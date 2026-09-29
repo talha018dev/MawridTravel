@@ -53,7 +53,7 @@ Admin pages do not require SEO.
 Target structure:
 
 ```text
-mawrid-travels/
+mawrid-travel/
 ├── apps/
 │   ├── web/                         # Angular application
 │   │   ├── src/
@@ -66,7 +66,7 @@ mawrid-travels/
 │       ├── Domain/
 │       ├── Infrastructure/
 │       ├── Program.cs
-│       ├── MawridTravels.Api.csproj
+│       ├── MawridTravel.Api.csproj
 │       └── Dockerfile
 │
 ├── docker-compose.yml
@@ -1314,7 +1314,7 @@ apps/api/
 │   └── Extensions/
 │
 ├── Program.cs
-└── MawridTravels.Api.csproj
+└── MawridTravel.Api.csproj
 ```
 
 #### Backend architecture rules
@@ -1350,7 +1350,7 @@ This alignment should make the monorepo easier to navigate without tightly coupl
 The confirmed application architecture is therefore:
 
 ```text
-mawrid-travels/
+mawrid-travel/
 ├── apps/
 │   ├── web/                         # Angular SSR
 │   │   └── src/app/
