@@ -25,9 +25,14 @@ Alternatively, set `DATABASE_CONNECTION_STRING` in the process environment.
 dotnet run
 ```
 
-API liveness: `GET http://localhost:5166/api/health`
+API liveness: `GET http://localhost:5000/api/health`
 
-Database connectivity: `GET http://localhost:5166/api/health/database`
+Database connectivity: `GET http://localhost:5000/api/health/database`
+
+Interactive Scalar API reference: `http://localhost:5000/scalar`
+
+The Scalar UI and its OpenAPI document are exposed only in the Development
+environment.
 
 ## EF Core migrations
 
