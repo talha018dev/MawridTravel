@@ -1079,7 +1079,7 @@ Before or during the relevant implementation phases, decide:
 
 1. Exact domain name.
 2. Cookie vs JWT authentication strategy.
-3. Whether guest checkout is allowed.
+3. Guest checkout is allowed; customer authentication must not be required to place an order.
 4. Exact customer account functionality.
 5. Payment method/provider, if online payment is needed.
 6. Exact product fields/categories/inventory requirements.

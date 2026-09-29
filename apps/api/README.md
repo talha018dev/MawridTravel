@@ -34,6 +34,27 @@ Interactive Scalar API reference: `http://localhost:5000/scalar`
 The Scalar UI and its OpenAPI document are exposed only in the Development
 environment.
 
+The development CORS policy allows the Angular development and SSR origins at
+`http://localhost:4200` and `http://localhost:4000`. Configure
+`Cors__AllowedOrigins__0` (and subsequent numeric entries) for deployed origins.
+
+## Tests
+
+Run the API integration tests from the repository root:
+
+```bash
+dotnet test apps/api.tests/MawridTravel.Api.Tests.csproj
+```
+
+## Container image
+
+Build the API image from the repository root so the Docker build context contains
+the API project:
+
+```bash
+docker build -f apps/api/Dockerfile -t mawrid-travel-api .
+```
+
 ## EF Core migrations
 
 Create migrations only as features introduce persistent entities:
