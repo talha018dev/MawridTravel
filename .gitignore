@@ -1,0 +1,25 @@
+# Dependencies and generated frontend output
+node_modules/
+dist/
+.angular/
+coverage/
+
+# .NET output (for the API phase)
+bin/
+obj/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
