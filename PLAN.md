@@ -76,7 +76,7 @@ mawrid-travels/
 └── PLAN.md
 ```
 
-The exact backend folder structure may evolve as development begins. Prefer feature-oriented organization over unnecessary architectural layers.
+The backend architecture is confirmed as **Vertical Slice Architecture** in a single ASP.NET Core project initially. See Section 18 for the detailed frontend and backend architecture rules.
 
 ---
 
@@ -1143,3 +1143,235 @@ The first production version is successful when:
 - There is a working database backup strategy.
 - The application can be redeployed without manual reconstruction of its configuration.
 
+
+---
+
+## 18. Confirmed Application Architecture
+
+### 18.1 Frontend: Angular Domain / Feature-Driven Architecture
+
+The Angular application will use a **domain-driven, feature-oriented folder structure**. This is a pragmatic frontend organization based on business domains, not a full textbook Domain-Driven Design implementation.
+
+Primary business domains:
+
+- Products
+- Orders
+- Flights / flight price requests
+- Blogs
+- Account / authentication
+
+Application-wide infrastructure belongs in `core/`, while genuinely reusable presentation and utility code belongs in `shared/`.
+
+Recommended structure:
+
+```text
+apps/web/src/app/
+├── core/
+│   ├── auth/
+│   ├── guards/
+│   ├── interceptors/
+│   ├── http/
+│   └── config/
+│
+├── shared/
+│   ├── ui/
+│   ├── directives/
+│   ├── pipes/
+│   └── utils/
+│
+├── domains/
+│   ├── products/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── data-access/
+│   │   ├── models/
+│   │   └── products.routes.ts
+│   ├── orders/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── data-access/
+│   │   ├── models/
+│   │   └── orders.routes.ts
+│   ├── flights/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── data-access/
+│   │   ├── models/
+│   │   └── flights.routes.ts
+│   ├── blogs/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── data-access/
+│   │   ├── models/
+│   │   └── blogs.routes.ts
+│   └── account/
+│       ├── pages/
+│       ├── components/
+│       ├── data-access/
+│       ├── models/
+│       └── account.routes.ts
+│
+├── layouts/
+│   ├── public-layout/
+│   ├── customer-layout/
+│   └── admin-layout/
+│
+├── app.routes.ts
+└── app.config.ts
+```
+
+#### Frontend architecture rules
+
+- Organize application code primarily by **business domain**, not globally by technical type.
+- Use Angular **standalone components**.
+- Lazy-load domain routes where appropriate.
+- Keep global authentication, guards, interceptors, HTTP configuration, and app configuration in `core/`.
+- Put only genuinely reusable UI, directives, pipes, and utilities in `shared/`.
+- Avoid arbitrary imports between business domains.
+- If functionality is truly shared between domains, move the reusable part to `shared/` or expose a deliberate public API from the owning domain.
+- Do not create folders merely to satisfy the architecture. Small domains may start with a few files and be subdivided into `pages`, `components`, `data-access`, and `models` as they grow.
+
+#### Admin organization
+
+`admin` should **not** become a duplicate business domain containing copies of products, orders, blogs, and flights. Admin pages are alternate interfaces into the same business domains.
+
+For example:
+
+```text
+domains/orders/pages/
+├── my-orders/
+└── admin-orders/
+
+domains/blogs/pages/
+├── blog-list/
+├── blog-details/
+├── blog-editor/
+└── admin-blog-list/
+```
+
+Admin routing can use paths such as:
+
+```text
+/admin
+/admin/products
+/admin/orders
+/admin/flights
+/admin/blogs
+```
+
+Angular guards improve navigation and UX, but backend authorization remains mandatory.
+
+### 18.2 Backend: ASP.NET Core Vertical Slice Architecture
+
+The ASP.NET Core backend will use **Vertical Slice Architecture** with feature-oriented folders.
+
+Start as a **single ASP.NET Core project** rather than immediately splitting the backend into separate Domain, Application, Infrastructure, API, and Contracts projects.
+
+Recommended structure:
+
+```text
+apps/api/
+├── Features/
+│   ├── Auth/
+│   │   ├── Login/
+│   │   └── Register/
+│   ├── Products/
+│   │   ├── GetProducts/
+│   │   ├── GetProduct/
+│   │   ├── CreateProduct/
+│   │   ├── UpdateProduct/
+│   │   └── DeleteProduct/
+│   ├── Orders/
+│   │   ├── CreateOrder/
+│   │   ├── GetMyOrders/
+│   │   ├── GetOrder/
+│   │   └── UpdateOrderStatus/
+│   ├── Blogs/
+│   │   ├── GetBlogs/
+│   │   ├── GetBlog/
+│   │   ├── CreateBlog/
+│   │   ├── UpdateBlog/
+│   │   └── DeleteBlog/
+│   └── FlightRequests/
+│       ├── CreateFlightRequest/
+│       ├── GetMyFlightRequests/
+│       ├── GetFlightRequests/
+│       └── RespondToFlightRequest/
+│
+├── Domain/
+│   ├── Entities/
+│   └── Enums/
+│
+├── Infrastructure/
+│   ├── Persistence/
+│   ├── Authentication/
+│   ├── Email/
+│   └── Storage/
+│
+├── Common/
+│   ├── Exceptions/
+│   ├── Middleware/
+│   └── Extensions/
+│
+├── Program.cs
+└── MawridTravels.Api.csproj
+```
+
+#### Backend architecture rules
+
+- Prefer **Minimal APIs** with feature-specific endpoint registration.
+- Keep request, response, validation, and endpoint/handler code close to the use case that owns it.
+- Use EF Core directly where the operation is straightforward.
+- Do not introduce generic repositories such as `IProductRepository` or `IOrderRepository` merely for architectural layering.
+- Extract domain services or dedicated application services when business logic becomes sufficiently complex to justify them.
+- Keep business rules out of endpoints when those rules belong to domain entities or dedicated services.
+- Do not add MediatR initially. Introduce a mediator only if the application's complexity creates a concrete need for that indirection.
+- Use `ProblemDetails` and centralized exception handling for consistent API errors.
+- Backend authorization is authoritative regardless of frontend route protection.
+
+### 18.3 Frontend / Backend Domain Alignment
+
+Keep terminology aligned across both applications where practical:
+
+```text
+Angular                         ASP.NET Core
+--------------------------------------------------
+domains/products/       <->     Features/Products/
+domains/orders/         <->     Features/Orders/
+domains/blogs/          <->     Features/Blogs/
+domains/flights/        <->     Features/FlightRequests/
+domains/account/        <->     Features/Auth/
+```
+
+This alignment should make the monorepo easier to navigate without tightly coupling the Angular implementation to the backend implementation.
+
+### 18.4 Architecture Summary
+
+The confirmed application architecture is therefore:
+
+```text
+mawrid-travels/
+├── apps/
+│   ├── web/                         # Angular SSR
+│   │   └── src/app/
+│   │       ├── core/
+│   │       ├── shared/
+│   │       ├── domains/
+│   │       │   ├── products/
+│   │       │   ├── orders/
+│   │       │   ├── flights/
+│   │       │   ├── blogs/
+│   │       │   └── account/
+│   │       └── layouts/
+│   │
+│   └── api/                         # ASP.NET Core
+│       ├── Features/
+│       ├── Domain/
+│       ├── Infrastructure/
+│       └── Common/
+│
+├── docker-compose.yml
+└── PLAN.md
+```
+
+The guiding principle on both sides is **organize around business capabilities first and add abstraction only when it solves an actual problem**.
