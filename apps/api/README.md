@@ -55,6 +55,18 @@ the API project:
 docker build -f apps/api/Dockerfile -t mawrid-travel-api .
 ```
 
+For normal local container development, start the API and PostgreSQL together
+from the repository root:
+
+```bash
+docker compose up --build -d
+```
+
+Compose builds `DATABASE_CONNECTION_STRING` from the same `POSTGRES_DB`,
+`POSTGRES_USER`, and `POSTGRES_PASSWORD` values in the root `.env` file. Inside
+the Compose network, the API connects to the database using the service hostname
+`postgres`.
+
 ## EF Core migrations
 
 Create migrations only as features introduce persistent entities:

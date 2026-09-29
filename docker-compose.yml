@@ -1,4 +1,18 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DATABASE_CONNECTION_STRING: Host=postgres;Port=5432;Database=${POSTGRES_DB:-mawrid_travel};Username=${POSTGRES_USER:-mawrid};Password=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your .env file}
+    ports:
+      - "127.0.0.1:5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:18-alpine
     restart: unless-stopped
@@ -6,10 +20,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-mawrid_travel}
       POSTGRES_USER: ${POSTGRES_USER:-mawrid}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your .env file}
-    ports:
-      - "127.0.0.1:5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s

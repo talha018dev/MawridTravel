@@ -39,13 +39,18 @@ The production server listens on `http://localhost:4000` by default.
 ## API and PostgreSQL
 
 Copy `.env.example` to `.env`, replace its development password, and start the
-database:
+complete backend:
 
 ```bash
-docker compose up -d postgres
+docker compose up --build -d
 ```
 
-Then follow [apps/api/README.md](apps/api/README.md) to configure the matching
-connection string with .NET user secrets and run the API.
+The API is available at `http://localhost:5000`. PostgreSQL remains private to
+the Compose network, where the API reaches it as `postgres:5432`. Both services
+use the PostgreSQL values from the same root `.env` file.
+
+To run the API directly with `dotnet run` instead, follow
+[apps/api/README.md](apps/api/README.md) to configure the matching connection
+string with .NET user secrets.
 
 See [PLAN.md](PLAN.md) for the full architecture and development phases.
