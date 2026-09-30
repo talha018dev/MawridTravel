@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using MawridTravel.Api.Domain.Authorization;
 using MawridTravel.Api.Domain.Entities;
+using MawridTravel.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace MawridTravel.Api.Features.Auth.Register;
 
@@ -22,6 +24,7 @@ internal static class RegisterEndpoint
         RegisterRequest request,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
+        AppDbContext dbContext,
         TimeProvider timeProvider)
     {
         var validationErrors = Validate(request);
@@ -42,19 +45,20 @@ internal static class RegisterEndpoint
             UpdatedAt = now
         };
 
-        var createResult = await userManager.CreateAsync(user, request.Password!);
-        if (!createResult.Succeeded)
+        var executionStrategy = dbContext.Database.CreateExecutionStrategy();
+        var result = await executionStrategy.ExecuteAsync(() =>
+            CreateUserAndAssignRoleAsync(
+                user,
+                request.Password!,
+                userManager,
+                dbContext));
+
+        if (!result.Succeeded)
         {
-            return Results.ValidationProblem(ToValidationErrors(createResult));
+            return Results.ValidationProblem(ToValidationErrors(result));
         }
 
-        var roleResult = await userManager.AddToRoleAsync(user, RoleNames.Customer);
-        if (!roleResult.Succeeded)
-        {
-            await userManager.DeleteAsync(user);
-            return Results.ValidationProblem(ToValidationErrors(roleResult));
-        }
-
+        // Do not issue a login cookie until the database transaction has committed.
         await signInManager.SignInAsync(user, isPersistent: false);
 
         var response = new RegisterResponse(
@@ -67,12 +71,38 @@ internal static class RegisterEndpoint
         return Results.Created("/api/auth/me", response);
     }
 
+    private static async Task<IdentityResult> CreateUserAndAssignRoleAsync(
+        ApplicationUser user,
+        string password,
+        UserManager<ApplicationUser> userManager,
+        AppDbContext dbContext)
+    {
+        await using var transaction =
+            await dbContext.Database.BeginTransactionAsync();
+
+        var createResult = await userManager.CreateAsync(user, password);
+        if (!createResult.Succeeded)
+        {
+            return createResult;
+        }
+
+        var roleResult = await userManager.AddToRoleAsync(user, RoleNames.Customer);
+        if (!roleResult.Succeeded)
+        {
+            return roleResult;
+        }
+
+        await transaction.CommitAsync();
+
+        return IdentityResult.Success;
+    }
+
     private static Dictionary<string, string[]> Validate(RegisterRequest request)
     {
         var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
 
-        ValidateName(request.FirstName, "firstName", "First name", errors);
-        ValidateName(request.LastName, "lastName", "Last name", errors);
+        AddNameValidationError(request.FirstName, "firstName", "First name", errors);
+        AddNameValidationError(request.LastName, "lastName", "Last name", errors);
 
         if (string.IsNullOrWhiteSpace(request.Email))
         {
@@ -96,7 +126,7 @@ internal static class RegisterEndpoint
         return errors;
     }
 
-    private static void ValidateName(
+    private static void AddNameValidationError(
         string? value,
         string key,
         string displayName,

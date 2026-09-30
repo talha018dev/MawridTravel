@@ -34,7 +34,9 @@ public sealed class RegistrationTests(ApiFactory factory) : IClassFixture<ApiFac
             password = "Travel123"
         });
 
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.True(
+            response.StatusCode == HttpStatusCode.Created,
+            await response.Content.ReadAsStringAsync());
         Assert.Contains(
             response.Headers.GetValues("Set-Cookie"),
             value => value.StartsWith("mawrid.auth=", StringComparison.Ordinal));
