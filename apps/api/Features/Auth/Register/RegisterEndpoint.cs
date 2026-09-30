@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Nodes;
+using EmailValidation;
 using MawridTravel.Api.Domain.Authorization;
 using MawridTravel.Api.Domain.Entities;
 using MawridTravel.Api.Infrastructure.Persistence;
@@ -15,7 +17,27 @@ internal static class RegisterEndpoint
             .AllowAnonymous()
             .WithName("Register")
             .Produces<RegisterResponse>(StatusCodes.Status201Created)
-            .ProducesValidationProblem();
+            .ProducesValidationProblem()
+            .AddOpenApiOperationTransformer((operation, _, _) =>
+            {
+                if (operation.RequestBody?.Content is { } content &&
+                    content.TryGetValue(
+                        "application/json",
+                        out var mediaType) == true)
+                {
+                    mediaType.Example = JsonNode.Parse(
+                        """
+                        {
+                        "firstName": "Talha",
+                        "lastName": "Jubaer",
+                        "email": "talha@example.com",
+                        "password": "Travel123"
+                        }
+                        """);
+                }
+
+                return Task.CompletedTask;
+            });
 
         return group;
     }
@@ -109,7 +131,7 @@ internal static class RegisterEndpoint
             errors["email"] = ["Email is required."];
         }
         else if (request.Email.Length > 256 ||
-                 !new EmailAddressAttribute().IsValid(request.Email.Trim()))
+                 !EmailValidator.Validate(request.Email.Trim()))
         {
             errors["email"] = ["Enter a valid email address."];
         }
