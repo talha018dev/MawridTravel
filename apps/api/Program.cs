@@ -1,5 +1,6 @@
 using MawridTravel.Api.Common.Exceptions;
 using MawridTravel.Api.Features.Health;
+using MawridTravel.Api.Infrastructure.Authentication;
 using MawridTravel.Api.Infrastructure.Persistence;
 using Scalar.AspNetCore;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddApplicationIdentity(builder.Environment);
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
@@ -28,6 +30,8 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
