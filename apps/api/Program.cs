@@ -1,4 +1,5 @@
 using MawridTravel.Api.Common.Exceptions;
+using MawridTravel.Api.Features.Auth;
 using MawridTravel.Api.Features.Health;
 using MawridTravel.Api.Infrastructure.Authentication;
 using MawridTravel.Api.Infrastructure.Persistence;
@@ -10,6 +11,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddPersistence(builder.Configuration);
 builder.Services.AddApplicationIdentity(builder.Environment);
+builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
 {
@@ -28,6 +30,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+await app.Services.SeedIdentityAsync();
+
 app.UseExceptionHandler();
 app.UseCors();
 app.UseAuthentication();
@@ -41,6 +45,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthEndpoints();
+app.MapAuthEndpoints();
 
 app.Run();
 

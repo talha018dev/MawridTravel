@@ -18,7 +18,7 @@ internal static class PersistenceExtensions
                 "ConnectionStrings:DefaultConnection or DATABASE_CONNECTION_STRING.");
         }
 
-        services.AddDbContextPool<AppDbContext>(options =>
+        services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString, npgsqlOptions =>
                 npgsqlOptions.EnableRetryOnFailure()));
 
