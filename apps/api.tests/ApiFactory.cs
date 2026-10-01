@@ -1,5 +1,6 @@
 using MawridTravel.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,9 @@ public sealed class ApiFactory : WebApplicationFactory<Program>
         builder.UseSetting("Cors:AllowedOrigins:0", AllowedOrigin);
         builder.ConfigureTestServices(services =>
         {
+            services.AddDataProtection()
+                .UseEphemeralDataProtectionProvider();
+
             var inMemoryProvider = new ServiceCollection()
                 .AddEntityFrameworkInMemoryDatabase()
                 .BuildServiceProvider();
