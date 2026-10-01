@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
-using EmailValidation;
 using MawridTravel.Api.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using static MawridTravel.Api.Features.Auth.Login.LoginRecords;
 
 namespace MawridTravel.Api.Features.Auth.Login;
 
@@ -41,7 +41,7 @@ internal static class LoginEndpoint
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager)
     {
-        var validationErrors = Validate(request);
+        var validationErrors = LoginValidator.Validate(request);
         if (validationErrors.Count > 0)
         {
             return Results.ValidationProblem(validationErrors);
@@ -76,45 +76,7 @@ internal static class LoginEndpoint
             roles));
     }
 
-    private static Dictionary<string, string[]> Validate(LoginRequest request)
-    {
-        var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
-
-        if (string.IsNullOrWhiteSpace(request.Email))
-        {
-            errors["email"] = ["Email is required."];
-        }
-        else if (request.Email.Length > 256 ||
-                 !EmailValidator.Validate(request.Email.Trim()))
-        {
-            errors["email"] = ["Enter a valid email address."];
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Password))
-        {
-            errors["password"] = ["Password is required."];
-        }
-        else if (request.Password.Length > 128)
-        {
-            errors["password"] = ["Password must not exceed 128 characters."];
-        }
-
-        return errors;
-    }
-
     private static IResult InvalidCredentials() => Results.Problem(
         statusCode: StatusCodes.Status401Unauthorized,
         title: "Invalid email or password.");
-
-    internal sealed record LoginRequest(
-        string? Email,
-        string? Password,
-        bool RememberMe);
-
-    internal sealed record LoginResponse(
-        Guid Id,
-        string FirstName,
-        string LastName,
-        string Email,
-        IList<string> Roles);
 }

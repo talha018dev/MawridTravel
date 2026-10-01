@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
 using EmailValidation;
 using MawridTravel.Api.Domain.Authorization;

@@ -1,5 +1,4 @@
 using MawridTravel.Api.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace MawridTravel.Api.Features.Health;
 
