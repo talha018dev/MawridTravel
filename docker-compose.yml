@@ -7,6 +7,11 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DATABASE_CONNECTION_STRING: Host=postgres;Port=5432;Database=${POSTGRES_DB:-mawrid_travel};Username=${POSTGRES_USER:-mawrid};Password=${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in your .env file}
+      AdminSeed__Enabled: ${ADMIN_SEED_ENABLED:-false}
+      AdminSeed__Email: ${ADMIN_SEED_EMAIL:-}
+      AdminSeed__Password: ${ADMIN_SEED_PASSWORD:-}
+      AdminSeed__FirstName: ${ADMIN_SEED_FIRST_NAME:-Mawrid}
+      AdminSeed__LastName: ${ADMIN_SEED_LAST_NAME:-Admin}
     ports:
       - "127.0.0.1:5000:8080"
     depends_on:

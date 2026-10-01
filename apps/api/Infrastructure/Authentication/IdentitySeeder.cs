@@ -40,5 +40,82 @@ internal static class IdentitySeeder
                     $"Could not create the '{roleName}' role: {errors}");
             }
         }
+
+        await SeedAdminAsync(scope.ServiceProvider);
+    }
+
+    private static async Task SeedAdminAsync(IServiceProvider services)
+    {
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var options = configuration
+            .GetSection(AdminSeedOptions.SectionName)
+            .Get<AdminSeedOptions>() ?? new AdminSeedOptions();
+
+        if (!options.Enabled)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(options.Email) ||
+            string.IsNullOrWhiteSpace(options.Password))
+        {
+            throw new InvalidOperationException(
+                "Admin seeding is enabled, but AdminSeed:Email or " +
+                "AdminSeed:Password is missing.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.FirstName) ||
+            string.IsNullOrWhiteSpace(options.LastName))
+        {
+            throw new InvalidOperationException(
+                "AdminSeed:FirstName and AdminSeed:LastName are required.");
+        }
+
+        var userManager = services
+            .GetRequiredService<UserManager<ApplicationUser>>();
+        var email = options.Email.Trim();
+        var user = await userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            var now = services
+                .GetRequiredService<TimeProvider>()
+                .GetUtcNow();
+            user = new ApplicationUser
+            {
+                FirstName = options.FirstName.Trim(),
+                LastName = options.LastName.Trim(),
+                UserName = email,
+                Email = email,
+                CreatedAt = now,
+                UpdatedAt = now
+            };
+
+            EnsureSucceeded(
+                await userManager.CreateAsync(user, options.Password),
+                "create the configured Admin user");
+        }
+
+        if (!await userManager.IsInRoleAsync(user, RoleNames.Admin))
+        {
+            EnsureSucceeded(
+                await userManager.AddToRoleAsync(user, RoleNames.Admin),
+                "assign the Admin role to the configured user");
+        }
+    }
+
+    private static void EnsureSucceeded(IdentityResult result, string action)
+    {
+        if (result.Succeeded)
+        {
+            return;
+        }
+
+        var errors = string.Join(
+            "; ",
+            result.Errors.Select(error => error.Description));
+
+        throw new InvalidOperationException(
+            $"Could not {action}: {errors}");
     }
 }

@@ -1,4 +1,7 @@
+using MawridTravel.Api.Domain.Authorization;
 using MawridTravel.Api.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -45,5 +48,19 @@ public sealed class AuthenticationConfigurationTests(ApiFactory factory)
         Assert.Equal(CookieSecurePolicy.SameAsRequest, options.Cookie.SecurePolicy);
         Assert.Equal(TimeSpan.FromHours(8), options.ExpireTimeSpan);
         Assert.True(options.SlidingExpiration);
+    }
+
+    [Fact]
+    public async Task AdminPolicy_RequiresAdminRole()
+    {
+        var policyProvider = factory.Services
+            .GetRequiredService<IAuthorizationPolicyProvider>();
+
+        var policy = await policyProvider.GetPolicyAsync(PolicyNames.Admin);
+
+        Assert.NotNull(policy);
+        var roleRequirement = Assert.Single(
+            policy.Requirements.OfType<RolesAuthorizationRequirement>());
+        Assert.Contains(RoleNames.Admin, roleRequirement.AllowedRoles);
     }
 }

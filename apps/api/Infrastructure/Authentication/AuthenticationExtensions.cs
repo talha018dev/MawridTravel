@@ -1,3 +1,4 @@
+using MawridTravel.Api.Domain.Authorization;
 using MawridTravel.Api.Domain.Entities;
 using MawridTravel.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -28,7 +29,12 @@ internal static class AuthenticationExtensions
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy(
+                PolicyNames.Admin,
+                policy => policy.RequireRole(RoleNames.Admin));
+        });
 
         services.ConfigureApplicationCookie(options =>
         {
