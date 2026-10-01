@@ -20,4 +20,8 @@
     <PackageReference Include="Scalar.AspNetCore" Version="2.17.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Auth\Logout\" />
+  </ItemGroup>
+
 </Project>

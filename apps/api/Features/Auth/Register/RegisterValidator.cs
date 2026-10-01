@@ -4,7 +4,7 @@ using static MawridTravel.Api.Features.Auth.Register.RegisterRecords;
 
 namespace MawridTravel.Api.Features.Auth.Register;
 
-public static class RegisterValidator
+internal static class RegisterValidator
 {
     internal static Dictionary<string, string[]> Validate(RegisterRequest request)
     {

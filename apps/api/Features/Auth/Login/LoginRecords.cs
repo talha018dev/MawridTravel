@@ -1,6 +1,6 @@
 namespace MawridTravel.Api.Features.Auth.Login;
 
-public record class LoginRecords
+internal record class LoginRecords
 {
     internal sealed record LoginRequest(
             string? Email,

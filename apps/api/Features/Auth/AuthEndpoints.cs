@@ -1,4 +1,5 @@
 using MawridTravel.Api.Features.Auth.Login;
+using MawridTravel.Api.Features.Auth.Logout;
 using MawridTravel.Api.Features.Auth.Me;
 using MawridTravel.Api.Features.Auth.Register;
 
@@ -14,6 +15,7 @@ internal static class AuthEndpoints
         group.MapRegisterEndpoint();
         group.MapLoginEndpoint();
         group.MapMeEndpoint();
+        group.MapLogoutEndpoint();
 
         return endpoints;
     }
