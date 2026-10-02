@@ -2,6 +2,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
+import { provideHttpClient } from '@angular/common/http';
 import { provideOptimus } from '@openng/optimus-ui/config';
 import { definePreset } from '@openng/optimus-ui-themes';
 import Aura from '@openng/optimus-ui-themes/aura';
@@ -47,6 +48,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(),
+    provideHttpClient(),
     provideOptimus({
       theme: {
         preset: MawridPreset,
