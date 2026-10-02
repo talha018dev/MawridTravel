@@ -20,5 +20,62 @@
       </a>
     </nav>
     <app-theme-toggle />
+    <p-button
+      class="min-[901px]:hidden"
+      styleClass="text-(--mawrid-font-primary)!"
+      [rounded]="true"
+      [text]="true"
+      [icon]="menuIcon"
+      ariaLabel="Open navigation menu"
+      (onClick)="mobileMenuOpen.set(true)"
+    />
   </div>
 </header>
+
+<p-drawer
+  header="Navigation"
+  position="right"
+  appendTo="body"
+  ariaCloseLabel="Close navigation menu"
+  [visible]="mobileMenuOpen()"
+  (visibleChange)="mobileMenuOpen.set($event)"
+>
+  <nav class="flex flex-col gap-2" aria-label="Mobile navigation">
+    <a
+      pButton
+      text
+      class="justify-start text-(--mawrid-font-primary)! no-underline"
+      routerLink="/"
+      (click)="closeMobileMenu()"
+    >
+      Home
+    </a>
+    <a
+      pButton
+      text
+      class="justify-start text-(--mawrid-font-primary)! no-underline"
+      href="/tickets"
+      (click)="closeMobileMenu()"
+    >
+      Book tickets
+    </a>
+    <a
+      pButton
+      text
+      class="justify-start text-(--mawrid-font-primary)! no-underline"
+      href="/journal"
+      (click)="closeMobileMenu()"
+    >
+      Journal
+    </a>
+    <a
+      pButton
+      text
+      class="justify-start text-(--mawrid-font-primary)! no-underline"
+      href="/shop"
+      (click)="closeMobileMenu()"
+    >
+      Shop
+    </a>
+  </nav>
+</p-drawer>
