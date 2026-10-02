@@ -8,6 +8,19 @@ import { definePreset } from '@openng/optimus-ui-themes';
 import Aura from '@openng/optimus-ui-themes/aura';
 
 const MawridPreset = definePreset(Aura, {
+  css: `
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      font-family: 'Lato', system-ui, sans-serif;
+    }
+
+    .p-button {
+      font-family: 'Lato', system-ui, sans-serif !important;
+    }
+  `,
   semantic: {
     primary: {
       50: '#f6f1f8',

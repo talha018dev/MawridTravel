@@ -1,0 +1,54 @@
+@if (drawer()) {
+  <nav class="flex flex-col gap-1 px-3 py-4 pl-0" aria-label="Mobile navigation">
+    <a
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      routerLink="/"
+      (click)="closeDrawer()"
+      >Home</a
+    >
+    <a
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      href="/tickets"
+      >Book tickets</a
+    >
+    <a
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      href="/journal"
+      >Journal</a
+    >
+    <a
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      href="/shop"
+      >Shop</a
+    >
+    <a
+      class="mt-2 rounded-[0.65rem] bg-(--mawrid-primary) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-white uppercase no-underline hover:bg-(--mawrid-secondary) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:bg-(--mawrid-accent) dark:text-(--mawrid-primary) dark:hover:bg-[#f3a08e]"
+      routerLink="/login"
+      (click)="closeDrawer()"
+      >Login</a
+    >
+  </nav>
+} @else {
+  <nav class="flex gap-2 max-[900px]:hidden" aria-label="Primary navigation">
+    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" routerLink="/">
+      Home
+    </a>
+    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/tickets">
+      Book tickets
+    </a>
+    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/journal">
+      Journal
+    </a>
+    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/shop">
+      Shop
+    </a>
+    <a
+      pButton
+      rounded
+      class="border-(--mawrid-accent)! bg-(--mawrid-accent)! text-(--mawrid-primary)! no-underline hover:border-[#d97562]! hover:bg-[#d97562]! dark:hover:border-[#f3a08e]! dark:hover:bg-[#f3a08e]!"
+      routerLink="/login"
+    >
+      Login
+    </a>
+  </nav>
+}

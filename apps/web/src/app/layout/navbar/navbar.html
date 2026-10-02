@@ -5,20 +5,7 @@
     class="mx-auto flex h-19.5 w-[min(73.75rem,calc(100%-2.5rem))] items-center gap-7 max-[620px]:h-17 max-[620px]:w-[calc(100%-1.5rem)]"
   >
     <div class="mr-auto"><app-logo /></div>
-    <nav class="flex gap-2 max-[900px]:hidden" aria-label="Primary navigation">
-      <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" routerLink="/">
-        Home
-      </a>
-      <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/tickets">
-        Book tickets
-      </a>
-      <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/journal">
-        Journal
-      </a>
-      <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/shop">
-        Shop
-      </a>
-    </nav>
+    <app-navigation />
     <app-theme-toggle />
     <p-button
       class="min-[901px]:hidden"
@@ -33,49 +20,17 @@
 </header>
 
 <p-drawer
-  header="Navigation"
-  position="right"
+  styleClass="w-[min(20rem,100vw)]! bg-[#fffaf7]! text-(--mawrid-primary)! dark:bg-[#120d27]! dark:text-white! [&_.p-drawer-header]:min-h-19.5 [&_.p-drawer-header]:border-b [&_.p-drawer-header]:border-[#e9e4ed] [&_.p-drawer-header]:bg-[#fffaf7] [&_.p-drawer-header]:px-4.5 [&_.p-drawer-header]:py-3 dark:[&_.p-drawer-header]:border-(--mawrid-secondary) dark:[&_.p-drawer-header]:bg-[#120d27] [&_.p-drawer-content]:bg-[#fffaf7] [&_.p-drawer-content]:p-0 dark:[&_.p-drawer-content]:bg-[#120d27]"
+  position="left"
   appendTo="body"
   ariaCloseLabel="Close navigation menu"
+  [closeButtonProps]="{
+    styleClass:
+      'size-10! rounded-[0.7rem]! border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! hover:border-(--mawrid-secondary)! hover:bg-(--mawrid-secondary)! dark:border-transparent! dark:bg-transparent! dark:text-white! dark:hover:border-(--mawrid-secondary)! dark:hover:bg-(--mawrid-secondary)!',
+  }"
   [visible]="mobileMenuOpen()"
   (visibleChange)="mobileMenuOpen.set($event)"
 >
-  <nav class="flex flex-col gap-2" aria-label="Mobile navigation">
-    <a
-      pButton
-      text
-      class="justify-start text-(--mawrid-font-primary)! no-underline"
-      routerLink="/"
-      (click)="closeMobileMenu()"
-    >
-      Home
-    </a>
-    <a
-      pButton
-      text
-      class="justify-start text-(--mawrid-font-primary)! no-underline"
-      href="/tickets"
-      (click)="closeMobileMenu()"
-    >
-      Book tickets
-    </a>
-    <a
-      pButton
-      text
-      class="justify-start text-(--mawrid-font-primary)! no-underline"
-      href="/journal"
-      (click)="closeMobileMenu()"
-    >
-      Journal
-    </a>
-    <a
-      pButton
-      text
-      class="justify-start text-(--mawrid-font-primary)! no-underline"
-      href="/shop"
-      (click)="closeMobileMenu()"
-    >
-      Shop
-    </a>
-  </nav>
+  <ng-template #header><app-logo /></ng-template>
+  <app-navigation [drawer]="true" (navigated)="closeMobileMenu()" />
 </p-drawer>
