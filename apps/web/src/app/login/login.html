@@ -1,0 +1,92 @@
+<section
+  class="grid min-h-[calc(100dvh-10rem)] place-items-center px-5 py-13.75 max-[620px]:px-3 max-[620px]:py-6"
+  aria-labelledby="login-title"
+>
+  <div
+    class="grid w-full max-w-240 grid-cols-2 overflow-hidden rounded-[1.75rem] border border-[#e9e4ed] bg-white shadow-[0_18px_55px_rgb(30_20_61/10%)] in-data-[theme=dark]:border-[#40345f] in-data-[theme=dark]:bg-[#1c1536] in-data-[theme=dark]:shadow-[0_20px_60px_rgb(0_0_0/28%)] max-[620px]:grid-cols-1 max-[620px]:rounded-3xl"
+  >
+    <div
+      class="relative isolate flex min-h-140 flex-col justify-between overflow-hidden bg-[#20183f] p-12 text-white after:absolute after:-right-22.5 after:-bottom-17.5 after:-z-10 after:size-65 after:rounded-full after:border-[3.4375rem] after:border-[#f3b8a826] after:content-[''] max-[620px]:min-h-60 max-[620px]:p-7"
+    >
+      <div
+        class="grid size-21.25 place-items-center rounded-full border-2 border-[#f3b8a8] max-[620px]:size-16"
+        aria-hidden="true"
+      >
+        <svg class="w-[72%] fill-[#f3b8a8]" viewBox="0 0 64 64">
+          <path d="M19 42c15 5 29-3 27-18-3 7-9 9-12 17 0-10-5-14-4-23-9 8-13 16-11 24Z" />
+        </svg>
+      </div>
+      <h2
+        class="m-0 max-w-87.5 font-['Playfair_Display',Georgia,serif] text-[2.7rem] leading-[1.08] max-[620px]:text-[2rem]"
+      >
+        Your journeys, saved in one place.
+      </h2>
+      <p class="m-0 max-w-sm text-[#d6d0e4] max-[620px]:hidden">
+        Manage bookings, keep wishlists and pick up where you left off.
+      </p>
+    </div>
+    <form
+      class="p-12 max-[620px]:px-6 max-[620px]:py-8 max-[390px]:px-4.5 max-[390px]:py-7.5"
+      (submit)="submitLogin(); $event.preventDefault()"
+    >
+      <h1
+        id="login-title"
+        class="mb-2 font-['Playfair_Display',Georgia,serif] text-[2.2rem] leading-[1.08]"
+      >
+        Welcome back
+      </h1>
+      <p class="mb-7 text-[#6d687c] in-data-[theme=dark]:text-[#b8b1c8]">
+        Log in to continue with Mawrid Travel.
+      </p>
+      <div class="my-4.5">
+        <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
+        <input
+          class="w-full rounded-xl border border-[#e9e4ed] bg-[#f6f1f8] p-3.5 text-[#20183f] outline-none placeholder:text-[#6d687c] focus:border-[#f3b8a8] focus:ring-3 focus:ring-[#e8867347] in-data-[theme=dark]:border-[#40345f] in-data-[theme=dark]:bg-[#271e46] in-data-[theme=dark]:text-[#fdf7f4]"
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="you@example.com"
+        />
+      </div>
+      <div class="my-4.5">
+        <div
+          class="mb-2 flex items-baseline justify-between gap-4 max-[390px]:flex-col max-[390px]:items-start max-[390px]:gap-1"
+        >
+          <label class="text-sm font-bold" for="password">Password</label>
+          <a
+            class="text-sm font-bold text-[#e88673] no-underline hover:underline"
+            href="/forgot-password"
+          >
+            Forgot password?
+          </a>
+        </div>
+        <p-password
+          inputId="password"
+          autocomplete="current-password"
+          placeholder="At least 6 characters"
+          [feedback]="false"
+          [toggleMask]="true"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+        />
+      </div>
+      <p-button type="submit" label="Log in" [fluid]="true" />
+      @if (loginComplete()) {
+        <p
+          class="mt-4 rounded-xl bg-[#26765d24] p-3 text-[#26765d] in-data-[theme=dark]:text-[#76d1ad]"
+          role="status"
+        >
+          Demo login successful &mdash; welcome back.
+        </p>
+      }
+      <p class="mt-5 text-center text-sm text-[#6d687c] in-data-[theme=dark]:text-[#b8b1c8]">
+        New here?
+        <a class="text-[#e88673] no-underline hover:underline" href="/register">
+          Create an account
+        </a>
+      </p>
+    </form>
+  </div>
+</section>
