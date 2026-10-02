@@ -1,1 +1,17 @@
 @import 'tailwindcss';
+@import 'primeicons/primeicons.css';
+@custom-variant dark (&:where(.app-dark, .app-dark *));
+
+:root {
+  --mawrid-primary: #20183f;
+  --mawrid-secondary: #40345f;
+  --mawrid-accent: #e88673;
+  --mawrid-font-primary: var(--mawrid-primary);
+}
+
+.app-dark {
+  --mawrid-primary: #20183f;
+  --mawrid-secondary: #40345f;
+  --mawrid-accent: #e88673;
+  --mawrid-font-primary: #ffffff;
+}

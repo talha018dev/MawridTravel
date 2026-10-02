@@ -3,7 +3,7 @@
   aria-labelledby="login-title"
 >
   <div
-    class="grid w-full max-w-240 grid-cols-2 overflow-hidden rounded-[1.75rem] border border-[#e9e4ed] bg-white shadow-[0_18px_55px_rgb(30_20_61/10%)] in-data-[theme=dark]:border-[#40345f] in-data-[theme=dark]:bg-[#1c1536] in-data-[theme=dark]:shadow-[0_20px_60px_rgb(0_0_0/28%)] max-[620px]:grid-cols-1 max-[620px]:rounded-3xl"
+    class="grid w-full max-w-240 grid-cols-2 overflow-hidden rounded-[1.75rem] border border-[#e9e4ed] bg-white shadow-[0_18px_55px_rgb(30_20_61/10%)] dark:border-(--mawrid-secondary) dark:bg-[#1c1536] dark:shadow-[0_20px_60px_rgb(0_0_0/28%)] max-[620px]:grid-cols-1 max-[620px]:rounded-3xl"
   >
     <div
       class="relative isolate flex min-h-140 flex-col justify-between overflow-hidden bg-[#20183f] p-12 text-white after:absolute after:-right-22.5 after:-bottom-17.5 after:-z-10 after:size-65 after:rounded-full after:border-[3.4375rem] after:border-[#f3b8a826] after:content-[''] max-[620px]:min-h-60 max-[620px]:p-7"
@@ -35,9 +35,7 @@
       >
         Welcome back
       </h1>
-      <p class="mb-7 text-[#6d687c] in-data-[theme=dark]:text-[#b8b1c8]">
-        Log in to continue with Mawrid Travel.
-      </p>
+      <p class="mb-7 text-[#6d687c] dark:text-[#b8b1c8]">Log in to continue with Mawrid Travel.</p>
       <div class="my-4.5">
         <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
         <input
@@ -57,7 +55,7 @@
         >
           <label class="text-sm font-bold" for="password">Password</label>
           <a
-            class="text-sm font-bold text-[#e88673] no-underline hover:underline"
+            class="text-sm font-bold text-(--mawrid-accent) no-underline hover:underline"
             href="/forgot-password"
           >
             Forgot password?
@@ -80,9 +78,9 @@
           text="Demo login successful — welcome back."
         />
       }
-      <p class="mt-5 text-center text-sm text-[#6d687c] in-data-[theme=dark]:text-[#b8b1c8]">
+      <p class="mt-5 text-center text-sm text-[#6d687c] dark:text-[#b8b1c8]">
         New here?
-        <a class="text-[#e88673] no-underline hover:underline" href="/register">
+        <a class="text-(--mawrid-accent) no-underline hover:underline" href="/register">
           Create an account
         </a>
       </p>

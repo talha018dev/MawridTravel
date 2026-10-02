@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, DOCUMENT, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, computed, DOCUMENT, inject, PLATFORM_ID, signal } from '@angular/core';
+import { OpenngIcons } from '@openng/optimus-ui/api';
 import { Button } from '@openng/optimus-ui/button';
 
 type ColorTheme = 'light' | 'dark';
@@ -14,6 +15,9 @@ export class ThemeToggle {
   private readonly platformId = inject(PLATFORM_ID);
 
   protected readonly theme = signal<ColorTheme>('light');
+  protected readonly themeIcon = computed(() =>
+    this.theme() === 'dark' ? OpenngIcons.SUN : OpenngIcons.MOON,
+  );
 
   constructor() {
     if (!isPlatformBrowser(this.platformId)) return;
@@ -30,7 +34,7 @@ export class ThemeToggle {
 
   private setTheme(theme: ColorTheme): void {
     this.theme.set(theme);
-    this.document.documentElement.dataset['theme'] = theme;
+    this.document.documentElement.classList.toggle('app-dark', theme === 'dark');
 
     if (isPlatformBrowser(this.platformId)) localStorage.setItem('mawrid-theme', theme);
   }

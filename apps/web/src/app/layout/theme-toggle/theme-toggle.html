@@ -1,14 +1,8 @@
 <p-button
   [rounded]="true"
   [text]="true"
+  [icon]="themeIcon()"
   (onClick)="toggleTheme()"
+  [className]="theme() === 'dark' ? 'color-white' : ''"
   [ariaLabel]="theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
->
-  <span class="text-lg" aria-hidden="true">
-    @if (theme() === 'dark') {
-      &#9728;
-    } @else {
-      &#9790;
-    }
-  </span>
-</p-button>
+/>
