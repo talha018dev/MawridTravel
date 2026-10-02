@@ -3,8 +3,8 @@ import { OpenngIcons } from '@openng/optimus-ui/api';
 import { Button, ButtonDirective } from '@openng/optimus-ui/button';
 import { Drawer } from '@openng/optimus-ui/drawer';
 import { RouterLink } from '@angular/router';
-import { Logo } from '../logo/logo';
-import { ThemeToggle } from '../theme-toggle/theme-toggle';
+import { Logo } from '@app/layout/logo/logo';
+import { ThemeToggle } from '@app/layout/theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-navbar',

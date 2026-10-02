@@ -1,0 +1,106 @@
+<form
+  class="p-12 max-[620px]:px-6 max-[620px]:py-8 max-[390px]:px-4.5 max-[390px]:py-7.5"
+  [formGroup]="loginForm"
+  (ngSubmit)="submitLogin()"
+>
+  <h1
+    id="login-title"
+    class="mb-2 font-['Playfair_Display',Georgia,serif] text-[2.2rem] leading-[1.08]"
+  >
+    Welcome back
+  </h1>
+  <p class="mb-7 text-[#6d687c] dark:text-[#b8b1c8]">Log in to continue with Mawrid Travel.</p>
+  <div class="my-4.5">
+    <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
+    <input
+      pInputText
+      class="w-full"
+      id="email"
+      formControlName="email"
+      type="email"
+      autocomplete="email"
+      required
+      maxlength="256"
+      aria-describedby="email-errors"
+      placeholder="you@example.com"
+      
+    />
+    @if (email.invalid && (email.dirty || email.touched)) {
+      <div id="email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+        @if (email.hasError('required')) {
+          <p>Email is required.</p>
+        } @else if (email.hasError('email')) {
+          <p>Enter a valid email address.</p>
+        } @else if (email.hasError('maxlength')) {
+          <p>Email must not exceed 256 characters.</p>
+        }
+      </div>
+    }
+  </div>
+  <div class="my-4.5">
+    <div
+      class="mb-2 flex items-baseline justify-between gap-4 max-[390px]:flex-col max-[390px]:items-start max-[390px]:gap-1"
+    >
+      <label class="text-sm font-bold" for="password">Password</label>
+      <a
+        class="text-sm font-bold text-(--mawrid-accent) no-underline hover:underline"
+        href="/forgot-password"
+      >
+        Forgot password?
+      </a>
+    </div>
+    <p-password
+      class="block!"
+      inputId="password"
+      formControlName="password"
+      autocomplete="current-password"
+      placeholder="Password"
+      required
+      [maxlength]="128"
+      [invalid]="password.invalid && (password.dirty || password.touched)"
+      aria-describedby="password-errors"
+      [feedback]="false"
+      [toggleMask]="true"
+      inputStyleClass="w-full inline-block"
+    />
+    @if (password.invalid && (password.dirty || password.touched)) {
+      <div id="password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+        @if (password.hasError('required')) {
+          <p>Password is required.</p>
+        } @else if (password.hasError('maxlength')) {
+          <p>Password must not exceed 128 characters.</p>
+        }
+      </div>
+    }
+  </div>
+  <div class="my-4.5 flex items-center gap-2">
+    <p-checkbox inputId="rememberMe" formControlName="rememberMe" [binary]="true" />
+    <label class="cursor-pointer text-sm" for="rememberMe">Remember me</label>
+  </div>
+  <p-button
+    type="submit"
+    [label]="submitting() ? 'Logging in...' : 'Login'"
+    [loading]="submitting()"
+    [disabled]="submitting()"
+    styleClass="border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! dark:border-(--mawrid-accent)! dark:bg-(--mawrid-accent)! dark:text-(--mawrid-primary)!"
+    [pt]="{ label: { class: 'font-bold!' } }"
+    [fluid]="true"
+  />
+
+  @if (loginComplete()) {
+    <p-message
+      styleClass="mt-4 w-full"
+      severity="success"
+      text="Login successful — welcome back."
+    />
+  }
+  @if (errorMessage(); as message) {
+    <p-message styleClass="mt-4 w-full" severity="error" [text]="message" />
+  }
+  <p class="mt-5 text-center text-sm text-[#6d687c] dark:text-[#b8b1c8]">
+    New here?
+    <a class="text-(--mawrid-accent) no-underline hover:underline" href="/register"
+      >Create an account</a
+    >
+  </p>
+</form>

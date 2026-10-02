@@ -1,4 +1,3 @@
-import { NgOptimizedImage } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,30 +7,40 @@ import { InputText } from '@openng/optimus-ui/inputtext';
 import { Message } from '@openng/optimus-ui/message';
 import { Password } from '@openng/optimus-ui/password';
 import { finalize } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '@app/features/auth/auth.service';
 
 @Component({
-  selector: 'app-login',
-  imports: [Button, Checkbox, InputText, Message, NgOptimizedImage, Password, ReactiveFormsModule],
-  templateUrl: './login.html',
+  selector: 'app-login-form',
+  standalone: true,
+  imports: [Button, Checkbox, InputText, Message, Password, ReactiveFormsModule],
+  templateUrl: './login-form.html',
 })
-export class Login {
+export class LoginForm {
   private readonly authService = inject(AuthService);
 
   protected readonly loginComplete = signal(false);
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  
   protected readonly loginForm = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [Validators.required, Validators.email, Validators.maxLength(256)],
     }),
     password: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.maxLength(128)],
     }),
     rememberMe: new FormControl(false, { nonNullable: true }),
   });
+
+  protected get email() {
+    return this.loginForm.controls.email;
+  }
+
+  protected get password() {
+    return this.loginForm.controls.password;
+  }
 
   protected submitLogin(): void {
     this.loginComplete.set(false);
@@ -39,7 +48,6 @@ export class Login {
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
-      this.errorMessage.set('Enter a valid email address and password.');
       return;
     }
 
