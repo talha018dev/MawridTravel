@@ -1,23 +1,26 @@
 @if (drawer()) {
-  <nav class="flex flex-col gap-1 px-3 py-4 pl-0" aria-label="Mobile navigation">
+  <nav
+    class="flex flex-col gap-1 px-3 py-4 pl-0 [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
+    aria-label="Mobile navigation"
+  >
     <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
       routerLink="/"
       (click)="closeDrawer()"
       >Home</a
     >
     <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
       href="/tickets"
       >Book tickets</a
     >
     <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
       href="/journal"
       >Journal</a
     >
     <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-primary) uppercase no-underline hover:bg-[#f8e8e4] hover:text-[#b95745] focus-visible:bg-[#f8e8e4] focus-visible:text-[#b95745] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:text-white dark:hover:bg-[#2b2147] dark:hover:text-[#f3a08e] dark:focus-visible:bg-[#2b2147] dark:focus-visible:text-[#f3a08e]"
+      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
       href="/shop"
       >Shop</a
     >
@@ -29,7 +32,10 @@
     >
   </nav>
 } @else {
-  <nav class="flex gap-2 max-[900px]:hidden" aria-label="Primary navigation">
+  <nav
+    class="flex gap-2 max-[900px]:hidden [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
+    aria-label="Primary navigation"
+  >
     <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" routerLink="/">
       Home
     </a>

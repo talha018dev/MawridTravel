@@ -22,6 +22,14 @@ html {
   --mawrid-secondary: #40345f;
   --mawrid-accent: #e88673;
   --mawrid-font-primary: var(--mawrid-primary);
+  --mawrid-page: #fffaf7;
+  --mawrid-header: rgb(255 250 247 / 90%);
+  --mawrid-card: #ffffff;
+  --mawrid-border: #e9e4ed;
+  --mawrid-text-muted: #6d687c;
+  --mawrid-nav-hover: #f8e8e4;
+  --mawrid-nav-hover-text: #b95745;
+  --mawrid-card-shadow: 0 18px 55px rgb(30 20 61 / 10%);
 }
 
 .app-dark {
@@ -29,4 +37,12 @@ html {
   --mawrid-secondary: #40345f;
   --mawrid-accent: #e88673;
   --mawrid-font-primary: #ffffff;
+  --mawrid-page: #120d27;
+  --mawrid-header: rgb(18 13 39 / 90%);
+  --mawrid-card: #1c1536;
+  --mawrid-border: var(--mawrid-secondary);
+  --mawrid-text-muted: #b8b1c8;
+  --mawrid-nav-hover: #2b2147;
+  --mawrid-nav-hover-text: #f3a08e;
+  --mawrid-card-shadow: 0 20px 60px rgb(0 0 0 / 28%);
 }

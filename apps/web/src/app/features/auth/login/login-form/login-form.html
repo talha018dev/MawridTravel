@@ -9,7 +9,7 @@
   >
     Welcome back
   </h1>
-  <p class="mb-7 text-[#6d687c] dark:text-[#b8b1c8]">Log in to continue with Mawrid Travel.</p>
+  <p class="mb-7 text-(--mawrid-text-muted)">Log in to continue with Mawrid Travel.</p>
   <div class="my-4.5">
     <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
     <input
@@ -97,7 +97,7 @@
   @if (errorMessage(); as message) {
     <p-message styleClass="mt-4 w-full" severity="error" [text]="message" />
   }
-  <p class="mt-5 text-center text-sm text-[#6d687c] dark:text-[#b8b1c8]">
+  <p class="mt-5 text-center text-sm text-(--mawrid-text-muted)">
     New here?
     <a class="text-(--mawrid-accent) no-underline hover:underline" href="/register"
       >Create an account</a

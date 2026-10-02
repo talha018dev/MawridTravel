@@ -1,6 +1,4 @@
-<header
-  class="border-b border-[#e9e4ed] bg-[#fffaf7]/90 backdrop-blur-lg dark:border-(--mawrid-secondary) dark:bg-[#120d27]/90"
->
+<header class="border-b border-(--mawrid-border) bg-(--mawrid-header) backdrop-blur-lg">
   <div
     class="mx-auto flex h-19.5 w-[min(73.75rem,calc(100%-2.5rem))] items-center gap-7 max-[620px]:h-17 max-[620px]:w-[calc(100%-1.5rem)]"
   >
@@ -20,13 +18,13 @@
 </header>
 
 <p-drawer
-  styleClass="w-[min(20rem,100vw)]! bg-[#fffaf7]! text-(--mawrid-primary)! dark:bg-[#120d27]! dark:text-white! [&_.p-drawer-header]:min-h-19.5 [&_.p-drawer-header]:border-b [&_.p-drawer-header]:border-[#e9e4ed] [&_.p-drawer-header]:bg-[#fffaf7] [&_.p-drawer-header]:px-4.5 [&_.p-drawer-header]:py-3 dark:[&_.p-drawer-header]:border-(--mawrid-secondary) dark:[&_.p-drawer-header]:bg-[#120d27] [&_.p-drawer-content]:bg-[#fffaf7] [&_.p-drawer-content]:p-0 dark:[&_.p-drawer-content]:bg-[#120d27]"
+  styleClass="w-[min(20rem,100vw)]! bg-(--mawrid-page)! text-(--mawrid-font-primary)! [&_.p-drawer-header]:min-h-19.5 [&_.p-drawer-header]:border-b [&_.p-drawer-header]:border-(--mawrid-border) [&_.p-drawer-header]:bg-(--mawrid-page) [&_.p-drawer-header]:px-4.5 [&_.p-drawer-header]:py-3 [&_.p-drawer-content]:bg-(--mawrid-page) [&_.p-drawer-content]:p-0"
   position="left"
   appendTo="body"
   ariaCloseLabel="Close navigation menu"
   [closeButtonProps]="{
     styleClass:
-      'size-10! rounded-[0.7rem]! border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! hover:border-(--mawrid-secondary)! hover:bg-(--mawrid-secondary)! dark:border-transparent! dark:bg-transparent! dark:text-white! dark:hover:border-(--mawrid-secondary)! dark:hover:bg-(--mawrid-secondary)!',
+      'size-10! border-transparent! bg-transparent! text-(--mawrid-primary)! dark:text-white!',
   }"
   [visible]="mobileMenuOpen()"
   (visibleChange)="mobileMenuOpen.set($event)"
