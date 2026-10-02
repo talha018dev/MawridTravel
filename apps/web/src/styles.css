@@ -22,6 +22,7 @@ html {
   --mawrid-secondary: #40345f;
   --mawrid-accent: #e88673;
   --mawrid-font-primary: var(--mawrid-primary);
+  --mawrid-font-accent: #B84F3D;
   --mawrid-page: #fffaf7;
   --mawrid-header: rgb(255 250 247 / 90%);
   --mawrid-card: #ffffff;
@@ -37,6 +38,7 @@ html {
   --mawrid-secondary: #40345f;
   --mawrid-accent: #e88673;
   --mawrid-font-primary: #ffffff;
+  --mawrid-font-accent: var(--mawrid-accent);
   --mawrid-page: #120d27;
   --mawrid-header: rgb(18 13 39 / 90%);
   --mawrid-card: #1c1536;

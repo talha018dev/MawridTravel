@@ -14,7 +14,7 @@
     <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
     <input
       pInputText
-      class="w-full"
+      class="w-full [&.p-invalid]:border-red-600!"
       id="email"
       formControlName="email"
       type="email"
@@ -43,7 +43,7 @@
     >
       <label class="text-sm font-bold" for="password">Password</label>
       <a
-        class="text-sm font-bold text-(--mawrid-accent) no-underline hover:underline"
+        class="text-sm font-bold text-(--mawrid-font-accent) no-underline hover:underline"
         href="/forgot-password"
       >
         Forgot password?
@@ -61,7 +61,7 @@
       aria-describedby="password-errors"
       [feedback]="false"
       [toggleMask]="true"
-      inputStyleClass="w-full inline-block"
+      inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
     />
     @if (password.invalid && (password.dirty || password.touched)) {
       <div id="password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
@@ -99,7 +99,7 @@
   }
   <p class="mt-5 text-center text-sm text-(--mawrid-text-muted)">
     New here?
-    <a class="text-(--mawrid-accent) no-underline hover:underline" href="/register"
+    <a class="text-(--mawrid-font-accent) no-underline hover:underline" href="/register"
       >Create an account</a
     >
   </p>
