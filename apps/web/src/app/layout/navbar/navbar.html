@@ -1,0 +1,16 @@
+<header
+  class="relative z-10 border-b border-[#e9e4ed] bg-[#fffaf7]/90 backdrop-blur-lg in-data-[theme=dark]:border-[#40345f] in-data-[theme=dark]:bg-[#120d27]/90"
+>
+  <div
+    class="mx-auto flex h-19.5 w-[min(73.75rem,calc(100%-2.5rem))] items-center gap-7 max-[620px]:h-17 max-[620px]:w-[calc(100%-1.5rem)]"
+  >
+    <div class="mr-auto"><app-logo /></div>
+    <nav class="flex gap-2 max-[900px]:hidden" aria-label="Primary navigation">
+      <a pButton text rounded class="no-underline" routerLink="/"> Home </a>
+      <a pButton text rounded class="no-underline" href="/tickets"> Book tickets </a>
+      <a pButton text rounded class="no-underline" href="/journal"> Journal </a>
+      <a pButton text rounded class="no-underline" href="/shop"> Shop </a>
+    </nav>
+    <app-theme-toggle />
+  </div>
+</header>
