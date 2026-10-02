@@ -21,9 +21,9 @@
       autocomplete="email"
       required
       maxlength="256"
+      [invalid]="email.invalid && (email.dirty || email.touched)"
       aria-describedby="email-errors"
       placeholder="you@example.com"
-      
     />
     @if (email.invalid && (email.dirty || email.touched)) {
       <div id="email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
