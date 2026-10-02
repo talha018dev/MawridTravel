@@ -8,5 +8,6 @@ import { ThemeToggle } from '../theme-toggle/theme-toggle';
   selector: 'app-navbar',
   imports: [ButtonDirective, Logo, RouterLink, ThemeToggle],
   templateUrl: './navbar.html',
+  host: { class: 'sticky top-0 z-50 block' },
 })
 export class Navbar {}

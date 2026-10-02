@@ -2,6 +2,21 @@
 @import 'primeicons/primeicons.css';
 @custom-variant dark (&:where(.app-dark, .app-dark *));
 
+html,
+body {
+  font-family: 'Lato', system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 :root {
   --mawrid-primary: #20183f;
   --mawrid-secondary: #40345f;

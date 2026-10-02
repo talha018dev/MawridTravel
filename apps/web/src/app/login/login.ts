@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { Button } from '@openng/optimus-ui/button';
 import { InputText } from '@openng/optimus-ui/inputtext';
@@ -6,7 +7,7 @@ import { Password } from '@openng/optimus-ui/password';
 
 @Component({
   selector: 'app-login',
-  imports: [Button, InputText, Message, Password],
+  imports: [Button, InputText, Message, NgOptimizedImage, Password],
   templateUrl: './login.html',
 })
 export class Login {

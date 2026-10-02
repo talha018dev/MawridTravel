@@ -9,12 +9,15 @@
       class="relative isolate flex min-h-140 flex-col justify-between overflow-hidden bg-[#20183f] p-12 text-white after:absolute after:-right-22.5 after:-bottom-17.5 after:-z-10 after:size-65 after:rounded-full after:border-[3.4375rem] after:border-[#f3b8a826] after:content-[''] max-[620px]:min-h-60 max-[620px]:p-7"
     >
       <div
-        class="grid size-21.25 place-items-center rounded-full border-2 border-[#f3b8a8] max-[620px]:size-16"
-        aria-hidden="true"
+        class="grid size-28 place-items-center overflow-hidden rounded-full border-2 border-[#f3b8a8] max-[620px]:size-20"
       >
-        <svg class="w-[72%] fill-[#f3b8a8]" viewBox="0 0 64 64">
-          <path d="M19 42c15 5 29-3 27-18-3 7-9 9-12 17 0-10-5-14-4-23-9 8-13 16-11 24Z" />
-        </svg>
+        <img
+          ngSrc="/mawrid-logo.jpg"
+          width="5417"
+          height="5418"
+          class="size-full scale-160 object-cover"
+          alt="Mawrid Travel"
+        />
       </div>
       <h2
         class="m-0 max-w-87.5 font-['Playfair_Display',Georgia,serif] text-[2.7rem] leading-[1.08] max-[620px]:text-[2rem]"
@@ -70,7 +73,14 @@
           inputStyleClass="w-full"
         />
       </div>
-      <p-button type="submit" label="Log in" [fluid]="true" />
+      <p-button
+        type="submit"
+        label="Login"
+        styleClass="border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! dark:border-(--mawrid-accent)! dark:bg-(--mawrid-accent)! dark:text-(--mawrid-primary)!"
+        [pt]="{ label: { class: 'font-bold!' } }"
+        [fluid]="true"
+      />
+
       @if (loginComplete()) {
         <p-message
           styleClass="mt-4 w-full"
