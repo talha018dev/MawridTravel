@@ -40,16 +40,16 @@ const MawridPreset = definePreset(Aura, {
         primary: {
           color: '#20183f',
           contrastColor: '#ffffff',
-          hoverColor: '#181230',
-          activeColor: '#100c20',
+          hoverColor: '#40345f',
+          activeColor: '#181230',
         },
       },
       dark: {
         primary: {
-          color: '#20183f',
-          contrastColor: '#ffffff',
-          hoverColor: '#302653',
-          activeColor: 'var(--mawrid-secondary)',
+          color: '#e88673',
+          contrastColor: '#20183f',
+          hoverColor: '#f3a08e',
+          activeColor: '#d97562',
         },
       },
     },

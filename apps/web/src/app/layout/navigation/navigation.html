@@ -22,7 +22,7 @@
       >Shop</a
     >
     <a
-      class="mt-2 rounded-[0.65rem] bg-(--mawrid-primary) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-white uppercase no-underline hover:bg-(--mawrid-secondary) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) dark:bg-(--mawrid-accent) dark:text-(--mawrid-primary) dark:hover:bg-[#f3a08e]"
+      class="mt-2 rounded-[0.65rem] bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
       routerLink="/login"
       (click)="closeDrawer()"
       >Login</a
@@ -42,13 +42,6 @@
     <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/shop">
       Shop
     </a>
-    <a
-      pButton
-      rounded
-      class="border-(--mawrid-accent)! bg-(--mawrid-accent)! text-(--mawrid-primary)! no-underline hover:border-[#d97562]! hover:bg-[#d97562]! dark:hover:border-[#f3a08e]! dark:hover:bg-[#f3a08e]!"
-      routerLink="/login"
-    >
-      Login
-    </a>
+    <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
   </nav>
 }

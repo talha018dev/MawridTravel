@@ -82,8 +82,8 @@
     [label]="submitting() ? 'Logging in...' : 'Login'"
     [loading]="submitting()"
     [disabled]="submitting()"
-    styleClass="mt-2 rounded-[0.65rem]! border-(--mawrid-primary)! bg-(--mawrid-primary)! p-3.5! text-white! uppercase hover:border-(--mawrid-secondary)! hover:bg-(--mawrid-secondary)! focus-visible:outline-2! focus-visible:outline-offset-2! focus-visible:outline-(--mawrid-accent)! dark:border-(--mawrid-accent)! dark:bg-(--mawrid-accent)! dark:text-(--mawrid-primary)! dark:hover:border-[#f3a08e]! dark:hover:bg-[#f3a08e]!"
-    [pt]="{label: {class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!'}}"
+    styleClass="mt-2 rounded-[0.65rem]! p-3.5! uppercase"
+    [pt]="{ label: { class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!' } }"
     [fluid]="true"
   />
 
