@@ -87,6 +87,7 @@ internal static class IdentitySeeder
                 LastName = options.LastName.Trim(),
                 UserName = email,
                 Email = email,
+                EmailConfirmed = true,
                 CreatedAt = now,
                 UpdatedAt = now
             };
@@ -94,6 +95,14 @@ internal static class IdentitySeeder
             EnsureSucceeded(
                 await userManager.CreateAsync(user, options.Password),
                 "create the configured Admin user");
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            user.EmailConfirmed = true;
+            EnsureSucceeded(
+                await userManager.UpdateAsync(user),
+                "confirm the configured Admin user's email");
         }
 
         if (!await userManager.IsInRoleAsync(user, RoleNames.Admin))

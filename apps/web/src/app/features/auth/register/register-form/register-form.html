@@ -6,141 +6,166 @@
   <h1 id="register-title" class="mb-2 text-[2.2rem] leading-[1.08]">Create your account</h1>
   <p class="mb-7 text-(--mawrid-text-muted)">Join Mawrid Travel and start planning.</p>
 
-  <div class="grid grid-cols-2 gap-4 max-[390px]:grid-cols-1 max-[390px]:gap-0">
-    <div class="my-2">
-      <label class="mb-2 block text-sm font-bold" for="firstName">First name</label>
-      <input
-        pInputText
-        class="w-full [&.p-invalid]:border-red-600!"
-        id="firstName"
-        formControlName="firstName"
-        autocomplete="given-name"
-        required
-        maxlength="100"
-        [invalid]="controls.firstName.invalid && controls.firstName.touched"
-        aria-describedby="first-name-errors"
-        placeholder="First name"
-      />
-      @if (controls.firstName.invalid && controls.firstName.touched) {
-        <div id="first-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-          <p>First name is required</p>
-        </div>
-      }
-    </div>
-    <div class="my-2">
-      <label class="mb-2 block text-sm font-bold" for="lastName">Last name</label>
-      <input
-        pInputText
-        class="w-full [&.p-invalid]:border-red-600!"
-        id="lastName"
-        formControlName="lastName"
-        autocomplete="family-name"
-        required
-        maxlength="100"
-        [invalid]="controls.lastName.invalid && controls.lastName.touched"
-        aria-describedby="last-name-errors"
-        placeholder="Last name"
-      />
-      @if (controls.lastName.invalid && controls.lastName.touched) {
-        <div id="last-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-          <p>Last name is required</p>
-        </div>
-      }
-    </div>
-  </div>
-
-  <div class="my-2">
-    <label class="mb-2 block text-sm font-bold" for="registerEmail">Email address</label>
-    <input
-      pInputText
-      class="w-full [&.p-invalid]:border-red-600!"
-      id="registerEmail"
-      formControlName="email"
-      type="email"
-      autocomplete="email"
-      required
-      maxlength="256"
-      [invalid]="controls.email.invalid && controls.email.touched"
-      aria-describedby="register-email-errors"
-      placeholder="you@example.com"
-    />
-    @if (controls.email.invalid && controls.email.touched) {
-      <div id="register-email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        @if (controls.email.hasError('required')) {
-          <p>Email is required.</p>
-        } @else {
-          <p>Enter a valid email address.</p>
+  @if (!verificationEmail()) {
+    <div class="grid grid-cols-2 gap-4 max-[390px]:grid-cols-1 max-[390px]:gap-0">
+      <div class="my-2">
+        <label class="mb-2 block text-sm font-bold" for="firstName">First name</label>
+        <input
+          pInputText
+          class="w-full [&.p-invalid]:border-red-600!"
+          id="firstName"
+          formControlName="firstName"
+          autocomplete="given-name"
+          required
+          maxlength="100"
+          [invalid]="controls.firstName.invalid && controls.firstName.touched"
+          aria-describedby="first-name-errors"
+          placeholder="First name"
+        />
+        @if (controls.firstName.invalid && controls.firstName.touched) {
+          <div id="first-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+            <p>First name is required</p>
+          </div>
         }
       </div>
-    }
-  </div>
-
-  <div class="my-2">
-    <label class="mb-2 block text-sm font-bold" for="registerPassword">Password</label>
-    <p-password
-      class="block!"
-      inputId="registerPassword"
-      formControlName="password"
-      autocomplete="new-password"
-      placeholder="At least 8 characters"
-      required
-      [maxlength]="128"
-      [invalid]="controls.password.invalid && controls.password.touched"
-      aria-describedby="register-password-errors"
-      [feedback]="true"
-      [toggleMask]="true"
-      inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
-    />
-    @if (controls.password.invalid && controls.password.touched) {
-      <div id="register-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        <p>Use at least 8 characters with uppercase, lowercase and a number.</p>
+      <div class="my-2">
+        <label class="mb-2 block text-sm font-bold" for="lastName">Last name</label>
+        <input
+          pInputText
+          class="w-full [&.p-invalid]:border-red-600!"
+          id="lastName"
+          formControlName="lastName"
+          autocomplete="family-name"
+          required
+          maxlength="100"
+          [invalid]="controls.lastName.invalid && controls.lastName.touched"
+          aria-describedby="last-name-errors"
+          placeholder="Last name"
+        />
+        @if (controls.lastName.invalid && controls.lastName.touched) {
+          <div id="last-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+            <p>Last name is required</p>
+          </div>
+        }
       </div>
-    }
-  </div>
+    </div>
 
-  <div class="my-2">
-    <label class="mb-2 block text-sm font-bold" for="confirmPassword">Confirm password</label>
-    <p-password
-      class="block!"
-      inputId="confirmPassword"
-      formControlName="confirmPassword"
-      autocomplete="new-password"
-      placeholder="Enter your password again"
-      required
-      [invalid]="
+    <div class="my-2">
+      <label class="mb-2 block text-sm font-bold" for="registerEmail">Email address</label>
+      <input
+        pInputText
+        class="w-full [&.p-invalid]:border-red-600!"
+        id="registerEmail"
+        formControlName="email"
+        type="email"
+        autocomplete="email"
+        required
+        maxlength="256"
+        [invalid]="controls.email.invalid && controls.email.touched"
+        aria-describedby="register-email-errors"
+        placeholder="you@example.com"
+      />
+      @if (controls.email.invalid && controls.email.touched) {
+        <div id="register-email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+          @if (controls.email.hasError('required')) {
+            <p>Email is required.</p>
+          } @else {
+            <p>Enter a valid email address.</p>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="my-2">
+      <label class="mb-2 block text-sm font-bold" for="registerPassword">Password</label>
+      <p-password
+        class="block!"
+        inputId="registerPassword"
+        formControlName="password"
+        autocomplete="new-password"
+        placeholder="At least 8 characters"
+        required
+        [maxlength]="128"
+        [invalid]="controls.password.invalid && controls.password.touched"
+        aria-describedby="register-password-errors"
+        [feedback]="true"
+        [toggleMask]="true"
+        inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
+      />
+      @if (controls.password.invalid && controls.password.touched) {
+        <div id="register-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+          <p>Use at least 8 characters with uppercase, lowercase and a number.</p>
+        </div>
+      }
+    </div>
+
+    <div class="my-2">
+      <label class="mb-2 block text-sm font-bold" for="confirmPassword">Confirm password</label>
+      <p-password
+        class="block!"
+        inputId="confirmPassword"
+        formControlName="confirmPassword"
+        autocomplete="new-password"
+        placeholder="Enter your password again"
+        required
+        [invalid]="
+          controls.confirmPassword.touched &&
+          (controls.confirmPassword.invalid || registerForm.hasError('passwordMismatch'))
+        "
+        aria-describedby="confirm-password-errors"
+        [feedback]="false"
+        [toggleMask]="true"
+        inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
+      />
+      @if (
         controls.confirmPassword.touched &&
         (controls.confirmPassword.invalid || registerForm.hasError('passwordMismatch'))
-      "
-      aria-describedby="confirm-password-errors"
-      [feedback]="false"
-      [toggleMask]="true"
-      inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
+      ) {
+        <div id="confirm-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+          <p>Passwords must match.</p>
+        </div>
+      }
+    </div>
+
+    <p-button
+      type="submit"
+      [label]="submitting() ? 'Creating account...' : 'Create account'"
+      [loading]="submitting()"
+      [disabled]="submitting()"
+      styleClass="mt-4 rounded-[0.65rem]! p-3.5! uppercase"
+      [pt]="{ label: { class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!' } }"
+      [fluid]="true"
     />
-    @if (
-      controls.confirmPassword.touched &&
-      (controls.confirmPassword.invalid || registerForm.hasError('passwordMismatch'))
-    ) {
-      <div id="confirm-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        <p>Passwords must match.</p>
-      </div>
-    }
-  </div>
-
-  <p-button
-    type="submit"
-    [label]="submitting() ? 'Creating account...' : 'Create account'"
-    [loading]="submitting()"
-    [disabled]="submitting()"
-    styleClass="mt-4 rounded-[0.65rem]! p-3.5! uppercase"
-    [pt]="{ label: { class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!' } }"
-    [fluid]="true"
-  />
-
-  @if (registrationComplete()) {
-    <p-message
-      styleClass="mt-4 w-full"
-      severity="success"
-      content="Your account is ready — welcome to Mawrid Travel."
+  } @else {
+    <div class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-page) p-5">
+      <h2 class="mb-2 text-xl font-bold">Verify your email</h2>
+      <p class="mb-5 text-sm text-(--mawrid-text-muted)">
+        Enter the six-digit code for {{ verificationEmail() }}. Use <strong>000000</strong> while
+        email delivery is being configured.
+      </p>
+      <label class="mb-2 block text-sm font-bold" for="registrationOtp">Verification code</label>
+      <p-inputotp
+        id="registrationOtp"
+        formControlName="otp"
+        [length]="6"
+        [integerOnly]="true"
+        [autofocus]="true"
+        styleClass="mb-2"
+      />
+      @if (controls.otp.invalid && controls.otp.touched) {
+        <p class="mb-3 text-sm text-red-600" aria-live="polite">
+          Enter the six-digit verification code.
+        </p>
+      }
+    </div>
+    <p-button
+      type="submit"
+      [label]="submitting() ? 'Verifying...' : 'Verify account'"
+      [loading]="submitting()"
+      [disabled]="submitting()"
+      styleClass="mt-4 rounded-[0.65rem]! p-3.5! uppercase"
+      [pt]="{ label: { class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!' } }"
+      [fluid]="true"
     />
   }
   @if (errorMessage(); as message) {

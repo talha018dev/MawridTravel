@@ -15,6 +15,7 @@ internal static class AuthenticationExtensions
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
 
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = true;

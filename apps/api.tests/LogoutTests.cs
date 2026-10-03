@@ -19,6 +19,12 @@ public sealed class LogoutTests(ApiFactory factory) : IClassFixture<ApiFactory>
             password = "Travel123"
         });
         registerResponse.EnsureSuccessStatusCode();
+        var verifyResponse = await client.PostAsJsonAsync("/api/auth/verify-otp", new
+        {
+            email,
+            otp = "000000"
+        });
+        verifyResponse.EnsureSuccessStatusCode();
 
         var authenticatedResponse = await client.GetAsync("/api/auth/me");
         Assert.Equal(HttpStatusCode.OK, authenticatedResponse.StatusCode);

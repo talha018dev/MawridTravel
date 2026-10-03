@@ -20,6 +20,12 @@ public sealed class MeTests(ApiFactory factory) : IClassFixture<ApiFactory>
             password = "Travel123"
         });
         registerResponse.EnsureSuccessStatusCode();
+        var verifyResponse = await client.PostAsJsonAsync("/api/auth/verify-otp", new
+        {
+            email,
+            otp = "000000"
+        });
+        verifyResponse.EnsureSuccessStatusCode();
 
         var response = await client.GetAsync("/api/auth/me");
 

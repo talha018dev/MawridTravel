@@ -8,10 +8,5 @@ public record class RegisterRecords
             string? Email,
             string? Password);
 
-    internal sealed record RegisterResponse(
-        Guid Id,
-        string FirstName,
-        string LastName,
-        string Email,
-        string Role);
+    internal sealed record RegisterResponse(string Email, bool RequiresOtp);
 }

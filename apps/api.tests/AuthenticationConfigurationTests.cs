@@ -26,6 +26,7 @@ public sealed class AuthenticationConfigurationTests(ApiFactory factory)
             .Value;
 
         Assert.True(options.User.RequireUniqueEmail);
+        Assert.True(options.SignIn.RequireConfirmedEmail);
         Assert.Equal(8, options.Password.RequiredLength);
         Assert.True(options.Password.RequireUppercase);
         Assert.True(options.Password.RequireLowercase);

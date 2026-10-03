@@ -92,6 +92,7 @@ public sealed class LoginTests(ApiFactory factory) : IClassFixture<ApiFactory>
             LastName = "Customer",
             UserName = email,
             Email = email,
+            EmailConfirmed = true,
             CreatedAt = now,
             UpdatedAt = now
         };

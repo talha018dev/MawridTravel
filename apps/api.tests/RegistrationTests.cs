@@ -23,7 +23,7 @@ public sealed class RegistrationTests(ApiFactory factory) : IClassFixture<ApiFac
     }
 
     [Fact]
-    public async Task Register_CreatesCustomerAndAuthenticationCookie()
+    public async Task Register_CreatesUnconfirmedCustomerWithoutAuthenticationCookie()
     {
         var email = $"customer-{Guid.NewGuid():N}@example.com";
         var response = await _client.PostAsJsonAsync("/api/auth/register", new
@@ -37,16 +37,12 @@ public sealed class RegistrationTests(ApiFactory factory) : IClassFixture<ApiFac
         Assert.True(
             response.StatusCode == HttpStatusCode.Created,
             await response.Content.ReadAsStringAsync());
-        Assert.Contains(
-            response.Headers.GetValues("Set-Cookie"),
-            value => value.StartsWith("mawrid.auth=", StringComparison.Ordinal));
+        Assert.False(response.Headers.Contains("Set-Cookie"));
 
         var body = await response.Content.ReadFromJsonAsync<RegisterResponse>();
         Assert.NotNull(body);
-        Assert.Equal("Talha", body.FirstName);
-        Assert.Equal("Jubaer", body.LastName);
         Assert.Equal(email, body.Email);
-        Assert.Equal(RoleNames.Customer, body.Role);
+        Assert.True(body.RequiresOtp);
 
         using var scope = factory.Services.CreateScope();
         var userManager = scope.ServiceProvider
@@ -55,7 +51,56 @@ public sealed class RegistrationTests(ApiFactory factory) : IClassFixture<ApiFac
 
         Assert.NotNull(user);
         Assert.NotEqual("Travel123", user.PasswordHash);
+        Assert.False(user.EmailConfirmed);
         Assert.True(await userManager.IsInRoleAsync(user, RoleNames.Customer));
+    }
+
+    [Fact]
+    public async Task VerifyOtp_WithDevelopmentCode_ConfirmsAndSignsInCustomer()
+    {
+        var email = $"verified-{Guid.NewGuid():N}@example.com";
+        var registerResponse = await _client.PostAsJsonAsync("/api/auth/register", new
+        {
+            firstName = "Verified",
+            lastName = "Customer",
+            email,
+            password = "Travel123"
+        });
+        registerResponse.EnsureSuccessStatusCode();
+
+        var response = await _client.PostAsJsonAsync("/api/auth/verify-otp", new
+        {
+            email,
+            otp = "000000"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains(
+            response.Headers.GetValues("Set-Cookie"),
+            value => value.StartsWith("mawrid.auth=", StringComparison.Ordinal));
+
+        using var scope = factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider
+            .GetRequiredService<UserManager<ApplicationUser>>();
+        var user = await userManager.FindByEmailAsync(email);
+
+        Assert.NotNull(user);
+        Assert.True(user.EmailConfirmed);
+    }
+
+    [Fact]
+    public async Task VerifyOtp_WithInvalidCode_ReturnsValidationProblem()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/verify-otp", new
+        {
+            email = "customer@example.com",
+            otp = "123456"
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(
+            "application/problem+json",
+            response.Content.Headers.ContentType?.MediaType);
     }
 
     [Fact]
@@ -75,10 +120,5 @@ public sealed class RegistrationTests(ApiFactory factory) : IClassFixture<ApiFac
             response.Content.Headers.ContentType?.MediaType);
     }
 
-    private sealed record RegisterResponse(
-        Guid Id,
-        string FirstName,
-        string LastName,
-        string Email,
-        string Role);
+    private sealed record RegisterResponse(string Email, bool RequiresOtp);
 }

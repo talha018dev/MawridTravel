@@ -44,7 +44,6 @@ internal static class RegisterEndpoint
     private static async Task<IResult> HandleAsync(
         RegisterRequest request,
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
         AppDbContext dbContext,
         TimeProvider timeProvider)
     {
@@ -79,17 +78,9 @@ internal static class RegisterEndpoint
             return Results.ValidationProblem(RegisterValidator.ToValidationErrors(result));
         }
 
-        // Do not issue a login cookie until the database transaction has committed.
-        await signInManager.SignInAsync(user, isPersistent: false);
-
-        var response = new RegisterResponse(
-            user.Id,
-            user.FirstName,
-            user.LastName,
-            user.Email,
-            RoleNames.Customer);
-
-        return Results.Created("/api/auth/me", response);
+        return Results.Created(
+            "/api/auth/verify-otp",
+            new RegisterResponse(user.Email, RequiresOtp: true));
     }
 
     private static async Task<IdentityResult> CreateUserAndAssignRoleAsync(

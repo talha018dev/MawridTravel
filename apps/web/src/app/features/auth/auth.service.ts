@@ -25,11 +25,21 @@ export interface RegisterRequest {
 }
 
 export interface RegisterResponse {
+  email: string;
+  requiresOtp: boolean;
+}
+
+export interface VerifyOtpRequest {
+  email: string;
+  otp: string;
+}
+
+export interface VerifyOtpResponse {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  roles: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,6 +55,12 @@ export class AuthService {
 
   register(request: RegisterRequest): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, request, {
+      withCredentials: true,
+    });
+  }
+
+  verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse> {
+    return this.http.post<VerifyOtpResponse>(`${this.apiUrl}/verify-otp`, request, {
       withCredentials: true,
     });
   }
