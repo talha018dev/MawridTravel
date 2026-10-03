@@ -70,6 +70,12 @@ export class VerifyEmail implements OnDestroy {
       });
   }
 
+  protected verifyWhenOtpComplete(): void {
+    if (/^\d{6}$/.test(this.controls.otp.value) && !this.submitting()) {
+      this.verify();
+    }
+  }
+
   protected resend(): void {
     if (this.resending() || this.resendCooldown() > 0) return;
 
