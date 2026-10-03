@@ -18,11 +18,13 @@
           autocomplete="given-name"
           required
           maxlength="100"
-          [invalid]="controls.firstName.invalid && controls.firstName.touched"
+          [invalid]="
+            controls.firstName.invalid && (submitAttempted() )
+          "
           aria-describedby="first-name-errors"
           placeholder="First name"
         />
-        @if (controls.firstName.invalid && controls.firstName.touched) {
+        @if (controls.firstName.invalid && (submitAttempted() )) {
           <div id="first-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
             <p>First name is required</p>
           </div>
@@ -38,11 +40,11 @@
           autocomplete="family-name"
           required
           maxlength="100"
-          [invalid]="controls.lastName.invalid && controls.lastName.touched"
+          [invalid]="controls.lastName.invalid && (submitAttempted())"
           aria-describedby="last-name-errors"
           placeholder="Last name"
         />
-        @if (controls.lastName.invalid && controls.lastName.touched) {
+        @if (controls.lastName.invalid && (submitAttempted())) {
           <div id="last-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
             <p>Last name is required</p>
           </div>
@@ -61,11 +63,11 @@
         autocomplete="email"
         required
         maxlength="256"
-        [invalid]="controls.email.invalid && controls.email.touched"
+        [invalid]="controls.email.invalid && (submitAttempted())"
         aria-describedby="register-email-errors"
         placeholder="you@example.com"
       />
-      @if (controls.email.invalid && controls.email.touched) {
+      @if (controls.email.invalid && (submitAttempted())) {
         <div id="register-email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
           @if (controls.email.hasError('required')) {
             <p>Email is required.</p>
@@ -86,13 +88,13 @@
         placeholder="At least 8 characters"
         required
         [maxlength]="128"
-        [invalid]="controls.password.invalid && controls.password.touched"
+        [invalid]="controls.password.invalid && (submitAttempted())"
         aria-describedby="register-password-errors"
         [feedback]="true"
         [toggleMask]="true"
         inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
       />
-      @if (controls.password.invalid && controls.password.touched) {
+      @if (controls.password.invalid && (submitAttempted())) {
         <div id="register-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
           <p>Use at least 8 characters with uppercase, lowercase and a number.</p>
         </div>
@@ -109,7 +111,7 @@
         placeholder="Enter your password again"
         required
         [invalid]="
-          controls.confirmPassword.touched &&
+          (submitAttempted()) &&
           (controls.confirmPassword.invalid || registerForm.hasError('passwordMismatch'))
         "
         aria-describedby="confirm-password-errors"
@@ -118,7 +120,7 @@
         inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
       />
       @if (
-        controls.confirmPassword.touched &&
+        (submitAttempted()) &&
         (controls.confirmPassword.invalid || registerForm.hasError('passwordMismatch'))
       ) {
         <div id="confirm-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
@@ -152,7 +154,7 @@
         [autofocus]="true"
         styleClass="mb-2"
       />
-      @if (controls.otp.invalid && controls.otp.touched) {
+      @if (controls.otp.invalid && (submitAttempted())) {
         <p class="mb-3 text-sm text-red-600" aria-live="polite">
           Enter the six-digit verification code.
         </p>

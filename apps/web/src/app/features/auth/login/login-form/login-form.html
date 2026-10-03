@@ -16,11 +16,11 @@
       autocomplete="email"
       required
       maxlength="256"
-      [invalid]="email.invalid && (email.dirty || email.touched)"
+      [invalid]="email.invalid && (submitAttempted() || email.dirty)"
       aria-describedby="email-errors"
       placeholder="you@example.com"
     />
-    @if (email.invalid && (email.dirty || email.touched)) {
+    @if (email.invalid && (submitAttempted() || email.dirty)) {
       <div id="email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
         @if (email.hasError('required')) {
           <p>Email is required.</p>
@@ -52,13 +52,13 @@
       placeholder="Password"
       required
       [maxlength]="128"
-      [invalid]="password.invalid && (password.dirty || password.touched)"
+      [invalid]="password.invalid && (submitAttempted() || password.dirty)"
       aria-describedby="password-errors"
       [feedback]="false"
       [toggleMask]="true"
       inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
     />
-    @if (password.invalid && (password.dirty || password.touched)) {
+    @if (password.invalid && (submitAttempted() || password.dirty)) {
       <div id="password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
         @if (password.hasError('required')) {
           <p>Password is required.</p>

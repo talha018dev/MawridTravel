@@ -21,6 +21,7 @@ export class LoginForm {
   private readonly router = inject(Router);
 
   protected readonly submitting = signal(false);
+  readonly submitAttempted = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly loginForm = new FormGroup({
@@ -44,6 +45,7 @@ export class LoginForm {
   }
 
   protected submitLogin(): void {
+    this.submitAttempted.set(true);
     this.errorMessage.set(null);
 
     if (this.loginForm.invalid) {

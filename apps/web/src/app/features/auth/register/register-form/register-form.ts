@@ -34,6 +34,7 @@ export class RegisterForm {
 
   protected readonly verificationEmail = signal<string | null>(null);
   protected readonly submitting = signal(false);
+  protected readonly submitAttempted = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
   protected readonly registerForm = new FormGroup(
@@ -79,6 +80,7 @@ export class RegisterForm {
   }
 
   protected submitRegistration(): void {
+    this.submitAttempted.set(true);
     this.errorMessage.set(null);
 
     const verificationEmail = this.verificationEmail();
@@ -101,6 +103,7 @@ export class RegisterForm {
         next: (response) => {
           this.verificationEmail.set(response.email);
           this.controls.otp.enable();
+          this.submitAttempted.set(false);
         },
         error: (error: HttpErrorResponse) => {
           this.errorMessage.set(
