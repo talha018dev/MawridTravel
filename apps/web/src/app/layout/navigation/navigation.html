@@ -24,12 +24,24 @@
       href="/shop"
       >Shop</a
     >
-    <a
-      class="mt-2 rounded-[0.65rem] bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
-      routerLink="/login"
-      (click)="closeDrawer()"
-      >Login</a
-    >
+    @if (authenticated()) {
+      <button
+        pButton
+        type="button"
+        class="mt-2 rounded-[0.65rem]! p-3.5! text-sm! leading-tight! font-extrabold! tracking-[0.075em]! uppercase"
+        [disabled]="loggingOut()"
+        (click)="logout()"
+      >
+        {{ loggingOut() ? 'Logging out...' : 'Logout' }}
+      </button>
+    } @else {
+      <a
+        class="mt-2 rounded-[0.65rem] bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
+        routerLink="/login"
+        (click)="closeDrawer()"
+        >Login</a
+      >
+    }
   </nav>
 } @else {
   <nav
@@ -48,6 +60,12 @@
     <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/shop">
       Shop
     </a>
-    <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
+    @if (authenticated()) {
+      <button pButton rounded type="button" [disabled]="loggingOut()" (click)="logout()">
+        {{ loggingOut() ? 'Logging out...' : 'Logout' }}
+      </button>
+    } @else {
+      <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
+    }
   </nav>
 }

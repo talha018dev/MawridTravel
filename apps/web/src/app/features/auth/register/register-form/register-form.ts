@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
 import { AuthService } from '@app/features/auth/auth.service';
 import { Button } from '@openng/optimus-ui/button';
 import { InputText } from '@openng/optimus-ui/inputtext';
-import { InputOtp } from '@openng/optimus-ui/inputotp';
 import { Message } from '@openng/optimus-ui/message';
 import { Password } from '@openng/optimus-ui/password';
 import { finalize } from 'rxjs';
@@ -25,14 +24,13 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
 
 @Component({
   selector: 'app-register-form',
-  imports: [Button, InputOtp, InputText, Message, Password, ReactiveFormsModule],
+  imports: [Button, InputText, Message, Password, ReactiveFormsModule],
   templateUrl: './register-form.html',
 })
 export class RegisterForm {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  protected readonly verificationEmail = signal<string | null>(null);
   protected readonly submitting = signal(false);
   protected readonly submitAttempted = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -64,13 +62,6 @@ export class RegisterForm {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      otp: new FormControl(
-        { value: '', disabled: true },
-        {
-          nonNullable: true,
-          validators: [Validators.required, Validators.pattern(/^\d{6}$/)],
-        },
-      ),
     },
     { validators: passwordsMatch },
   );
@@ -83,27 +74,21 @@ export class RegisterForm {
     this.submitAttempted.set(true);
     this.errorMessage.set(null);
 
-    const verificationEmail = this.verificationEmail();
-    if (verificationEmail) {
-      this.submitOtp(verificationEmail);
-      return;
-    }
-
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
     }
 
-    const { confirmPassword: _, otp: __, ...request } = this.registerForm.getRawValue();
+    const { confirmPassword: _, ...request } = this.registerForm.getRawValue();
     this.submitting.set(true);
     this.authService
       .register(request)
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: (response) => {
-          this.verificationEmail.set(response.email);
-          this.controls.otp.enable();
-          this.submitAttempted.set(false);
+          void this.router.navigate(['/verify-email'], {
+            queryParams: { email: response.email },
+          });
         },
         error: (error: HttpErrorResponse) => {
           this.errorMessage.set(
@@ -112,20 +97,6 @@ export class RegisterForm {
               : 'Unable to create your account. Please try again.',
           );
         },
-      });
-  }
-
-  private submitOtp(email: string): void {
-    this.controls.otp.markAsTouched();
-    if (this.controls.otp.invalid) return;
-
-    this.submitting.set(true);
-    this.authService
-      .verifyOtp({ email, otp: this.controls.otp.value })
-      .pipe(finalize(() => this.submitting.set(false)))
-      .subscribe({
-        next: () => void this.router.navigateByUrl('/'),
-        error: () => this.errorMessage.set('The verification code is invalid. Please try again.'),
       });
   }
 }

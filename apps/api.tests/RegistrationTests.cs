@@ -104,6 +104,40 @@ public sealed class RegistrationTests(ApiFactory factory) : IClassFixture<ApiFac
     }
 
     [Fact]
+    public async Task Register_WhenAccountIsUnconfirmed_ReturnsOtpRequirementAgain()
+    {
+        var email = $"retry-{Guid.NewGuid():N}@example.com";
+        var request = new
+        {
+            firstName = "Retry",
+            lastName = "Customer",
+            email,
+            password = "Travel123"
+        };
+
+        var firstResponse = await _client.PostAsJsonAsync("/api/auth/register", request);
+        firstResponse.EnsureSuccessStatusCode();
+        var retryResponse = await _client.PostAsJsonAsync("/api/auth/register", request);
+
+        Assert.Equal(HttpStatusCode.Created, retryResponse.StatusCode);
+        var body = await retryResponse.Content.ReadFromJsonAsync<RegisterResponse>();
+        Assert.NotNull(body);
+        Assert.Equal(email, body.Email);
+        Assert.True(body.RequiresOtp);
+    }
+
+    [Fact]
+    public async Task ResendOtp_WithEmail_ReturnsGenericSuccess()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/resend-otp", new
+        {
+            email = "unknown@example.com"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Register_WithInvalidInput_ReturnsValidationProblem()
     {
         var response = await _client.PostAsJsonAsync("/api/auth/register", new

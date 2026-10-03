@@ -1,0 +1,121 @@
+<section
+  class="grid min-h-[calc(100dvh-10rem)] place-items-center px-5 py-13.75 max-[620px]:px-3 max-[620px]:py-6"
+  aria-labelledby="verify-email-title"
+>
+  <div
+    class="grid w-full max-w-240 grid-cols-2 overflow-hidden rounded-[1.75rem] border border-(--mawrid-border) bg-(--mawrid-card) shadow-(--mawrid-card-shadow) max-[620px]:grid-cols-1 max-[620px]:rounded-3xl"
+  >
+    <div
+      class="relative isolate flex min-h-140 flex-col justify-between overflow-hidden bg-(--mawrid-primary) p-12 text-white after:absolute after:-right-22.5 after:-bottom-17.5 after:-z-10 after:size-65 after:rounded-full after:border-[3.4375rem] after:border-[#f3b8a826] after:content-[''] max-[620px]:min-h-60 max-[620px]:p-7"
+    >
+      <div
+        class="grid size-28 place-items-center overflow-hidden rounded-full border-2 border-[#f3b8a8] max-[620px]:size-20"
+      >
+        <img
+          ngSrc="/mawrid-logo.webp"
+          width="1293"
+          height="1217"
+          class="size-full object-contain"
+          alt="Mawrid Travel"
+        />
+      </div>
+      <h2 class="m-0 max-w-87.5 text-[2.7rem] leading-[1.08] max-[620px]:text-[2rem]">
+        One last step before takeoff.
+      </h2>
+      <p class="m-0 max-w-sm text-[#d6d0e4] max-[620px]:hidden">
+        Verify your email to secure your account and continue your journey.
+      </p>
+    </div>
+
+    <form
+      class="p-12 max-[620px]:px-6 max-[620px]:py-8 max-[390px]:px-4.5 max-[390px]:py-7.5"
+      [formGroup]="verificationForm"
+      (ngSubmit)="verify()"
+    >
+      <h1 id="verify-email-title" class="mb-2 text-[2.2rem] leading-[1.08]">Verify your email</h1>
+      <p class="mb-7 text-(--mawrid-text-muted)">
+        Enter your email and six-digit verification code. For now, use
+        <strong>000000</strong>.
+      </p>
+
+      <div class="mb-5">
+        <label class="mb-2 block text-sm font-bold" for="verificationEmail">Email address</label>
+        <input
+          pInputText
+          id="verificationEmail"
+          class="w-full [&.p-invalid]:border-red-600!"
+          formControlName="email"
+          type="email"
+          autocomplete="email"
+          maxlength="256"
+          [invalid]="controls.email.invalid && (submitAttempted() || controls.email.touched)"
+          aria-describedby="verification-email-errors"
+          placeholder="you@example.com"
+        />
+        @if (controls.email.invalid && (submitAttempted() || controls.email.touched)) {
+          <p id="verification-email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+            Enter a valid email address.
+          </p>
+        }
+      </div>
+
+      <div class="mb-5">
+        <label class="mb-2 block text-sm font-bold" for="verificationOtp">
+          Verification code
+        </label>
+        <p-inputotp
+          id="verificationOtp"
+          formControlName="otp"
+          [length]="6"
+          [integerOnly]="true"
+          [autofocus]="true"
+        />
+        @if (controls.otp.invalid && (submitAttempted() || controls.otp.touched)) {
+          <p class="mt-2 text-sm text-red-600" aria-live="polite">
+            Enter the six-digit verification code.
+          </p>
+        }
+      </div>
+
+      <p-button
+        type="submit"
+        [label]="submitting() ? 'Verifying...' : 'Verify account'"
+        [loading]="submitting()"
+        [disabled]="submitting() || resending()"
+        styleClass="rounded-[0.65rem]! p-3.5! uppercase"
+        [pt]="{ label: { class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!' } }"
+        [fluid]="true"
+      />
+      <p-button
+        type="button"
+        [label]="
+          resending()
+            ? 'Resending...'
+            : resendCooldown() > 0
+              ? 'Resend code (' + resendCooldown() + 's)'
+              : 'Resend code'
+        "
+        [loading]="resending()"
+        [disabled]="submitting() || resending() || resendCooldown() > 0"
+        [text]="true"
+        styleClass="mt-2"
+        [fluid]="true"
+        (onClick)="resend()"
+      />
+
+      @if (message(); as successMessage) {
+        <p-message styleClass="mt-4 w-full" severity="success" [text]="successMessage" />
+      }
+      @if (errorMessage(); as error) {
+        <p-message styleClass="mt-4 w-full" severity="error" [text]="error" />
+      }
+
+      <p class="mt-5 text-center text-sm text-(--mawrid-text-muted)">
+        Back to
+        <a class="text-(--mawrid-font-accent) no-underline hover:underline" routerLink="/login"
+          >login</a
+        >
+      </p>
+    </form>
+  </div>
+</section>

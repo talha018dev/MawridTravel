@@ -63,6 +63,13 @@ export class LoginForm {
           void this.router.navigateByUrl(destination);
         },
         error: (error: HttpErrorResponse) => {
+          if (error.status === 403) {
+            void this.router.navigate(['/verify-email'], {
+              queryParams: { email: this.email.value },
+            });
+            return;
+          }
+
           this.errorMessage.set(
             error.status === 401
               ? 'Invalid email or password.'

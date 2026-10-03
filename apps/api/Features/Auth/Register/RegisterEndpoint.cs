@@ -54,6 +54,23 @@ internal static class RegisterEndpoint
         }
 
         var email = request.Email!.Trim();
+        var existingUser = await userManager.FindByEmailAsync(email);
+        if (existingUser is not null)
+        {
+            if (!existingUser.EmailConfirmed)
+            {
+                return Results.Created(
+                    "/api/auth/verify-otp",
+                    new RegisterResponse(email, RequiresOtp: true));
+            }
+
+            return Results.ValidationProblem(
+                new Dictionary<string, string[]>(StringComparer.Ordinal)
+                {
+                    ["email"] = ["An account with this email already exists."]
+                });
+        }
+
         var now = timeProvider.GetUtcNow();
         var user = new ApplicationUser
         {

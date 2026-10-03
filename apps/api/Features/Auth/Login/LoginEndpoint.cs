@@ -14,6 +14,7 @@ internal static class LoginEndpoint
             .WithName("Login")
             .Produces<LoginResponse>()
             .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
             .ProducesValidationProblem()
             .AddOpenApiOperationTransformer((operation, _, _) =>
             {
@@ -53,6 +54,13 @@ internal static class LoginEndpoint
         if (user is null)
         {
             return InvalidCredentials();
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            return Results.Problem(
+                statusCode: StatusCodes.Status403Forbidden,
+                title: "Email verification required.");
         }
 
         var signInResult = await signInManager.PasswordSignInAsync(

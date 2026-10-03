@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { catchError, finalize, Observable, of, shareReplay, tap, throwError } from 'rxjs';
 import { environment } from '@env/environment';
 
 export interface LoginRequest {
@@ -16,6 +17,8 @@ export interface LoginResponse {
   email: string;
   roles: string[];
 }
+
+export type AuthUser = LoginResponse;
 
 export interface RegisterRequest {
   firstName: string;
@@ -42,15 +45,50 @@ export interface VerifyOtpResponse {
   roles: string[];
 }
 
+export interface ResendOtpResponse {
+  message: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly apiUrl = `${environment.apiBaseUrl}/api/auth`;
+  private readonly currentUser = signal<AuthUser | null>(null);
+
+  private sessionLoaded = false;
+  private sessionRequest: Observable<AuthUser | null> | null = null;
+
+  readonly user = this.currentUser.asReadonly();
+  readonly authenticated = computed(() => this.currentUser() !== null);
+
+  ensureSession(): Observable<AuthUser | null> {
+    if (!isPlatformBrowser(this.platformId)) return of(null);
+    if (this.sessionLoaded) return of(this.currentUser());
+    if (this.sessionRequest) return this.sessionRequest;
+
+    this.sessionRequest = this.http
+      .get<AuthUser>(`${this.apiUrl}/me`, { withCredentials: true })
+      .pipe(
+        tap((user) => this.currentUser.set(user)),
+        catchError(() => {
+          this.currentUser.set(null);
+          return of(null);
+        }),
+        finalize(() => {
+          this.sessionLoaded = true;
+          this.sessionRequest = null;
+        }),
+        shareReplay({ bufferSize: 1, refCount: false }),
+      );
+
+    return this.sessionRequest;
+  }
 
   login(request: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request, {
-      withCredentials: true,
-    });
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/login`, request, { withCredentials: true })
+      .pipe(tap((user) => this.setAuthenticatedUser(user)));
   }
 
   register(request: RegisterRequest): Observable<RegisterResponse> {
@@ -60,8 +98,36 @@ export class AuthService {
   }
 
   verifyOtp(request: VerifyOtpRequest): Observable<VerifyOtpResponse> {
-    return this.http.post<VerifyOtpResponse>(`${this.apiUrl}/verify-otp`, request, {
-      withCredentials: true,
-    });
+    return this.http
+      .post<VerifyOtpResponse>(`${this.apiUrl}/verify-otp`, request, { withCredentials: true })
+      .pipe(tap((user) => this.setAuthenticatedUser(user)));
+  }
+
+  resendOtp(email: string): Observable<ResendOtpResponse> {
+    return this.http.post<ResendOtpResponse>(
+      `${this.apiUrl}/resend-otp`,
+      { email },
+      { withCredentials: true },
+    );
+  }
+
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, null, { withCredentials: true }).pipe(
+      catchError((error: unknown) => {
+        if (error instanceof Object && 'status' in error && error.status === 401) {
+          return of(undefined);
+        }
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.currentUser.set(null);
+        this.sessionLoaded = true;
+      }),
+    );
+  }
+
+  private setAuthenticatedUser(user: AuthUser): void {
+    this.currentUser.set(user);
+    this.sessionLoaded = true;
   }
 }

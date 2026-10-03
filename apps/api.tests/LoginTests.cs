@@ -80,7 +80,28 @@ public sealed class LoginTests(ApiFactory factory) : IClassFixture<ApiFactory>
             response.Content.Headers.ContentType?.MediaType);
     }
 
-    private async Task CreateCustomerAsync(string email, string password)
+    [Fact]
+    public async Task Login_WithUnconfirmedEmail_ReturnsForbidden()
+    {
+        var email = $"unconfirmed-{Guid.NewGuid():N}@example.com";
+        await CreateCustomerAsync(email, "Travel123", emailConfirmed: false);
+        using var client = factory.CreateClient();
+
+        var response = await client.PostAsJsonAsync("/api/auth/login", new
+        {
+            email,
+            password = "Travel123",
+            rememberMe = false
+        });
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.False(response.Headers.Contains("Set-Cookie"));
+    }
+
+    private async Task CreateCustomerAsync(
+        string email,
+        string password,
+        bool emailConfirmed = true)
     {
         using var scope = factory.Services.CreateScope();
         var userManager = scope.ServiceProvider
@@ -92,7 +113,7 @@ public sealed class LoginTests(ApiFactory factory) : IClassFixture<ApiFactory>
             LastName = "Customer",
             UserName = email,
             Email = email,
-            EmailConfirmed = true,
+            EmailConfirmed = emailConfirmed,
             CreatedAt = now,
             UpdatedAt = now
         };
