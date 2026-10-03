@@ -37,6 +37,9 @@ export const MawridPreset = definePreset(Aura, {
           hoverColor: '#40345f',
           activeColor: '#181230',
         },
+        formField: {
+          invalidPlaceholderColor: '#dc2626',
+        },
       },
       dark: {
         primary: {
@@ -44,6 +47,9 @@ export const MawridPreset = definePreset(Aura, {
           contrastColor: '#20183f',
           hoverColor: '#f3a08e',
           activeColor: '#d97562',
+        },
+        formField: {
+          invalidPlaceholderColor: '#dc2626',
         },
       },
     },

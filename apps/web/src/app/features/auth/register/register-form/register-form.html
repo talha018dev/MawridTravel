@@ -7,7 +7,7 @@
   <p class="mb-7 text-(--mawrid-text-muted)">Join Mawrid Travel and start planning.</p>
 
   <div class="grid grid-cols-2 gap-4 max-[390px]:grid-cols-1 max-[390px]:gap-0">
-    <div class="my-2.5">
+    <div class="my-2">
       <label class="mb-2 block text-sm font-bold" for="firstName">First name</label>
       <input
         pInputText
@@ -27,7 +27,7 @@
         </div>
       }
     </div>
-    <div class="my-2.5">
+    <div class="my-2">
       <label class="mb-2 block text-sm font-bold" for="lastName">Last name</label>
       <input
         pInputText
@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <div class="my-2.5">
+  <div class="my-2">
     <label class="mb-2 block text-sm font-bold" for="registerEmail">Email address</label>
     <input
       pInputText
@@ -75,7 +75,7 @@
     }
   </div>
 
-  <div class="my-2.5">
+  <div class="my-2">
     <label class="mb-2 block text-sm font-bold" for="registerPassword">Password</label>
     <p-password
       class="block!"
@@ -93,12 +93,12 @@
     />
     @if (controls.password.invalid && controls.password.touched) {
       <div id="register-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        <p>Use 8–128 characters with uppercase, lowercase and a number.</p>
+        <p>Use at least 8 characters with uppercase, lowercase and a number.</p>
       </div>
     }
   </div>
 
-  <div class="my-2.5">
+  <div class="my-2">
     <label class="mb-2 block text-sm font-bold" for="confirmPassword">Confirm password</label>
     <p-password
       class="block!"
