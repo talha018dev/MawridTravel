@@ -3,12 +3,7 @@
   [formGroup]="loginForm"
   (ngSubmit)="submitLogin()"
 >
-  <h1
-    id="login-title"
-    class="mb-2 font-['Playfair_Display',Georgia,serif] text-[2.2rem] leading-[1.08]"
-  >
-    Welcome back
-  </h1>
+  <h1 id="login-title" class="mb-2 text-[2.2rem] leading-[1.08]">Welcome back</h1>
   <p class="mb-7 text-(--mawrid-text-muted)">Log in to continue with Mawrid Travel.</p>
   <div class="my-4.5">
     <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
@@ -86,14 +81,6 @@
     [pt]="{ label: { class: 'text-sm! leading-tight! font-extrabold! tracking-[0.075em]!' } }"
     [fluid]="true"
   />
-
-  @if (loginComplete()) {
-    <p-message
-      styleClass="mt-4 w-full"
-      severity="success"
-      content="Login successful — welcome back."
-    />
-  }
   @if (errorMessage(); as message) {
     <p-message styleClass="mt-4 w-full" severity="error" [text]="message" />
   }

@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Button } from '@openng/optimus-ui/button';
 import { Checkbox } from '@openng/optimus-ui/checkbox';
 import { InputText } from '@openng/optimus-ui/inputtext';
@@ -17,11 +18,11 @@ import { AuthService } from '@app/features/auth/auth.service';
 })
 export class LoginForm {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  protected readonly loginComplete = signal(false);
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
-  
+
   protected readonly loginForm = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
@@ -43,7 +44,6 @@ export class LoginForm {
   }
 
   protected submitLogin(): void {
-    this.loginComplete.set(false);
     this.errorMessage.set(null);
 
     if (this.loginForm.invalid) {
@@ -56,7 +56,10 @@ export class LoginForm {
       .login(this.loginForm.getRawValue())
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
-        next: () => this.loginComplete.set(true),
+        next: (response) => {
+          const destination = response.roles.includes('Admin') ? '/admin/dashboard' : '/';
+          void this.router.navigateByUrl(destination);
+        },
         error: (error: HttpErrorResponse) => {
           this.errorMessage.set(
             error.status === 401

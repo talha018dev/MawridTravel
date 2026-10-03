@@ -36,4 +36,15 @@ describe('App', () => {
     expect(compiled.querySelector('h1')?.textContent).toContain('Welcome back');
     expect(compiled.querySelector('input[type="email"]')).toBeTruthy();
   });
+
+  it('should render the registration page at /register', async () => {
+    const fixture = TestBed.createComponent(App);
+    await TestBed.inject(Router).navigateByUrl('/register');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Create your account');
+    expect(compiled.querySelector('input[autocomplete="given-name"]')).toBeTruthy();
+    expect(compiled.querySelector('input[type="email"]')).toBeTruthy();
+  });
 });
