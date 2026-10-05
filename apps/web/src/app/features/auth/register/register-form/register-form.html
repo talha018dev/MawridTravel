@@ -11,7 +11,7 @@
       <label class="mb-2 block text-sm font-bold" for="firstName">First name</label>
       <input
         pInputText
-        class="w-full [&.p-invalid]:border-red-600!"
+        class="w-full"
         id="firstName"
         formControlName="firstName"
         autocomplete="given-name"
@@ -22,16 +22,16 @@
         placeholder="First name"
       />
       @if (controls.firstName.invalid && submitAttempted()) {
-        <div id="first-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-          <p>First name is required</p>
-        </div>
+        <p-message id="first-name-errors" severity="error" size="small" variant="simple">
+          First name is required.
+        </p-message>
       }
     </div>
     <div class="my-2">
       <label class="mb-2 block text-sm font-bold" for="lastName">Last name</label>
       <input
         pInputText
-        class="w-full [&.p-invalid]:border-red-600!"
+        class="w-full"
         id="lastName"
         formControlName="lastName"
         autocomplete="family-name"
@@ -42,9 +42,9 @@
         placeholder="Last name"
       />
       @if (controls.lastName.invalid && submitAttempted()) {
-        <div id="last-name-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-          <p>Last name is required</p>
-        </div>
+        <p-message id="last-name-errors" severity="error" size="small" variant="simple">
+          Last name is required.
+        </p-message>
       }
     </div>
   </div>
@@ -53,7 +53,7 @@
     <label class="mb-2 block text-sm font-bold" for="registerEmail">Email address</label>
     <input
       pInputText
-      class="w-full [&.p-invalid]:border-red-600!"
+      class="w-full"
       id="registerEmail"
       formControlName="email"
       type="email"
@@ -65,13 +65,15 @@
       placeholder="you@example.com"
     />
     @if (controls.email.invalid && submitAttempted()) {
-      <div id="register-email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        @if (controls.email.hasError('required')) {
-          <p>Email is required.</p>
-        } @else {
-          <p>Enter a valid email address.</p>
-        }
-      </div>
+      @if (controls.email.hasError('required')) {
+        <p-message id="register-email-errors" severity="error" size="small" variant="simple">
+          Email is required.
+        </p-message>
+      } @else {
+        <p-message id="register-email-errors" severity="error" size="small" variant="simple">
+          Enter a valid email address.
+        </p-message>
+      }
     }
   </div>
 
@@ -89,12 +91,12 @@
       aria-describedby="register-password-errors"
       [feedback]="true"
       [toggleMask]="true"
-      inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
+      inputStyleClass="w-full inline-block"
     />
     @if (controls.password.invalid && submitAttempted()) {
-      <div id="register-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        <p>Use at least 8 characters with uppercase, lowercase and a number.</p>
-      </div>
+      <p-message id="register-password-errors" severity="error" size="small" variant="simple">
+        Use at least 8 characters with uppercase, lowercase and a number.
+      </p-message>
     }
   </div>
 
@@ -114,15 +116,15 @@
       aria-describedby="confirm-password-errors"
       [feedback]="false"
       [toggleMask]="true"
-      inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
+      inputStyleClass="w-full inline-block"
     />
     @if (
       submitAttempted() &&
       (controls.confirmPassword.invalid || registerForm.hasError('passwordMismatch'))
     ) {
-      <div id="confirm-password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        <p>Passwords must match.</p>
-      </div>
+      <p-message id="confirm-password-errors" severity="error" size="small" variant="simple">
+        Passwords must match.
+      </p-message>
     }
   </div>
 

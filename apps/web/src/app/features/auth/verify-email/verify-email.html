@@ -43,7 +43,7 @@
         <input
           pInputText
           id="verificationEmail"
-          class="w-full [&.p-invalid]:border-red-600!"
+          class="w-full"
           formControlName="email"
           type="email"
           autocomplete="email"
@@ -53,9 +53,14 @@
           placeholder="you@example.com"
         />
         @if (controls.email.invalid && (submitAttempted() || controls.email.touched)) {
-          <p id="verification-email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
+          <p-message
+            id="verification-email-errors"
+            severity="error"
+            size="small"
+            variant="simple"
+          >
             Enter a valid email address.
-          </p>
+          </p-message>
         }
       </div>
 
@@ -72,9 +77,9 @@
           (onChange)="verifyWhenOtpComplete()"
         />
         @if (controls.otp.invalid && (submitAttempted() || controls.otp.touched)) {
-          <p class="mt-2 text-sm text-red-600" aria-live="polite">
+          <p-message severity="error" size="small" variant="simple">
             Enter the six-digit verification code.
-          </p>
+          </p-message>
         }
       </div>
 

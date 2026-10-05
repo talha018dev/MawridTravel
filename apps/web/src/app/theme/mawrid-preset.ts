@@ -38,7 +38,8 @@ export const MawridPreset = definePreset(Aura, {
           activeColor: '#181230',
         },
         formField: {
-          invalidPlaceholderColor: '#dc2626',
+          invalidBorderColor: '#ef4444',
+          invalidPlaceholderColor: '#ef4444',
         },
       },
       dark: {
@@ -49,7 +50,32 @@ export const MawridPreset = definePreset(Aura, {
           activeColor: '#d97562',
         },
         formField: {
-          invalidPlaceholderColor: '#dc2626',
+          invalidBorderColor: '#ef4444',
+          invalidPlaceholderColor: '#ef4444',
+        },
+      },
+    },
+  },
+  components: {
+    message: {
+      colorScheme: {
+        light: {
+          error: {
+            background: '#fff1f0',
+            borderColor: '#fecdca',
+            color: '#ef4444',
+            outlined: { color: '#ef4444', borderColor: '#ef4444' },
+            simple: { color: '#ef4444' },
+          },
+        },
+        dark: {
+          error: {
+            background: '#4a1d1f',
+            borderColor: '#912018',
+            color: '#ef4444',
+            outlined: { color: '#ef4444', borderColor: '#ef4444' },
+            simple: { color: '#ef4444' },
+          },
         },
       },
     },

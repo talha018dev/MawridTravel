@@ -9,7 +9,7 @@
     <label class="mb-2 block text-sm font-bold" for="email">Email address</label>
     <input
       pInputText
-      class="w-full [&.p-invalid]:border-red-600!"
+      class="w-full"
       id="email"
       formControlName="email"
       type="email"
@@ -21,15 +21,19 @@
       placeholder="you@example.com"
     />
     @if (email.invalid && (submitAttempted() || email.dirty)) {
-      <div id="email-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        @if (email.hasError('required')) {
-          <p>Email is required.</p>
-        } @else if (email.hasError('email')) {
-          <p>Enter a valid email address.</p>
-        } @else if (email.hasError('maxlength')) {
-          <p>Email must not exceed 256 characters.</p>
-        }
-      </div>
+      @if (email.hasError('required')) {
+        <p-message id="email-errors" severity="error" size="small" variant="simple">
+          Email is required.
+        </p-message>
+      } @else if (email.hasError('email')) {
+        <p-message id="email-errors" severity="error" size="small" variant="simple">
+          Enter a valid email address.
+        </p-message>
+      } @else if (email.hasError('maxlength')) {
+        <p-message id="email-errors" severity="error" size="small" variant="simple">
+          Email must not exceed 256 characters.
+        </p-message>
+      }
     }
   </div>
   <div class="my-4.5">
@@ -56,16 +60,18 @@
       aria-describedby="password-errors"
       [feedback]="false"
       [toggleMask]="true"
-      inputStyleClass="w-full inline-block [&.p-invalid]:border-red-600!"
+      inputStyleClass="w-full inline-block"
     />
     @if (password.invalid && (submitAttempted() || password.dirty)) {
-      <div id="password-errors" class="mt-2 text-sm text-red-600" aria-live="polite">
-        @if (password.hasError('required')) {
-          <p>Password is required.</p>
-        } @else if (password.hasError('maxlength')) {
-          <p>Password must not exceed 128 characters.</p>
-        }
-      </div>
+      @if (password.hasError('required')) {
+        <p-message id="password-errors" severity="error" size="small" variant="simple">
+          Password is required.
+        </p-message>
+      } @else if (password.hasError('maxlength')) {
+        <p-message id="password-errors" severity="error" size="small" variant="simple">
+          Password must not exceed 128 characters.
+        </p-message>
+      }
     }
   </div>
   <div class="my-4.5 flex items-center gap-2">
