@@ -68,7 +68,17 @@ the Compose network, the API connects to the database using the service hostname
 
 ## EF Core migrations
 
-Create migrations only as features introduce persistent entities:
+Apply existing migrations using the same production image as the API:
+
+```bash
+dotnet MawridTravel.Api.dll --migrate
+```
+
+Configure that command as Railway's API pre-deploy command. It applies pending
+migrations and exits before Railway starts the new application deployment.
+
+For local migration development, create migrations only as features introduce
+persistent entities:
 
 ```bash
 dotnet tool restore

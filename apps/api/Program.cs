@@ -30,6 +30,12 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+if (args.Contains("--migrate", StringComparer.OrdinalIgnoreCase))
+{
+    await app.Services.MigrateDatabaseAsync();
+    return;
+}
+
 await app.Services.SeedIdentityAsync();
 
 app.UseExceptionHandler();

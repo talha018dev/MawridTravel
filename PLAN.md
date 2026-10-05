@@ -628,7 +628,7 @@ For approximately the first two weeks, deploy using Railway.
 2. Create an empty Railway project with separate `web`, `api`, and managed PostgreSQL services.
 3. Configure the monorepo root directories as `/apps/web` and `/apps/api` so each service detects its own Dockerfile.
 4. Configure service health checks (`/health` for web and `/api/health` for API), restart policies, deployment region, and path-based deploy triggers.
-5. Connect the API to PostgreSQL with Railway reference variables and apply migrations as a controlled pre-deploy step.
+5. Connect the API to PostgreSQL with Railway reference variables and run `dotnet MawridTravel.Api.dll --migrate` as the API pre-deploy command.
 6. Deploy the API, verify liveness and database readiness, then deploy the Angular SSR service.
 7. Generate temporary Railway domains and test the full application before connecting Cloudflare.
 8. Configure custom domains, CORS/cookie behavior, and Cloudflare DNS.
