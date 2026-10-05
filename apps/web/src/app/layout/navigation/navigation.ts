@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { ButtonDirective } from '@openng/optimus-ui/button';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/features/auth/auth.service';
@@ -16,6 +16,9 @@ export class Navigation {
   readonly drawer = input(false);
   readonly navigated = output<void>();
   protected readonly authenticated = this.authService.authenticated;
+  protected readonly admin = computed(
+    () => this.authService.user()?.roles.includes('Admin') ?? false,
+  );
   protected readonly loggingOut = signal(false);
 
   constructor() {

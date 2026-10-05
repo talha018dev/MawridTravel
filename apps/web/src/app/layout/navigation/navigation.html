@@ -25,6 +25,14 @@
       >Shop</a
     >
     @if (authenticated()) {
+      @if (admin()) {
+        <a
+          class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+          routerLink="/admin/dashboard"
+          (click)="closeDrawer()"
+          >Admin</a
+        >
+      }
       <button
         pButton
         type="button"
@@ -61,6 +69,17 @@
       Shop
     </a>
     @if (authenticated()) {
+      @if (admin()) {
+        <a
+          pButton
+          text
+          rounded
+          class="text-(--mawrid-font-primary)! no-underline"
+          routerLink="/admin/dashboard"
+        >
+          Admin
+        </a>
+      }
       <button pButton rounded type="button" [disabled]="loggingOut()" (click)="logout()">
         {{ loggingOut() ? 'Logging out...' : 'Logout' }}
       </button>

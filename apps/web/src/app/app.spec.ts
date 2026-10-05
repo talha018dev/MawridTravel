@@ -15,6 +15,7 @@ describe('App', () => {
         {
           provide: AuthService,
           useValue: {
+            user: signal(null),
             authenticated: signal(false),
             ensureSession: () => of(null),
             logout: () => of(undefined),

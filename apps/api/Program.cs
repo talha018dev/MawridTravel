@@ -1,4 +1,5 @@
 using MawridTravel.Api.Common.Exceptions;
+using MawridTravel.Api.Features.Admin;
 using MawridTravel.Api.Features.Auth;
 using MawridTravel.Api.Features.Health;
 using MawridTravel.Api.Infrastructure.Authentication;
@@ -52,6 +53,7 @@ if (app.Environment.IsDevelopment())
 
 app.MapHealthEndpoints();
 app.MapAuthEndpoints();
+app.MapAdminEndpoints();
 
 app.Run();
 

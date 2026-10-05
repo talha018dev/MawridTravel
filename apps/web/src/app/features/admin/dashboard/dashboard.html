@@ -6,4 +6,30 @@
     Administration
   </p>
   <h1 id="dashboard-title" class="text-4xl font-bold">Dashboard</h1>
+
+  @if (loading()) {
+    <p class="mt-8 text-(--mawrid-font-secondary)" aria-live="polite">Loading dashboard…</p>
+  } @else if (errorMessage(); as message) {
+    <p
+      class="mt-8 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500"
+      role="alert"
+    >
+      {{ message }}
+    </p>
+  } @else if (summary(); as dashboard) {
+    <div class="mt-8 grid gap-4 sm:grid-cols-3">
+      <article class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-header) p-6">
+        <p class="text-sm text-(--mawrid-font-secondary)">Registered users</p>
+        <p class="mt-2 text-3xl font-bold">{{ dashboard.totalUsers }}</p>
+      </article>
+      <article class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-header) p-6">
+        <p class="text-sm text-(--mawrid-font-secondary)">Customers</p>
+        <p class="mt-2 text-3xl font-bold">{{ dashboard.totalCustomers }}</p>
+      </article>
+      <article class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-header) p-6">
+        <p class="text-sm text-(--mawrid-font-secondary)">Administrators</p>
+        <p class="mt-2 text-3xl font-bold">{{ dashboard.totalAdmins }}</p>
+      </article>
+    </div>
+  }
 </section>

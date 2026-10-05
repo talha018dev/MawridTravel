@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from '@app/features/admin/admin.guard';
 import { guestOnlyGuard } from '@app/features/auth/guest-only.guard';
 
 export const routes: Routes = [
@@ -28,9 +29,21 @@ export const routes: Routes = [
     title: 'Verify email | Mawrid Travel',
   },
   {
-    path: 'admin/dashboard',
-    loadComponent: () =>
-      import('@app/features/admin/dashboard/dashboard').then(({ Dashboard }) => Dashboard),
-    title: 'Admin dashboard | Mawrid Travel',
+    path: 'admin',
+    canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('@app/features/admin/dashboard/dashboard').then(({ Dashboard }) => Dashboard),
+        title: 'Admin dashboard | Mawrid Travel',
+      },
+    ],
   },
 ];
