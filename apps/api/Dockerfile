@@ -1,11 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 WORKDIR /src
 
-COPY apps/api/MawridTravel.Api.csproj apps/api/
-RUN dotnet restore apps/api/MawridTravel.Api.csproj
+COPY MawridTravel.Api.csproj ./
+RUN dotnet restore MawridTravel.Api.csproj
 
-COPY apps/api/ apps/api/
-RUN dotnet publish apps/api/MawridTravel.Api.csproj \
+COPY . .
+RUN dotnet publish MawridTravel.Api.csproj \
     --configuration Release \
     --output /app/publish \
     --no-restore \

@@ -617,6 +617,25 @@ Benefits:
 
 For approximately the first two weeks, deploy using Railway.
 
+### Deployment sequence
+
+1. Complete a production-readiness preflight locally:
+   - Build and test the Angular SSR and ASP.NET containers.
+   - Confirm both services bind to their configured ports and expose health endpoints.
+   - Test the same-origin `/api` proxy from Angular SSR to the private API service before configuring production domains.
+   - Confirm the production database migration and rollback procedure.
+   - Inventory required variables and secrets without committing their values.
+2. Create an empty Railway project with separate `web`, `api`, and managed PostgreSQL services.
+3. Configure the monorepo root directories as `/apps/web` and `/apps/api` so each service detects its own Dockerfile.
+4. Configure service health checks (`/health` for web and `/api/health` for API), restart policies, deployment region, and path-based deploy triggers.
+5. Connect the API to PostgreSQL with Railway reference variables and apply migrations as a controlled pre-deploy step.
+6. Deploy the API, verify liveness and database readiness, then deploy the Angular SSR service.
+7. Generate temporary Railway domains and test the full application before connecting Cloudflare.
+8. Configure custom domains, CORS/cookie behavior, and Cloudflare DNS.
+9. Run the launch verification and rollback checklist, then enable automatic deployments from the protected production branch.
+
+Use Railway's current Infrastructure as Code workflow for durable project configuration when it is introduced. Do not add new `railway.json` or `railway.toml` configuration because Railway has deprecated Config as Code for new services.
+
 Target topology:
 
 ```text
@@ -628,14 +647,18 @@ Railway
 └── PostgreSQL
 ```
 
-Possible domains:
+Public domain:
 
 ```text
-https://example.com        → Angular
-https://api.example.com    → ASP.NET API
+https://example.com        → Angular SSR
 ```
 
 The actual Mawrid Travels domain will replace `example.com`.
+
+The API should not receive a public Railway or custom domain unless an external
+integration later requires one. Browser requests use `https://example.com/api/*`;
+the Angular SSR service proxies them to the API over Railway's private network.
+Set the web service's `API_BASE_URL` to the API service's private origin.
 
 ### Railway goals
 
@@ -645,6 +668,18 @@ The actual Mawrid Travels domain will replace `example.com`.
 - Validate domain/DNS configuration.
 - Test the real customer/admin workflows.
 - Avoid spending time managing a VPS before the application is functional.
+
+### Production readiness gate
+
+Do not direct customer traffic to the deployment until all of the following are true:
+
+- Web and API container images build reproducibly from clean contexts.
+- Liveness checks pass, and API database readiness is verified separately.
+- Database migrations have a documented forward and rollback procedure.
+- Authentication cookies, HTTPS forwarding, CORS, and the final API routing model are verified using production-like domains.
+- Required variables and secrets are recorded by name, with no secret values committed to Git.
+- PostgreSQL backups, retention, and a test restore procedure are configured.
+- A previous working deployment or another tested rollback path is available.
 
 ---
 
@@ -698,12 +733,10 @@ Cloudflare
 Hetzner VPS
    ↓
 Caddy / Nginx
-   ├── example.com
-   │       ↓
-   │   Angular SSR container
-   │
-   └── api.example.com
+   └── example.com
            ↓
+       Angular SSR container
+           ↓ /api over private network
        ASP.NET container
            ↓
        PostgreSQL
@@ -765,7 +798,7 @@ Final choice: **TBD**.
 Responsibilities include:
 
 - Route main-domain traffic to Angular SSR.
-- Route API subdomain traffic to ASP.NET.
+- Keep ASP.NET private while Angular SSR proxies same-origin `/api` traffic to it.
 - Forward required HTTP headers.
 - Integrate correctly with Cloudflare proxying.
 - Apply sensible request/body limits and security configuration.

@@ -48,11 +48,10 @@ dotnet test apps/api.tests/MawridTravel.Api.Tests.csproj
 
 ## Container image
 
-Build the API image from the repository root so the Docker build context contains
-the API project:
+Build the API image from the repository root:
 
 ```bash
-docker build -f apps/api/Dockerfile -t mawrid-travel-api .
+docker build -t mawrid-travel-api apps/api
 ```
 
 For normal local container development, start the API and PostgreSQL together

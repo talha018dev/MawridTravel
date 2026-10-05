@@ -5,12 +5,55 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
+import http from 'node:http';
+import https from 'node:https';
 import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+const apiBaseUrl = process.env['API_BASE_URL'];
+
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'healthy' });
+});
+
+if (apiBaseUrl) {
+  const apiTarget = new URL(apiBaseUrl);
+  const apiClient = apiTarget.protocol === 'https:' ? https : http;
+
+  app.use('/api', (req, res) => {
+    const targetUrl = new URL(req.originalUrl, apiTarget);
+    const proxyRequest = apiClient.request(
+      targetUrl,
+      {
+        method: req.method,
+        headers: {
+          ...req.headers,
+          host: apiTarget.host,
+          'x-forwarded-host': req.get('host') ?? '',
+          'x-forwarded-proto': req.protocol,
+        },
+      },
+      (proxyResponse) => {
+        res.writeHead(proxyResponse.statusCode ?? 502, proxyResponse.headers);
+        proxyResponse.pipe(res);
+      },
+    );
+
+    proxyRequest.on('error', () => {
+      if (res.headersSent) {
+        res.destroy();
+        return;
+      }
+
+      res.status(502).json({ error: 'The API service is unavailable.' });
+    });
+
+    req.pipe(proxyRequest);
+  });
+}
 
 /**
  * Example Express Rest API endpoints can be defined here.

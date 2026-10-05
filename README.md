@@ -36,6 +36,21 @@ npm run serve:ssr:web
 
 The production server listens on `http://localhost:4000` by default.
 
+Set `API_BASE_URL` to the private API origin in deployed environments. The SSR
+server proxies browser requests from `/api` to this origin, keeping browser API
+traffic and authentication cookies on the web application's origin. For
+example, Railway can use its API service's private network address:
+
+```text
+API_BASE_URL=http://api.railway.internal:8080
+```
+
+Build the production web container from the repository root:
+
+```bash
+docker build -t mawrid-travel-web apps/web
+```
+
 ## API and PostgreSQL
 
 Copy `.env.example` to `.env`, replace its development password, and start the
