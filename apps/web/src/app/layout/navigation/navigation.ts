@@ -6,7 +6,7 @@ import { finalize } from 'rxjs';
 
 const ADMIN_MENU_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard' },
-  { label: 'Products', path: '/admin/products' },
+  { label: 'Products', path: '/admin/products/list' },
   { label: 'Orders', path: '/admin/orders' },
   { label: 'Blog', path: '/admin/blog' },
 ] as const;

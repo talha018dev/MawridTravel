@@ -1,0 +1,128 @@
+<section
+  class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-10 sm:py-16"
+  aria-labelledby="product-edit-title"
+>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase">
+        Product management
+      </p>
+      <h1 id="product-edit-title" class="text-3xl font-bold sm:text-4xl">Edit product</h1>
+    </div>
+    <a
+      routerLink="/admin/products/list"
+      class="rounded-lg border border-(--mawrid-border) px-4 py-2.5 font-bold text-(--mawrid-font-primary) no-underline transition-colors hover:bg-(--mawrid-nav-hover)"
+    >
+      Back to products
+    </a>
+  </div>
+
+  @if (loading()) {
+    <p class="mt-8 text-(--mawrid-text-muted)" aria-live="polite">
+      <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i>Loading product…
+    </p>
+  } @else {
+    @if (errorMessage(); as message) {
+      <p class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
+        {{ message }}
+      </p>
+    }
+
+    <form class="mt-8" [formGroup]="productForm" (ngSubmit)="saveProduct()" novalidate>
+      <div
+        class="grid gap-5 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:grid-cols-2 sm:p-7"
+      >
+        <div class="sm:col-span-2">
+          <label class="mb-2 block text-sm font-bold" for="editProductName">Name</label>
+          <input pInputText id="editProductName" class="w-full" formControlName="name" />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-bold" for="editProductSlug">Slug</label>
+          <input pInputText id="editProductSlug" class="w-full" formControlName="slug" />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-bold" for="editProductSku">SKU</label>
+          <input pInputText id="editProductSku" class="w-full" formControlName="sku" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="mb-2 block text-sm font-bold" for="editProductDescription"
+            >Description</label
+          >
+          <textarea
+            pTextarea
+            id="editProductDescription"
+            class="min-h-36 w-full"
+            formControlName="description"
+            [autoResize]="true"
+          ></textarea>
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-bold" for="editProductPrice">Price</label>
+          <p-inputnumber
+            inputId="editProductPrice"
+            formControlName="price"
+            [min]="0"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-bold" for="editComparePrice"
+            >Compare-at price</label
+          >
+          <p-inputnumber
+            inputId="editComparePrice"
+            formControlName="compareAtPrice"
+            [min]="0"
+            [minFractionDigits]="2"
+            [maxFractionDigits]="2"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-bold" for="editProductCurrency">Currency</label>
+          <input
+            pInputText
+            id="editProductCurrency"
+            class="w-full uppercase"
+            maxlength="3"
+            formControlName="currency"
+          />
+        </div>
+        <div>
+          <label class="mb-2 block text-sm font-bold" for="editProductStock">Stock</label>
+          <p-inputnumber
+            inputId="editProductStock"
+            formControlName="stockQuantity"
+            [min]="0"
+            [maxFractionDigits]="0"
+            styleClass="w-full"
+            inputStyleClass="w-full"
+          />
+        </div>
+        <div class="flex items-center justify-between gap-4 sm:col-span-2">
+          <div>
+            <p class="font-bold">Active</p>
+            <p class="mt-1 text-sm text-(--mawrid-text-muted)">Show this product to customers.</p>
+          </div>
+          <p-toggleswitch inputId="editProductActive" formControlName="isActive" />
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <a pButton severity="secondary" variant="outlined" routerLink="/admin/products/list">
+          Cancel
+        </a>
+        <p-button
+          type="submit"
+          [label]="saving() ? 'Saving…' : 'Save changes'"
+          [loading]="saving()"
+          [disabled]="saving()"
+        />
+      </div>
+    </form>
+  }
+</section>

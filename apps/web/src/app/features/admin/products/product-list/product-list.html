@@ -1,0 +1,162 @@
+<section
+  class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
+  aria-labelledby="product-list-title"
+>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase">
+        Product management
+      </p>
+      <h1 id="product-list-title" class="text-3xl font-bold sm:text-4xl">Products</h1>
+      <p class="mt-2 text-(--mawrid-text-muted)">Search, filter and manage your product catalog.</p>
+    </div>
+    <a pButton routerLink="/admin/products/new" class="no-underline">
+      <i class="pi pi-plus" aria-hidden="true"></i>
+      <span>Create product</span>
+    </a>
+  </div>
+
+  <div class="mt-8 grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem]">
+    <div>
+      <label class="mb-2 block text-sm font-bold" for="productSearch">Search products</label>
+      <p-iconfield>
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          id="productSearch"
+          class="w-full"
+          type="search"
+          placeholder="Name, slug or SKU"
+          autocomplete="off"
+          [formControl]="searchControl"
+        />
+      </p-iconfield>
+    </div>
+    <div>
+      <label class="mb-2 block text-sm font-bold" for="productStatus">Status</label>
+      <p-select
+        inputId="productStatus"
+        class="w-full"
+        styleClass="w-full"
+        [formControl]="statusControl"
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </div>
+  </div>
+
+  @if (errorMessage(); as message) {
+    <p class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
+      {{ message }}
+    </p>
+  }
+
+  <p-table
+    styleClass="mt-6 overflow-hidden rounded-2xl border border-(--mawrid-border)"
+    tableStyleClass="min-w-215"
+    dataKey="id"
+    [value]="products()"
+    [lazy]="true"
+    [lazyLoadOnInit]="false"
+    [paginator]="true"
+    [rows]="pageSize"
+    [first]="(page() - 1) * pageSize"
+    [totalRecords]="totalCount()"
+    [loading]="loading()"
+    [rowHover]="true"
+    [scrollable]="true"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first}–{last} of {totalRecords} products"
+    (onPage)="changePage($event)"
+  >
+    <ng-template #header>
+      <tr>
+        <th>Product</th>
+        <th>SKU</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Status</th>
+        <th>Updated</th>
+        <th class="text-right!">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-product>
+      <tr>
+        <td>
+          <div class="flex items-center gap-3">
+            @if (product.images[0]; as image) {
+              <img
+                class="size-11 rounded-lg object-cover"
+                [src]="image.url"
+                [alt]="image.altText || ''"
+              />
+            } @else {
+              <span
+                class="grid size-11 place-items-center rounded-lg bg-(--mawrid-header) text-(--mawrid-text-muted)"
+              >
+                <i class="pi pi-image" aria-hidden="true"></i>
+              </span>
+            }
+            <div>
+              <p class="font-bold">{{ product.name }}</p>
+              <p class="mt-0.5 text-xs text-(--mawrid-text-muted)">/{{ product.slug }}</p>
+            </div>
+          </div>
+        </td>
+        <td class="text-(--mawrid-text-muted)">{{ product.sku || '—' }}</td>
+        <td class="font-semibold">{{ formatPrice(product) }}</td>
+        <td>{{ product.stockQuantity }}</td>
+        <td>
+          <span
+            class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold"
+            [class.bg-emerald-500/15]="product.isActive"
+            [class.text-emerald-600]="product.isActive"
+            [class.bg-slate-500/15]="!product.isActive"
+            [class.text-(--mawrid-text-muted)]="!product.isActive"
+          >
+            {{ product.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+        <td class="text-(--mawrid-text-muted)">
+          {{ product.updatedAt | date: 'mediumDate' }}
+        </td>
+        <td>
+          <div class="flex justify-end gap-2">
+            <a
+              pButton
+              text
+              rounded
+              severity="secondary"
+              aria-label="Edit {{ product.name }}"
+              title="Edit product"
+              [routerLink]="['/admin/products', product.id, 'edit']"
+            >
+              <i class="pi pi-pencil" aria-hidden="true"></i>
+            </a>
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              variant="text"
+              [rounded]="true"
+              [loading]="deletingId() === product.id"
+              [disabled]="deletingId() !== null"
+              [ariaLabel]="'Delete ' + product.name"
+              title="Delete product"
+              (onClick)="deleteProduct(product)"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td class="py-12! text-center! text-(--mawrid-text-muted)" colspan="7">
+          No products match your search and filter.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-confirmdialog />
+</section>

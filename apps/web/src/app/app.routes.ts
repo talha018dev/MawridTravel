@@ -45,12 +45,33 @@ export const routes: Routes = [
         title: 'Admin dashboard | Mawrid Travel',
       },
       {
+        path: 'products/list',
+        loadComponent: () =>
+          import('@app/features/admin/products/product-list/product-list').then(
+            ({ ProductList }) => ProductList,
+          ),
+        title: 'Products | Mawrid Travel',
+      },
+      {
+        path: 'products',
+        pathMatch: 'full',
+        redirectTo: 'products/list',
+      },
+      {
         path: 'products/new',
         loadComponent: () =>
           import('@app/features/admin/products/product-create/product-create').then(
             ({ ProductCreate }) => ProductCreate,
           ),
         title: 'Create product | Mawrid Travel',
+      },
+      {
+        path: 'products/:id/edit',
+        loadComponent: () =>
+          import('@app/features/admin/products/product-edit/product-edit').then(
+            ({ ProductEdit }) => ProductEdit,
+          ),
+        title: 'Edit product | Mawrid Travel',
       },
     ],
   },
