@@ -38,6 +38,51 @@ The development CORS policy allows the Angular development and SSR origins at
 `http://localhost:4200` and `http://localhost:4000`. Configure
 `Cors__AllowedOrigins__0` (and subsequent numeric entries) for deployed origins.
 
+## Product catalog API
+
+Public catalog endpoints return active products only:
+
+```text
+GET /api/products?page=1&pageSize=20
+GET /api/products/{slug}
+```
+
+The following endpoints require the `Admin` role:
+
+```text
+GET    /api/admin/products
+GET    /api/admin/products/{id}
+POST   /api/admin/products
+PUT    /api/admin/products/{id}
+DELETE /api/admin/products/{id}
+
+POST   /api/admin/products/{id}/images?altText=...&isPrimary=true
+PUT    /api/admin/products/{productId}/images/{imageId}
+DELETE /api/admin/products/{productId}/images/{imageId}
+```
+
+Product image uploads use the image bytes as the request body with a
+`Content-Type` of `image/jpeg`, `image/png`, or `image/webp`. Images are limited
+to 5 MB and ten images per product. The API validates the declared type against
+the file signature before uploading it.
+
+### Cloudflare R2 image storage
+
+Create an R2 bucket, grant an R2 API token object read/write access to that
+bucket, and connect a public custom domain such as
+`https://images.mawridtravel.com`. Configure these secrets on the API service:
+
+```text
+R2__AccountId=<cloudflare-account-id>
+R2__AccessKeyId=<r2-access-key-id>
+R2__SecretAccessKey=<r2-secret-access-key>
+R2__BucketName=<bucket-name>
+R2__PublicBaseUrl=https://images.mawridtravel.com
+```
+
+Do not add these values to the Angular/web service or commit them to Git. For
+local development, use .NET user secrets with the same configuration keys.
+
 ## Tests
 
 Run the API integration tests from the repository root:
