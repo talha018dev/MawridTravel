@@ -73,6 +73,14 @@ export const routes: Routes = [
           ),
         title: 'Edit product | Mawrid Travel',
       },
+      {
+        path: 'products/:id',
+        loadComponent: () =>
+          import('@app/features/admin/products/product-details/product-details').then(
+            ({ ProductDetails }) => ProductDetails,
+          ),
+        title: 'Product details | Mawrid Travel',
+      },
     ],
   },
 ];

@@ -101,7 +101,12 @@
               </span>
             }
             <div>
-              <p class="font-bold">{{ product.name }}</p>
+              <a
+                class="font-bold text-(--mawrid-font-primary) no-underline hover:text-(--mawrid-font-accent) hover:underline"
+                [routerLink]="['/admin/products', product.id]"
+              >
+                {{ product.name }}
+              </a>
               <p class="mt-0.5 text-xs text-(--mawrid-text-muted)">/{{ product.slug }}</p>
             </div>
           </div>
@@ -125,6 +130,17 @@
         </td>
         <td>
           <div class="flex justify-end gap-2">
+            <a
+              pButton
+              text
+              rounded
+              severity="secondary"
+              aria-label="View {{ product.name }}"
+              title="View product details"
+              [routerLink]="['/admin/products', product.id]"
+            >
+              <i class="pi pi-eye" aria-hidden="true"></i>
+            </a>
             <a
               pButton
               text
