@@ -33,6 +33,7 @@ internal static class ProductHelpers
                     imageStorage.GetPublicUrl(image.ObjectKey),
                     image.ContentType,
                     image.AltText,
+                    image.SortOrder,
                     image.IsPrimary))
                 .ToArray());
 

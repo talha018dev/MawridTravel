@@ -4,6 +4,20 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/features/auth/auth.service';
 import { finalize } from 'rxjs';
 
+const ADMIN_MENU_ITEMS = [
+  { label: 'Dashboard', path: '/admin/dashboard' },
+  { label: 'Products', path: '/admin/products' },
+  { label: 'Orders', path: '/admin/orders' },
+  { label: 'Blog', path: '/admin/blog' },
+] as const;
+
+const PUBLIC_MENU_ITEMS = [
+  { label: 'Home', path: '/' },
+  { label: 'Book tickets', path: '/tickets' },
+  { label: 'Journal', path: '/journal' },
+  { label: 'Shop', path: '/shop' },
+] as const;
+
 @Component({
   selector: 'app-navigation',
   imports: [ButtonDirective, RouterLink],
@@ -19,6 +33,8 @@ export class Navigation {
   protected readonly admin = computed(
     () => this.authService.user()?.roles.includes('Admin') ?? false,
   );
+  protected readonly adminMenuItems = ADMIN_MENU_ITEMS;
+  protected readonly publicMenuItems = PUBLIC_MENU_ITEMS;
   protected readonly loggingOut = signal(false);
 
   constructor() {

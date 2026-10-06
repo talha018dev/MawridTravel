@@ -2,18 +2,31 @@
   class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-16"
   aria-labelledby="dashboard-title"
 >
-  <p class="mb-2 text-sm font-bold uppercase tracking-[.12em] text-(--mawrid-font-accent)">
-    Administration
-  </p>
-  <h1 id="dashboard-title" class="text-4xl font-bold">Dashboard</h1>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="mb-2 text-sm font-bold uppercase tracking-[.12em] text-(--mawrid-font-accent)">
+        Administration
+      </p>
+      <h1 id="dashboard-title" class="text-4xl font-bold">Dashboard</h1>
+    </div>
+    <a pButton routerLink="/admin/products/new" class="no-underline">
+      <i class="pi pi-plus" aria-hidden="true"></i>
+      <span pButtonLabel>Create product</span>
+    </a>
+  </div>
+
+  @if (productCreated) {
+    <p-message
+      styleClass="mt-8 w-full"
+      severity="success"
+      text="Product and selected images were created successfully."
+    />
+  }
 
   @if (loading()) {
     <p class="mt-8 text-(--mawrid-font-secondary)" aria-live="polite">Loading dashboard…</p>
   } @else if (errorMessage(); as message) {
-    <p
-      class="mt-8 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500"
-      role="alert"
-    >
+    <p class="mt-8 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
       {{ message }}
     </p>
   } @else if (summary(); as dashboard) {

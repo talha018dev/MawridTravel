@@ -44,6 +44,14 @@ export const routes: Routes = [
           import('@app/features/admin/dashboard/dashboard').then(({ Dashboard }) => Dashboard),
         title: 'Admin dashboard | Mawrid Travel',
       },
+      {
+        path: 'products/new',
+        loadComponent: () =>
+          import('@app/features/admin/products/product-create/product-create').then(
+            ({ ProductCreate }) => ProductCreate,
+          ),
+        title: 'Create product | Mawrid Travel',
+      },
     ],
   },
 ];

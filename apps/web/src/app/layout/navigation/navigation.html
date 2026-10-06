@@ -3,40 +3,30 @@
     class="flex flex-col gap-1 px-3 py-4 pl-0 [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
     aria-label="Mobile navigation"
   >
-    <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-      routerLink="/"
-      (click)="closeDrawer()"
-      >Home</a
-    >
-    <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-      href="/tickets"
-      >Book tickets</a
-    >
-    <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-      href="/journal"
-      >Journal</a
-    >
-    <a
-      class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-      href="/shop"
-      >Shop</a
-    >
-    @if (authenticated()) {
-      @if (admin()) {
+    @if (admin()) {
+      @for (item of adminMenuItems; track item.path) {
         <a
-          class="rounded-[0.65rem] p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-          routerLink="/admin/dashboard"
+          class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+          [routerLink]="item.path"
           (click)="closeDrawer()"
-          >Admin</a
+          >{{ item.label }}</a
         >
       }
+    } @else {
+      @for (item of publicMenuItems; track item.path) {
+        <a
+          class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+          [routerLink]="item.path"
+          (click)="closeDrawer()"
+          >{{ item.label }}</a
+        >
+      }
+    }
+    @if (authenticated()) {
       <button
         pButton
         type="button"
-        class="mt-2 rounded-[0.65rem]! p-3.5! text-sm! leading-tight! font-extrabold! tracking-[0.075em]! uppercase"
+        class="mt-2 rounded-lg! p-3.5! text-sm! leading-tight! font-extrabold! tracking-[0.075em]! uppercase"
         [disabled]="loggingOut()"
         (click)="logout()"
       >
@@ -44,7 +34,7 @@
       </button>
     } @else {
       <a
-        class="mt-2 rounded-[0.65rem] bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
+        class="mt-2 rounded-lg bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
         routerLink="/login"
         (click)="closeDrawer()"
         >Login</a
@@ -56,30 +46,32 @@
     class="flex gap-2 max-[900px]:hidden [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
     aria-label="Primary navigation"
   >
-    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" routerLink="/">
-      Home
-    </a>
-    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/tickets">
-      Book tickets
-    </a>
-    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/journal">
-      Journal
-    </a>
-    <a pButton text rounded class="text-(--mawrid-font-primary)! no-underline" href="/shop">
-      Shop
-    </a>
-    @if (authenticated()) {
-      @if (admin()) {
+    @if (admin()) {
+      @for (item of adminMenuItems; track item.path) {
         <a
           pButton
           text
           rounded
           class="text-(--mawrid-font-primary)! no-underline"
-          routerLink="/admin/dashboard"
+          [routerLink]="item.path"
         >
-          Admin
+          {{ item.label }}
         </a>
       }
+    } @else {
+      @for (item of publicMenuItems; track item.path) {
+        <a
+          pButton
+          text
+          rounded
+          class="text-(--mawrid-font-primary)! no-underline"
+          [routerLink]="item.path"
+        >
+          {{ item.label }}
+        </a>
+      }
+    }
+    @if (authenticated()) {
       <button pButton rounded type="button" [disabled]="loggingOut()" (click)="logout()">
         {{ loggingOut() ? 'Logging out...' : 'Logout' }}
       </button>
