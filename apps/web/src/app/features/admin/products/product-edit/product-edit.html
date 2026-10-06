@@ -1,5 +1,5 @@
 <section
-  class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-10 sm:py-16"
+  class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
   aria-labelledby="product-edit-title"
 >
   <div class="flex flex-wrap items-end justify-between gap-4">
@@ -21,6 +21,10 @@
     <p class="mt-8 text-(--mawrid-text-muted)" aria-live="polite">
       <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i>Loading product…
     </p>
+  } @else if (loadFailed()) {
+    <p class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
+      {{ errorMessage() }}
+    </p>
   } @else {
     @if (errorMessage(); as message) {
       <p class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
@@ -34,15 +38,66 @@
       >
         <div class="sm:col-span-2">
           <label class="mb-2 block text-sm font-bold" for="editProductName">Name</label>
-          <input pInputText id="editProductName" class="w-full" formControlName="name" />
+          <input
+            pInputText
+            id="editProductName"
+            class="w-full"
+            formControlName="name"
+            maxlength="200"
+            required
+            [invalid]="controls.name.invalid && submitAttempted()"
+          />
+          @if (submitAttempted() && controls.name.hasError('required')) {
+            <p-message severity="error" size="small" variant="simple"
+              >Product name is required.</p-message
+            >
+          }
+          @if (submitAttempted() && controls.name.hasError('maxlength')) {
+            <p-message severity="error" size="small" variant="simple"
+              >Name cannot exceed 200 characters.</p-message
+            >
+          }
+          @for (message of serverErrors()['name'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div>
           <label class="mb-2 block text-sm font-bold" for="editProductSlug">Slug</label>
-          <input pInputText id="editProductSlug" class="w-full" formControlName="slug" />
+          <input
+            pInputText
+            id="editProductSlug"
+            class="w-full"
+            formControlName="slug"
+            maxlength="220"
+            [invalid]="controls.slug.invalid && submitAttempted()"
+          />
+          @if (submitAttempted() && controls.slug.hasError('maxlength')) {
+            <p-message severity="error" size="small" variant="simple"
+              >Slug cannot exceed 220 characters.</p-message
+            >
+          }
+          @for (message of serverErrors()['slug'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div>
           <label class="mb-2 block text-sm font-bold" for="editProductSku">SKU</label>
-          <input pInputText id="editProductSku" class="w-full" formControlName="sku" />
+          <input
+            pInputText
+            id="editProductSku"
+            class="w-full"
+            formControlName="sku"
+            maxlength="64"
+            [invalid]="controls.sku.invalid && submitAttempted()"
+          />
+          @if (submitAttempted() && controls.sku.hasError('maxlength')) {
+            <p-message severity="error" size="small" variant="simple"
+              >SKU cannot exceed 64 characters.</p-message
+            >
+          }
+          @for (message of serverErrors()['sku'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div class="sm:col-span-2">
           <label class="mb-2 block text-sm font-bold" for="editProductDescription"
@@ -53,8 +108,18 @@
             id="editProductDescription"
             class="min-h-36 w-full"
             formControlName="description"
+            maxlength="10000"
             [autoResize]="true"
+            [invalid]="controls.description.invalid && submitAttempted()"
           ></textarea>
+          @if (submitAttempted() && controls.description.hasError('maxlength')) {
+            <p-message severity="error" size="small" variant="simple"
+              >Description cannot exceed 10,000 characters.</p-message
+            >
+          }
+          @for (message of serverErrors()['description'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div>
           <label class="mb-2 block text-sm font-bold" for="editProductPrice">Price</label>
@@ -64,9 +129,21 @@
             [min]="0"
             [minFractionDigits]="2"
             [maxFractionDigits]="2"
+            [invalid]="controls.price.invalid && submitAttempted()"
             styleClass="w-full"
             inputStyleClass="w-full"
           />
+          @if (
+            submitAttempted() &&
+            (controls.price.hasError('required') || controls.price.hasError('min'))
+          ) {
+            <p-message severity="error" size="small" variant="simple"
+              >Enter a price of zero or more.</p-message
+            >
+          }
+          @for (message of serverErrors()['price'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div>
           <label class="mb-2 block text-sm font-bold" for="editComparePrice"
@@ -78,9 +155,18 @@
             [min]="0"
             [minFractionDigits]="2"
             [maxFractionDigits]="2"
+            [invalid]="controls.compareAtPrice.invalid && submitAttempted()"
             styleClass="w-full"
             inputStyleClass="w-full"
           />
+          @if (submitAttempted() && controls.compareAtPrice.hasError('min')) {
+            <p-message severity="error" size="small" variant="simple"
+              >Compare-at price must be zero or greater.</p-message
+            >
+          }
+          @for (message of serverErrors()['compareAtPrice'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div>
           <label class="mb-2 block text-sm font-bold" for="editProductCurrency">Currency</label>
@@ -90,7 +176,20 @@
             class="w-full uppercase"
             maxlength="3"
             formControlName="currency"
+            required
+            [invalid]="controls.currency.invalid && submitAttempted()"
           />
+          @if (
+            submitAttempted() &&
+            (controls.currency.hasError('required') || controls.currency.hasError('pattern'))
+          ) {
+            <p-message severity="error" size="small" variant="simple"
+              >Enter a three-letter currency code such as BDT or USD.</p-message
+            >
+          }
+          @for (message of serverErrors()['currency'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div>
           <label class="mb-2 block text-sm font-bold" for="editProductStock">Stock</label>
@@ -99,9 +198,24 @@
             formControlName="stockQuantity"
             [min]="0"
             [maxFractionDigits]="0"
+            [useGrouping]="false"
+            [invalid]="controls.stockQuantity.invalid && submitAttempted()"
             styleClass="w-full"
             inputStyleClass="w-full"
           />
+          @if (
+            submitAttempted() &&
+            (controls.stockQuantity.hasError('required') ||
+              controls.stockQuantity.hasError('min') ||
+              controls.stockQuantity.hasError('wholeNumber'))
+          ) {
+            <p-message severity="error" size="small" variant="simple"
+              >Enter a whole-number stock quantity of zero or more.</p-message
+            >
+          }
+          @for (message of serverErrors()['stockQuantity'] ?? []; track message) {
+            <p-message severity="error" size="small" variant="simple" [text]="message" />
+          }
         </div>
         <div class="flex items-center justify-between gap-4 sm:col-span-2">
           <div>

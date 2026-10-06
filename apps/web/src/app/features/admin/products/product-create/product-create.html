@@ -1,5 +1,5 @@
 <section
-  class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-10 sm:py-16"
+  class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
   aria-labelledby="product-create-title"
 >
   <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -12,12 +12,6 @@
         Add the product details, inventory, pricing and images customers will see.
       </p>
     </div>
-    <a
-      routerLink="/admin/dashboard"
-      class="rounded-xl border border-(--mawrid-border) px-4 py-2.5 font-bold text-(--mawrid-font-primary) no-underline transition-colors hover:bg-(--mawrid-nav-hover)"
-    >
-      Back to dashboard
-    </a>
   </div>
 
   <form [formGroup]="productForm" (ngSubmit)="submitProduct()" novalidate>
@@ -198,9 +192,7 @@
               styleClass="w-full"
               ariaDescribedBy="compare-price-errors"
             />
-            @if (
-              submitAttempted() && controls.compareAtPrice.hasError('min')
-            ) {
+            @if (submitAttempted() && controls.compareAtPrice.hasError('min')) {
               <p-message id="compare-price-errors" severity="error" size="small" variant="simple">
                 Compare-at price must be zero or greater.
               </p-message>

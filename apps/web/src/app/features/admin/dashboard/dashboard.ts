@@ -6,27 +6,27 @@ import { ButtonDirective } from '@openng/optimus-ui/button';
 import { Message } from '@openng/optimus-ui/message';
 
 @Component({
-  selector: 'app-admin-dashboard',
-  imports: [ButtonDirective, Message, RouterLink],
-  templateUrl: './dashboard.html',
+    selector: 'app-admin-dashboard',
+    imports: [ButtonDirective, Message, RouterLink],
+    templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
-  private readonly adminService = inject(AdminService);
-  private readonly route = inject(ActivatedRoute);
+    private readonly adminService = inject(AdminService);
+    private readonly route = inject(ActivatedRoute);
 
-  protected readonly summary = signal<AdminDashboardSummary | null>(null);
-  protected readonly loading = signal(true);
-  protected readonly errorMessage = signal<string | null>(null);
-  protected readonly productCreated =
-    this.route.snapshot.queryParamMap.get('productCreated') === 'true';
+    protected readonly summary = signal<AdminDashboardSummary | null>(null);
+    protected readonly loading = signal(true);
+    protected readonly errorMessage = signal<string | null>(null);
+    protected readonly productCreated =
+        this.route.snapshot.queryParamMap.get('productCreated') === 'true';
 
-  ngOnInit(): void {
-    this.adminService
-      .getDashboardSummary()
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (summary) => this.summary.set(summary),
-        error: () => this.errorMessage.set('Unable to load the dashboard summary.'),
-      });
-  }
+    ngOnInit(): void {
+        this.adminService
+            .getDashboardSummary()
+            .pipe(finalize(() => this.loading.set(false)))
+            .subscribe({
+                next: (summary) => this.summary.set(summary),
+                error: () => this.errorMessage.set('Unable to load the dashboard summary.'),
+            });
+    }
 }

@@ -4,19 +4,19 @@ import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 
 export interface AdminDashboardSummary {
-  totalUsers: number;
-  totalCustomers: number;
-  totalAdmins: number;
+    totalUsers: number;
+    totalCustomers: number;
+    totalAdmins: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiBaseUrl}/api/admin`;
+    private readonly http = inject(HttpClient);
+    private readonly apiUrl = `${environment.apiBaseUrl}/api/admin`;
 
-  getDashboardSummary(): Observable<AdminDashboardSummary> {
-    return this.http.get<AdminDashboardSummary>(`${this.apiUrl}/dashboard`, {
-      withCredentials: true,
-    });
-  }
+    getDashboardSummary(): Observable<AdminDashboardSummary> {
+        return this.http.get<AdminDashboardSummary>(`${this.apiUrl}/dashboard`, {
+            withCredentials: true,
+        });
+    }
 }
