@@ -2,6 +2,8 @@
   class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
   aria-labelledby="product-list-title"
 >
+  <p-toast position="top-center" />
+
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
       <p class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase">
@@ -158,5 +160,5 @@
     </ng-template>
   </p-table>
 
-  <p-confirmdialog />
+  <p-confirmdialog [dismissableMask]="true" />
 </section>

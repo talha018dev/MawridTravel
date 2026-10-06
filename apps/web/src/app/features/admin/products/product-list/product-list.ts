@@ -16,7 +16,8 @@ import { InputIcon } from '@openng/optimus-ui/inputicon';
 import { InputText } from '@openng/optimus-ui/inputtext';
 import { Select } from '@openng/optimus-ui/select';
 import { TableModule } from '@openng/optimus-ui/table';
-import { ConfirmationService } from '@openng/optimus-ui/api';
+import { Toast } from '@openng/optimus-ui/toast';
+import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { TablePageEvent } from '@openng/optimus-ui/types/table';
 import {
   BehaviorSubject,
@@ -36,7 +37,7 @@ type ProductStatusFilter = 'all' | 'active' | 'inactive';
 
 @Component({
   selector: 'app-product-list',
-  providers: [ConfirmationService],
+  providers: [ConfirmationService, MessageService],
   imports: [
     Button,
     ButtonDirective,
@@ -49,12 +50,14 @@ type ProductStatusFilter = 'all' | 'active' | 'inactive';
     RouterLink,
     Select,
     TableModule,
+    Toast,
   ],
   templateUrl: './product-list.html',
 })
 export class ProductList implements OnInit {
   private readonly productAdminService = inject(ProductAdminService);
   private readonly confirmationService = inject(ConfirmationService);
+  private readonly messageService = inject(MessageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly pageChanges = new BehaviorSubject(1);
 
@@ -144,6 +147,7 @@ export class ProductList implements OnInit {
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
       accept: () => this.confirmDelete(product),
     });
   }
@@ -159,6 +163,12 @@ export class ProductList implements OnInit {
       )
       .subscribe({
         next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Product deleted',
+            detail: `“${product.name}” was deleted successfully.`,
+          });
+
           if (this.products().length === 1 && this.page() > 1) {
             this.pageChanges.next(this.page() - 1);
           } else {

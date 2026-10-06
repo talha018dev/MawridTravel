@@ -40,6 +40,39 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task DeleteProduct_WhenAnonymous_ReturnsUnauthorized()
+    {
+        using var client = factory.CreateClient();
+
+        var response = await client.DeleteAsync($"/api/admin/products/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteProduct_WhenCustomer_ReturnsForbidden()
+    {
+        using var client = factory.CreateClient();
+        var email = $"product-delete-customer-{Guid.NewGuid():N}@example.com";
+        await CreateUserAsync(email, RoleNames.Customer);
+        await LoginAsync(client, email);
+
+        var response = await client.DeleteAsync($"/api/admin/products/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteProduct_WhenProductDoesNotExist_ReturnsNotFound()
+    {
+        using var client = await CreateAdminClientAsync();
+
+        var response = await client.DeleteAsync($"/api/admin/products/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Admin_CanCreateUpdateAndDeleteProduct()
     {
         using var client = await CreateAdminClientAsync();
@@ -169,6 +202,82 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
         Assert.Equal(storage.UploadedKeys[0], storage.DeletedKeys[0]);
     }
 
+    [Fact]
+    public async Task Admin_CanDeleteProductAndItsStoredImages()
+    {
+        var storage = new FakeProductImageStorage();
+        using var imageFactory = factory.WithWebHostBuilder(builder =>
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll<IProductImageStorage>();
+                services.AddSingleton<IProductImageStorage>(storage);
+            }));
+        using var client = imageFactory.CreateClient();
+        var email = $"product-delete-admin-{Guid.NewGuid():N}@example.com";
+        await CreateUserAsync(imageFactory.Services, email, RoleNames.Admin);
+        await LoginAsync(client, email);
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/admin/products",
+            CreateRequest($"Product to delete {Guid.NewGuid():N}"));
+        createResponse.EnsureSuccessStatusCode();
+        var product = await createResponse.Content.ReadFromJsonAsync<ProductResponse>();
+        Assert.NotNull(product);
+
+        var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        using var imageContent = new ByteArrayContent(pngHeader);
+        imageContent.Headers.ContentType = new("image/png");
+        var uploadResponse = await client.PostAsync(
+            $"/api/admin/products/{product.Id}/images?isPrimary=true",
+            imageContent);
+        uploadResponse.EnsureSuccessStatusCode();
+        Assert.Single(storage.UploadedKeys);
+
+        var deleteResponse = await client.DeleteAsync($"/api/admin/products/{product.Id}");
+
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        Assert.Equal(storage.UploadedKeys, storage.DeletedKeys);
+        var getDeletedResponse = await client.GetAsync($"/api/admin/products/{product.Id}");
+        Assert.Equal(HttpStatusCode.NotFound, getDeletedResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteProduct_WhenImageStorageIsUnavailable_KeepsProduct()
+    {
+        var storage = new FakeProductImageStorage();
+        using var imageFactory = factory.WithWebHostBuilder(builder =>
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll<IProductImageStorage>();
+                services.AddSingleton<IProductImageStorage>(storage);
+            }));
+        using var client = imageFactory.CreateClient();
+        var email = $"product-storage-admin-{Guid.NewGuid():N}@example.com";
+        await CreateUserAsync(imageFactory.Services, email, RoleNames.Admin);
+        await LoginAsync(client, email);
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/admin/products",
+            CreateRequest($"Product retained {Guid.NewGuid():N}"));
+        createResponse.EnsureSuccessStatusCode();
+        var product = await createResponse.Content.ReadFromJsonAsync<ProductResponse>();
+        Assert.NotNull(product);
+
+        var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        using var imageContent = new ByteArrayContent(pngHeader);
+        imageContent.Headers.ContentType = new("image/png");
+        var uploadResponse = await client.PostAsync(
+            $"/api/admin/products/{product.Id}/images",
+            imageContent);
+        uploadResponse.EnsureSuccessStatusCode();
+        storage.IsConfigured = false;
+
+        var deleteResponse = await client.DeleteAsync($"/api/admin/products/{product.Id}");
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, deleteResponse.StatusCode);
+        Assert.Empty(storage.DeletedKeys);
+        var retainedResponse = await client.GetAsync($"/api/admin/products/{product.Id}");
+        Assert.Equal(HttpStatusCode.OK, retainedResponse.StatusCode);
+    }
+
     private async Task<HttpClient> CreateAdminClientAsync()
     {
         var client = factory.CreateClient();
@@ -261,7 +370,7 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
 
     private sealed class FakeProductImageStorage : IProductImageStorage
     {
-        public bool IsConfigured => true;
+        public bool IsConfigured { get; set; } = true;
 
         public List<string> UploadedKeys { get; } = [];
 

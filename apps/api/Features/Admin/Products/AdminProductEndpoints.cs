@@ -17,7 +17,12 @@ internal static class AdminProductEndpoints
         group.MapPut("/{id:guid}", ProductHandlers.UpdateProductAsync)
             .WithName("UpdateProduct");
         group.MapDelete("/{id:guid}", ProductHandlers.DeleteProductAsync)
-            .WithName("DeleteProduct");
+            .WithName("DeleteProduct")
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status401Unauthorized)
+            .Produces(StatusCodes.Status403Forbidden)
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status503ServiceUnavailable);
 
         group.MapProductImageEndpoints();
 
