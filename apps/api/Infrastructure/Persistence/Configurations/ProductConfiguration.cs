@@ -25,7 +25,7 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             tableBuilder.HasCheckConstraint("CK_Products_Price", "\"Price\" >= 0");
             tableBuilder.HasCheckConstraint(
                 "CK_Products_CompareAtPrice",
-                "\"CompareAtPrice\" IS NULL OR \"CompareAtPrice\" >= \"Price\"");
+                "\"CompareAtPrice\" IS NULL OR \"CompareAtPrice\" >= 0");
             tableBuilder.HasCheckConstraint(
                 "CK_Products_StockQuantity",
                 "\"StockQuantity\" >= 0");

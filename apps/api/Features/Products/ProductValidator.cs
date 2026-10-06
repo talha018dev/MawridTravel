@@ -35,11 +35,9 @@ internal static class ProductValidator
             errors["price"] = ["Price must be zero or greater."];
         }
 
-        if (request.CompareAtPrice is < 0 ||
-            request.CompareAtPrice.HasValue && request.CompareAtPrice < request.Price)
+        if (request.CompareAtPrice is < 0)
         {
-            errors["compareAtPrice"] =
-                ["Compare-at price must be greater than or equal to the price."];
+            errors["compareAtPrice"] = ["Compare-at price must be zero or greater."];
         }
 
         var currency = request.Currency?.Trim();

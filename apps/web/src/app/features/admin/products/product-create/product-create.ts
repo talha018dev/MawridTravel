@@ -6,7 +6,6 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -45,18 +44,7 @@ interface ValidationProblem {
   errors?: Record<string, string[]>;
 }
 
-function compareAtPriceValidator(control: AbstractControl): ValidationErrors | null {
-  const price = control.get('price')?.value as number | null;
-  const compareAtPrice = control.get('compareAtPrice')?.value as number | null;
-
-  if (price === null || compareAtPrice === null) {
-    return null;
-  }
-
-  return compareAtPrice >= price ? null : { compareAtPriceBelowPrice: true };
-}
-
-function wholeNumberValidator(control: AbstractControl): ValidationErrors | null {
+function wholeNumberValidator(control: AbstractControl): Record<string, boolean> | null {
   const value = control.value as number | null;
   return value === null || Number.isInteger(value) ? null : { wholeNumber: true };
 }
@@ -122,7 +110,6 @@ export class ProductCreate {
       }),
       isActive: new FormControl(false, { nonNullable: true }),
     },
-    { validators: compareAtPriceValidator },
   );
 
   constructor() {

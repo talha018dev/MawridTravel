@@ -159,6 +159,25 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task CreateProduct_AllowsCompareAtPriceBelowPrice()
+    {
+        using var client = await CreateAdminClientAsync();
+
+        var response = await client.PostAsJsonAsync(
+            "/api/admin/products",
+            CreateRequest(
+                $"Lower comparison {Guid.NewGuid():N}",
+                price: 150m,
+                compareAtPrice: 100m));
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var product = await response.Content.ReadFromJsonAsync<ProductResponse>();
+        Assert.NotNull(product);
+        Assert.Equal(150m, product.Price);
+        Assert.Equal(100m, product.CompareAtPrice);
+    }
+
+    [Fact]
     public async Task Admin_CanUploadAndDeleteProductImage()
     {
         var storage = new FakeProductImageStorage();

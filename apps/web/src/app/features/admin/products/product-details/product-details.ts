@@ -7,13 +7,14 @@ import {
 } from '@app/features/admin/products/data-access/product-admin.service';
 import { ConfirmationService } from '@openng/optimus-ui/api';
 import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { Carousel } from '@openng/optimus-ui/carousel';
 import { ConfirmDialog } from '@openng/optimus-ui/confirmdialog';
 import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
   providers: [ConfirmationService],
-  imports: [Button, ButtonDirective, ConfirmDialog, DatePipe, RouterLink],
+  imports: [Button, ButtonDirective, Carousel, ConfirmDialog, DatePipe, RouterLink],
   templateUrl: './product-details.html',
 })
 export class ProductDetails implements OnInit {

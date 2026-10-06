@@ -148,7 +148,7 @@
         <div class="mb-6 border-b border-(--mawrid-border) pb-4">
           <h2 id="pricing-title" class="text-xl font-bold">Pricing and inventory</h2>
           <p class="mt-1 text-sm text-(--mawrid-text-muted)">
-            Compare-at price is optional and must be the same as or higher than the selling price.
+            Prices must be zero or greater. Compare-at price is optional.
           </p>
         </div>
 
@@ -193,22 +193,16 @@
               [minFractionDigits]="2"
               [maxFractionDigits]="2"
               [useGrouping]="true"
-              [invalid]="
-                submitAttempted() &&
-                (controls.compareAtPrice.hasError('min') ||
-                  productForm.hasError('compareAtPriceBelowPrice'))
-              "
+              [invalid]="submitAttempted() && controls.compareAtPrice.hasError('min')"
               inputStyleClass="w-full"
               styleClass="w-full"
               ariaDescribedBy="compare-price-errors"
             />
             @if (
-              submitAttempted() &&
-              (controls.compareAtPrice.hasError('min') ||
-                productForm.hasError('compareAtPriceBelowPrice'))
+              submitAttempted() && controls.compareAtPrice.hasError('min')
             ) {
               <p-message id="compare-price-errors" severity="error" size="small" variant="simple">
-                Compare-at price must be at least the selling price.
+                Compare-at price must be zero or greater.
               </p-message>
             }
             @for (message of serverErrors()['compareAtPrice'] ?? []; track message) {

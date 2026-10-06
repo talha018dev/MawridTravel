@@ -7,27 +7,34 @@
       <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i>
       Loading product details…
     </p>
-  } @else if (product(); as item) {
+  } @else if (product(); as productDetails) {
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
         <p class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase">
           Product management
         </p>
-        <h1 id="product-details-title" class="text-3xl font-bold sm:text-4xl">{{ item.name }}</h1>
-        <p class="mt-2 text-(--mawrid-text-muted)">/{{ item.slug }}</p>
+        <h1 id="product-details-title" class="text-3xl font-bold sm:text-4xl">
+          {{ productDetails.name }}
+        </h1>
+        <p class="mt-2 text-(--mawrid-text-muted)">/{{ productDetails.slug }}</p>
       </div>
       <div class="flex flex-wrap gap-3">
         <a
           pButton
           severity="secondary"
           variant="outlined"
-          class="no-underline"
+          class="border-(--mawrid-secondary)! bg-transparent! text-(--mawrid-secondary)! no-underline hover:bg-(--mawrid-nav-hover)! dark:border-slate-500! dark:text-white!"
           routerLink="/admin/products/list"
         >
           <i class="pi pi-arrow-left" aria-hidden="true"></i>
           <span>Back to products</span>
         </a>
-        <a pButton class="no-underline" [routerLink]="['/admin/products', item.id, 'edit']">
+        <a
+          pButton
+          severity="secondary"
+          class="border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! no-underline hover:border-(--mawrid-secondary)! hover:bg-(--mawrid-secondary)! dark:border-slate-500! dark:bg-transparent! dark:text-white! dark:hover:bg-(--mawrid-nav-hover)!"
+          [routerLink]="['/admin/products', productDetails.id, 'edit']"
+        >
           <i class="pi pi-pencil" aria-hidden="true"></i>
           <span>Edit</span>
         </a>
@@ -37,7 +44,7 @@
           severity="danger"
           [loading]="deleting()"
           [disabled]="deleting()"
-          (onClick)="deleteProduct(item)"
+          (onClick)="deleteProduct(productDetails)"
         />
       </div>
     </div>
@@ -57,56 +64,58 @@
         <dl class="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2">
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">SKU</dt>
-            <dd class="mt-1">{{ item.sku || 'Not set' }}</dd>
+            <dd class="mt-1">{{ productDetails.sku || 'Not set' }}</dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Status</dt>
             <dd class="mt-1">
               <span
                 class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold"
-                [class.bg-emerald-500/15]="item.isActive"
-                [class.text-emerald-600]="item.isActive"
-                [class.bg-slate-500/15]="!item.isActive"
-                [class.text-(--mawrid-text-muted)]="!item.isActive"
+                [class.bg-emerald-500/15]="productDetails.isActive"
+                [class.text-emerald-600]="productDetails.isActive"
+                [class.bg-slate-500/15]="!productDetails.isActive"
+                [class.text-(--mawrid-text-muted)]="!productDetails.isActive"
               >
-                {{ item.isActive ? 'Active' : 'Inactive' }}
+                {{ productDetails.isActive ? 'Active' : 'Inactive' }}
               </span>
             </dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Price</dt>
-            <dd class="mt-1 font-semibold">{{ formatPrice(item.price, item.currency) }}</dd>
+            <dd class="mt-1 font-semibold">
+              {{ formatPrice(productDetails.price, productDetails.currency) }}
+            </dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Compare-at price</dt>
             <dd class="mt-1">
               {{
-                item.compareAtPrice === null
+                productDetails.compareAtPrice === null
                   ? 'Not set'
-                  : formatPrice(item.compareAtPrice, item.currency)
+                  : formatPrice(productDetails.compareAtPrice, productDetails.currency)
               }}
             </dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Stock quantity</dt>
-            <dd class="mt-1">{{ item.stockQuantity }}</dd>
+            <dd class="mt-1">{{ productDetails.stockQuantity }}</dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Currency</dt>
-            <dd class="mt-1">{{ item.currency }}</dd>
+            <dd class="mt-1">{{ productDetails.currency }}</dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Created</dt>
-            <dd class="mt-1">{{ item.createdAt | date: 'medium' }}</dd>
+            <dd class="mt-1">{{ productDetails.createdAt | date: 'medium' }}</dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Last updated</dt>
-            <dd class="mt-1">{{ item.updatedAt | date: 'medium' }}</dd>
+            <dd class="mt-1">{{ productDetails.updatedAt | date: 'medium' }}</dd>
           </div>
           <div class="sm:col-span-2">
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Description</dt>
             <dd class="mt-2 whitespace-pre-line text-(--mawrid-text-muted)">
-              {{ item.description || 'No description provided.' }}
+              {{ productDetails.description || 'No description provided.' }}
             </dd>
           </div>
         </dl>
@@ -119,36 +128,49 @@
         <div class="flex items-center justify-between gap-4">
           <h2 id="details-images-title" class="text-xl font-bold">Images</h2>
           <span class="text-sm text-(--mawrid-text-muted)">
-            {{ item.images.length }} {{ item.images.length === 1 ? 'image' : 'images' }}
+            {{ productDetails.images.length }}
+            {{ productDetails.images.length === 1 ? 'image' : 'images' }}
           </span>
         </div>
-        <div class="mt-6 grid grid-cols-2 gap-3">
-          @for (image of item.images; track image.id) {
-            <figure class="relative overflow-hidden rounded-xl border border-(--mawrid-border)">
-              <img
-                class="aspect-square w-full object-cover"
-                [src]="image.url"
-                [alt]="image.altText || item.name"
-              />
-              @if (image.isPrimary) {
-                <figcaption
-                  class="absolute right-2 bottom-2 rounded-full bg-(--mawrid-primary) px-2 py-1 text-xs font-bold text-white"
-                >
-                  Primary
-                </figcaption>
-              }
-            </figure>
-          } @empty {
-            <div
-              class="col-span-2 grid min-h-48 place-items-center rounded-xl border border-dashed border-(--mawrid-border) text-center text-(--mawrid-text-muted)"
-            >
-              <div>
-                <i class="pi pi-images mb-3 block text-3xl" aria-hidden="true"></i>
-                No product images
-              </div>
+        @if (productDetails.images.length > 0) {
+          <p-carousel
+            styleClass="mt-6"
+            [value]="productDetails.images"
+            [numVisible]="1"
+            [numScroll]="1"
+            [circular]="productDetails.images.length > 1"
+            [showNavigators]="productDetails.images.length > 1"
+            [showIndicators]="productDetails.images.length > 1"
+          >
+            <ng-template #item let-image>
+              <figure
+                class="relative mx-2 overflow-hidden rounded-xl border border-(--mawrid-border)"
+              >
+                <img
+                  class="aspect-square w-full object-cover"
+                  [src]="image.url"
+                  [alt]="image.altText || productDetails.name"
+                />
+                @if (image.isPrimary) {
+                  <figcaption
+                    class="absolute right-3 bottom-3 rounded-full bg-(--mawrid-primary) px-2.5 py-1 text-xs font-bold text-white"
+                  >
+                    Primary
+                  </figcaption>
+                }
+              </figure>
+            </ng-template>
+          </p-carousel>
+        } @else {
+          <div
+            class="mt-6 grid min-h-48 place-items-center rounded-xl border border-dashed border-(--mawrid-border) text-center text-(--mawrid-text-muted)"
+          >
+            <div>
+              <i class="pi pi-images mb-3 block text-3xl" aria-hidden="true"></i>
+              No product images
             </div>
-          }
-        </div>
+          </div>
+        }
       </section>
     </div>
   } @else {

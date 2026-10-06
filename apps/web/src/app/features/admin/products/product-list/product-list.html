@@ -42,6 +42,7 @@
         styleClass="w-full"
         [formControl]="statusControl"
         [options]="statusOptions"
+        [checkmark]="true"
         optionLabel="label"
         optionValue="value"
       />
@@ -135,8 +136,9 @@
               text
               rounded
               severity="secondary"
+              pTooltip="View details"
+              tooltipPosition="top"
               aria-label="View {{ product.name }}"
-              title="View product details"
               [routerLink]="['/admin/products', product.id]"
             >
               <i class="pi pi-eye" aria-hidden="true"></i>
@@ -146,8 +148,9 @@
               text
               rounded
               severity="secondary"
+              pTooltip="Edit product"
+              tooltipPosition="top"
               aria-label="Edit {{ product.name }}"
-              title="Edit product"
               [routerLink]="['/admin/products', product.id, 'edit']"
             >
               <i class="pi pi-pencil" aria-hidden="true"></i>
@@ -156,11 +159,13 @@
               icon="pi pi-trash"
               severity="danger"
               variant="text"
+              pTooltip="Delete product"
+              tooltipPosition="top"
+              tooltipStyleClass="max-w-none! whitespace-nowrap!"
               [rounded]="true"
               [loading]="deletingId() === product.id"
               [disabled]="deletingId() !== null"
               [ariaLabel]="'Delete ' + product.name"
-              title="Delete product"
               (onClick)="deleteProduct(product)"
             />
           </div>

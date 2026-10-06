@@ -17,6 +17,7 @@ import { InputText } from '@openng/optimus-ui/inputtext';
 import { Select } from '@openng/optimus-ui/select';
 import { TableModule } from '@openng/optimus-ui/table';
 import { Toast } from '@openng/optimus-ui/toast';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { TablePageEvent } from '@openng/optimus-ui/types/table';
 import {
@@ -51,6 +52,7 @@ type ProductStatusFilter = 'all' | 'active' | 'inactive';
     Select,
     TableModule,
     Toast,
+    Tooltip,
   ],
   templateUrl: './product-list.html',
 })
