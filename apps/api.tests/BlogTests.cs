@@ -2,8 +2,11 @@ using System.Net;
 using System.Net.Http.Json;
 using MawridTravel.Api.Domain.Authorization;
 using MawridTravel.Api.Domain.Entities;
+using MawridTravel.Api.Infrastructure.Storage;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MawridTravel.Api.Tests;
 
@@ -93,12 +96,42 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
             slug = "",
             excerpt = "",
             content = "",
-            featuredImageUrl = "not-a-url",
             isPublished = false
         });
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task CreateBlog_SanitizesRichTextContent()
+    {
+        using var client = await CreateAdminClientAsync();
+
+        var response = await client.PostAsJsonAsync("/api/admin/blogs", new
+        {
+            title = $"Safe rich text {Guid.NewGuid():N}",
+            slug = (string?)null,
+            excerpt = "Sanitizer test.",
+            content = "<h2>Safe heading</h2><p onclick=\"alert(1)\"><strong>Safe text</strong>" +
+                      "<script>alert(2)</script><img src=x onerror=\"alert(3)\">" +
+                      "<a href=\"javascript:alert(4)\">Unsafe link</a>" +
+                      "<a href=\"https://example.com\">Safe link</a></p>",
+            isPublished = false
+        });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var blog = await response.Content.ReadFromJsonAsync<BlogResponse>();
+        Assert.NotNull(blog);
+        var normalizedContent = blog.Content.ToLowerInvariant();
+        Assert.Contains("<h2>safe heading</h2>", normalizedContent);
+        Assert.Contains("<strong>safe text</strong>", normalizedContent);
+        Assert.Contains("href=\"https://example.com\"", normalizedContent);
+        Assert.DoesNotContain("<script", normalizedContent);
+        Assert.DoesNotContain("<img", normalizedContent);
+        Assert.DoesNotContain("onclick", normalizedContent);
+        Assert.DoesNotContain("onerror", normalizedContent);
+        Assert.DoesNotContain("javascript:", normalizedContent);
     }
 
     [Fact]
@@ -109,6 +142,46 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
         var response = await client.DeleteAsync($"/api/admin/blogs/{Guid.NewGuid()}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Admin_CanUploadOneFeaturedImageAndBlogDeletionRemovesIt()
+    {
+        var storage = new FakeImageStorage();
+        using var imageFactory = factory.WithWebHostBuilder(builder =>
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll<IImageStorage>();
+                services.AddSingleton<IImageStorage>(storage);
+            }));
+        using var client = imageFactory.CreateClient();
+        var email = $"blog-image-admin-{Guid.NewGuid():N}@example.com";
+        await CreateUserAsync(imageFactory.Services, email, RoleNames.Admin);
+        await LoginAsync(client, email);
+
+        var createResponse = await client.PostAsJsonAsync(
+            "/api/admin/blogs",
+            CreateRequest($"Image blog {Guid.NewGuid():N}"));
+        createResponse.EnsureSuccessStatusCode();
+        var blog = await createResponse.Content.ReadFromJsonAsync<BlogResponse>();
+        Assert.NotNull(blog);
+
+        using var imageContent = new ByteArrayContent(
+            [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+        imageContent.Headers.ContentType = new("image/png");
+        var uploadResponse = await client.PostAsync(
+            $"/api/admin/blogs/{blog.Id}/featured-image",
+            imageContent);
+
+        Assert.Equal(HttpStatusCode.OK, uploadResponse.StatusCode);
+        var updated = await uploadResponse.Content.ReadFromJsonAsync<BlogResponse>();
+        Assert.NotNull(updated);
+        Assert.StartsWith("https://images.example.com/blogs/", updated.FeaturedImageUrl);
+        var objectKey = Assert.Single(storage.UploadedKeys);
+
+        var deleteResponse = await client.DeleteAsync($"/api/admin/blogs/{blog.Id}");
+        Assert.Equal(HttpStatusCode.NoContent, deleteResponse.StatusCode);
+        Assert.Contains(objectKey, storage.DeletedKeys);
     }
 
     private async Task<HttpClient> CreateAdminClientAsync()
@@ -122,7 +195,12 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
 
     private async Task CreateUserAsync(string email, string role)
     {
-        await using var scope = factory.Services.CreateAsyncScope();
+        await CreateUserAsync(factory.Services, email, role);
+    }
+
+    private static async Task CreateUserAsync(IServiceProvider services, string email, string role)
+    {
+        await using var scope = services.CreateAsyncScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var now = DateTimeOffset.UtcNow;
         var user = new ApplicationUser
@@ -161,7 +239,6 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
             slug,
             excerpt = "Helpful travel advice.",
             content = "Detailed advice for planning a comfortable journey.",
-            featuredImageUrl = "https://images.mawridtravel.com/blog/example.jpg",
             isPublished
         };
 
@@ -169,6 +246,8 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
         Guid Id,
         string Title,
         string Slug,
+        string Content,
+        string? FeaturedImageUrl,
         bool IsPublished,
         DateTimeOffset? PublishedAt);
 
@@ -177,4 +256,32 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
         int PageSize,
         int TotalCount,
         IReadOnlyList<BlogResponse> Items);
+
+    private sealed class FakeImageStorage : IImageStorage
+    {
+        public bool IsConfigured => true;
+
+        public List<string> UploadedKeys { get; } = [];
+
+        public List<string> DeletedKeys { get; } = [];
+
+        public string GetPublicUrl(string objectKey) =>
+            $"https://images.example.com/{objectKey}";
+
+        public Task UploadAsync(
+            string objectKey,
+            Stream content,
+            string contentType,
+            CancellationToken cancellationToken)
+        {
+            UploadedKeys.Add(objectKey);
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAsync(string objectKey, CancellationToken cancellationToken)
+        {
+            DeletedKeys.Add(objectKey);
+            return Task.CompletedTask;
+        }
+    }
 }

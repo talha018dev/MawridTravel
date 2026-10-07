@@ -184,8 +184,8 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
         using var imageFactory = factory.WithWebHostBuilder(builder =>
             builder.ConfigureServices(services =>
             {
-                services.RemoveAll<IProductImageStorage>();
-                services.AddSingleton<IProductImageStorage>(storage);
+                services.RemoveAll<IImageStorage>();
+                services.AddSingleton<IImageStorage>(storage);
             }));
         using var client = imageFactory.CreateClient();
         var email = $"image-admin-{Guid.NewGuid():N}@example.com";
@@ -228,8 +228,8 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
         using var imageFactory = factory.WithWebHostBuilder(builder =>
             builder.ConfigureServices(services =>
             {
-                services.RemoveAll<IProductImageStorage>();
-                services.AddSingleton<IProductImageStorage>(storage);
+                services.RemoveAll<IImageStorage>();
+                services.AddSingleton<IImageStorage>(storage);
             }));
         using var client = imageFactory.CreateClient();
         var email = $"product-delete-admin-{Guid.NewGuid():N}@example.com";
@@ -266,8 +266,8 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
         using var imageFactory = factory.WithWebHostBuilder(builder =>
             builder.ConfigureServices(services =>
             {
-                services.RemoveAll<IProductImageStorage>();
-                services.AddSingleton<IProductImageStorage>(storage);
+                services.RemoveAll<IImageStorage>();
+                services.AddSingleton<IImageStorage>(storage);
             }));
         using var client = imageFactory.CreateClient();
         var email = $"product-storage-admin-{Guid.NewGuid():N}@example.com";
@@ -387,7 +387,7 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
         int SortOrder,
         bool IsPrimary);
 
-    private sealed class FakeProductImageStorage : IProductImageStorage
+    private sealed class FakeProductImageStorage : IImageStorage
     {
         public bool IsConfigured { get; set; } = true;
 

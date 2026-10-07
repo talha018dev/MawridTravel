@@ -1,3 +1,5 @@
+using MawridTravel.Api.Features.Admin.Blogs.Images;
+
 namespace MawridTravel.Api.Features.Admin.Blogs;
 
 internal static class AdminBlogEndpoints
@@ -20,6 +22,8 @@ internal static class AdminBlogEndpoints
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound);
+
+        group.MapBlogFeaturedImageEndpoints();
 
         return adminGroup;
     }

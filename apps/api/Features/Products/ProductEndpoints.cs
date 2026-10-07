@@ -19,7 +19,7 @@ internal static class ProductEndpoints
 
     private static async Task<IResult> GetProductsAsync(
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         int page = 1,
         int pageSize = 20,
         CancellationToken cancellationToken = default)
@@ -47,7 +47,7 @@ internal static class ProductEndpoints
     private static async Task<IResult> GetProductAsync(
         string slug,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         CancellationToken cancellationToken)
     {
         var normalizedSlug = slug.Trim().ToLowerInvariant();

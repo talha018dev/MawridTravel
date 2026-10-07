@@ -35,7 +35,7 @@ internal static class ProductImageEndpoints
         Guid id,
         HttpRequest request,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         TimeProvider timeProvider,
         string? altText = null,
         bool isPrimary = false,
@@ -162,7 +162,7 @@ internal static class ProductImageEndpoints
         Guid imageId,
         UpdateProductImageRequest request,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         CancellationToken cancellationToken)
     {
         var errors = ProductValidator.ValidateImage(request.AltText, request.SortOrder);
@@ -214,7 +214,7 @@ internal static class ProductImageEndpoints
         Guid productId,
         Guid imageId,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         CancellationToken cancellationToken)
     {
         if (!imageStorage.IsConfigured)

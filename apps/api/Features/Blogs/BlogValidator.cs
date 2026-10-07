@@ -1,3 +1,6 @@
+using System.Net;
+using System.Text.RegularExpressions;
+
 namespace MawridTravel.Api.Features.Blogs;
 
 internal static class BlogValidator
@@ -25,27 +28,26 @@ internal static class BlogValidator
             errors["excerpt"] = ["Excerpt must not exceed 500 characters."];
         }
 
-        if (string.IsNullOrWhiteSpace(request.Content))
+        if (!HasVisibleContent(request.Content))
         {
             errors["content"] = ["Content is required."];
         }
-        else if (request.Content.Trim().Length > 100_000)
+        else if (request.Content is { } content && content.Trim().Length > 100_000)
         {
             errors["content"] = ["Content must not exceed 100,000 characters."];
         }
 
-        var featuredImageUrl = request.FeaturedImageUrl?.Trim();
-        if (featuredImageUrl?.Length > 2_048)
+        return errors;
+    }
+
+    private static bool HasVisibleContent(string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
         {
-            errors["featuredImageUrl"] = ["Featured image URL must not exceed 2,048 characters."];
-        }
-        else if (!string.IsNullOrWhiteSpace(featuredImageUrl) &&
-                 (!Uri.TryCreate(featuredImageUrl, UriKind.Absolute, out var uri) ||
-                  uri.Scheme is not ("http" or "https")))
-        {
-            errors["featuredImageUrl"] = ["Featured image URL must be a valid HTTP or HTTPS URL."];
+            return false;
         }
 
-        return errors;
+        var text = Regex.Replace(content, "<[^>]*>", string.Empty);
+        return !string.IsNullOrWhiteSpace(WebUtility.HtmlDecode(text));
     }
 }

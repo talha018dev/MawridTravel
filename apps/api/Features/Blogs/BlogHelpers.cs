@@ -2,20 +2,23 @@ using System.Globalization;
 using System.Text;
 using MawridTravel.Api.Domain.Entities;
 using MawridTravel.Api.Infrastructure.Persistence;
+using MawridTravel.Api.Infrastructure.Storage;
 using Microsoft.EntityFrameworkCore;
 
 namespace MawridTravel.Api.Features.Blogs;
 
 internal static class BlogHelpers
 {
-    public static BlogResponse ToResponse(this BlogPost blog) =>
+    public static BlogResponse ToResponse(this BlogPost blog, IImageStorage imageStorage) =>
         new(
             blog.Id,
             blog.Title,
             blog.Slug,
             blog.Excerpt,
             blog.Content,
-            blog.FeaturedImageUrl,
+            blog.FeaturedImageObjectKey is null
+                ? null
+                : imageStorage.GetPublicUrl(blog.FeaturedImageObjectKey),
             blog.IsPublished,
             blog.PublishedAt,
             blog.CreatedAt,

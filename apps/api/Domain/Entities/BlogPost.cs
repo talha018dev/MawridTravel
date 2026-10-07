@@ -12,7 +12,9 @@ public sealed class BlogPost
 
     public required string Content { get; set; }
 
-    public string? FeaturedImageUrl { get; set; }
+    public string? FeaturedImageObjectKey { get; set; }
+
+    public string? FeaturedImageContentType { get; set; }
 
     public bool IsPublished { get; set; }
 

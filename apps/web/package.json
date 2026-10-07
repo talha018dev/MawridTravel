@@ -11,6 +11,9 @@
   },
   "private": true,
   "packageManager": "npm@11.19.0",
+  "overrides": {
+    "source-map-js": "1.2.2"
+  },
   "dependencies": {
     "@angular/common": "^22.2.0",
     "@angular/compiler": "^22.2.0",
@@ -22,7 +25,12 @@
     "@angular/ssr": "^22.2.0",
     "@openng/optimus-ui": "^2.0.2",
     "@openng/optimus-ui-themes": "^2.0.2",
+    "@tiptap/core": "^3.31.4",
+    "@tiptap/extension-link": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
+    "dompurify": "^3.4.16",
     "express": "^5.1.0",
+    "ngx-tiptap": "^15.0.0",
     "primeicons": "^8.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

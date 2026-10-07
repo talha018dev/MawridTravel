@@ -12,7 +12,8 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(blog => blog.Slug).HasMaxLength(220);
         builder.Property(blog => blog.Excerpt).HasMaxLength(500);
         builder.Property(blog => blog.Content).HasMaxLength(100_000);
-        builder.Property(blog => blog.FeaturedImageUrl).HasMaxLength(2_048);
+        builder.Property(blog => blog.FeaturedImageObjectKey).HasMaxLength(500);
+        builder.Property(blog => blog.FeaturedImageContentType).HasMaxLength(100);
 
         builder.HasIndex(blog => blog.Slug).IsUnique();
         builder.HasIndex(blog => new { blog.IsPublished, blog.PublishedAt });

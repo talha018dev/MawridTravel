@@ -2,10 +2,10 @@ namespace MawridTravel.Api.Infrastructure.Storage;
 
 internal static class StorageExtensions
 {
-    public static IServiceCollection AddProductImageStorage(
+    public static IServiceCollection AddImageStorage(
         this IServiceCollection services)
     {
-        services.AddSingleton<IProductImageStorage, R2ProductImageStorage>();
+        services.AddSingleton<IImageStorage, R2ImageStorage>();
         return services;
     }
 }

@@ -5,7 +5,6 @@ internal sealed record BlogWriteRequest(
     string? Slug,
     string? Excerpt,
     string? Content,
-    string? FeaturedImageUrl,
     bool IsPublished);
 
 internal sealed record BlogResponse(

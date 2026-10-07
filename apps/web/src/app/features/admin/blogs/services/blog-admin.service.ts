@@ -30,6 +30,14 @@ export interface BlogListParams {
     pageSize: number;
 }
 
+export interface BlogWriteRequest {
+    title: string;
+    slug: string | null;
+    excerpt: string | null;
+    content: string;
+    isPublished: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BlogAdminService {
     private readonly http = inject(HttpClient);
@@ -49,6 +57,17 @@ export class BlogAdminService {
 
         return this.http.get<BlogListResponse>(this.apiUrl, {
             params: httpParams,
+            withCredentials: true,
+        });
+    }
+
+    createBlog(request: BlogWriteRequest): Observable<Blog> {
+        return this.http.post<Blog>(this.apiUrl, request, { withCredentials: true });
+    }
+
+    uploadFeaturedImage(blogId: string, file: File): Observable<Blog> {
+        return this.http.post<Blog>(`${this.apiUrl}/${blogId}/featured-image`, file, {
+            headers: { 'Content-Type': file.type },
             withCredentials: true,
         });
     }

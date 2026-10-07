@@ -11,7 +11,7 @@ internal static class ProductHelpers
 {
     public static ProductResponse ToResponse(
         this Product product,
-        IProductImageStorage imageStorage) =>
+        IImageStorage imageStorage) =>
         new(
             product.Id,
             product.Name,

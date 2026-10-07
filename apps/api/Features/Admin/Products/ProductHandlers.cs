@@ -10,7 +10,7 @@ internal static class ProductHandlers
 {
     public static async Task<IResult> GetProductsAsync(
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         string? search,
         bool? isActive,
         int page = 1,
@@ -53,7 +53,7 @@ internal static class ProductHandlers
     public static async Task<IResult> GetProductAsync(
         Guid id,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         CancellationToken cancellationToken)
     {
         var product = await dbContext.Products
@@ -69,7 +69,7 @@ internal static class ProductHandlers
     public static async Task<IResult> CreateProductAsync(
         ProductWriteRequest request,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
@@ -126,7 +126,7 @@ internal static class ProductHandlers
         Guid id,
         ProductWriteRequest request,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
@@ -180,7 +180,7 @@ internal static class ProductHandlers
     public static async Task<IResult> DeleteProductAsync(
         Guid id,
         AppDbContext dbContext,
-        IProductImageStorage imageStorage,
+        IImageStorage imageStorage,
         CancellationToken cancellationToken)
     {
         var product = await dbContext.Products

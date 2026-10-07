@@ -4,7 +4,7 @@ using Amazon.S3.Model;
 
 namespace MawridTravel.Api.Infrastructure.Storage;
 
-internal interface IProductImageStorage
+internal interface IImageStorage
 {
     bool IsConfigured { get; }
 
@@ -19,12 +19,12 @@ internal interface IProductImageStorage
     Task DeleteAsync(string objectKey, CancellationToken cancellationToken);
 }
 
-internal sealed class R2ProductImageStorage : IProductImageStorage, IDisposable
+internal sealed class R2ImageStorage : IImageStorage, IDisposable
 {
     private readonly R2StorageOptions _options;
     private readonly Lazy<AmazonS3Client> _client;
 
-    public R2ProductImageStorage(IConfiguration configuration)
+    public R2ImageStorage(IConfiguration configuration)
     {
         _options = configuration
             .GetSection(R2StorageOptions.SectionName)
@@ -106,7 +106,7 @@ internal sealed class R2ProductImageStorage : IProductImageStorage, IDisposable
         if (!IsConfigured)
         {
             throw new InvalidOperationException(
-                "Cloudflare R2 product image storage is not configured.");
+                "Cloudflare R2 image storage is not configured.");
         }
     }
 }

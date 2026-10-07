@@ -1,0 +1,307 @@
+<section
+    class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
+    aria-labelledby="blog-create-title"
+>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p
+                class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase"
+            >
+                Blog management
+            </p>
+            <h1 id="blog-create-title" class="text-3xl font-bold sm:text-4xl">Create blog</h1>
+            <p class="mt-2 text-(--mawrid-text-muted)">
+                Write a travel article and save it as a draft or publish it immediately.
+            </p>
+        </div>
+        <a
+            pButton
+            severity="secondary"
+            variant="outlined"
+            class="no-underline"
+            routerLink="/admin/blog"
+        >
+            <i class="pi pi-arrow-left" aria-hidden="true"></i>
+            <span>Back to blogs</span>
+        </a>
+    </div>
+
+    <form class="mt-8" [formGroup]="blogForm" (ngSubmit)="submitBlog()" novalidate>
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+            <div class="grid gap-6">
+                <section
+                    class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+                    aria-labelledby="blog-details-title"
+                >
+                    <h2 id="blog-details-title" class="text-xl font-bold">Article details</h2>
+
+                    <div class="mt-5">
+                        <label class="mb-2 block text-sm font-bold" for="blogTitle">Title</label>
+                        <input
+                            pInputText
+                            id="blogTitle"
+                            class="w-full"
+                            formControlName="title"
+                            maxlength="200"
+                            placeholder="e.g. A complete guide to planning Umrah"
+                            required
+                            [invalid]="controls.title.invalid && submitAttempted()"
+                        />
+                        @if (submitAttempted() && controls.title.hasError('required')) {
+                            <p-message severity="error" size="small" variant="simple">
+                                Blog title is required.
+                            </p-message>
+                        }
+                        @if (submitAttempted() && controls.title.hasError('maxlength')) {
+                            <p-message severity="error" size="small" variant="simple">
+                                Title cannot exceed 200 characters.
+                            </p-message>
+                        }
+                        @for (message of serverErrors()['title'] ?? []; track message) {
+                            <p-message severity="error" size="small" variant="simple" [text]="message" />
+                        }
+                    </div>
+
+                    <div class="mt-5">
+                        <label class="mb-2 block text-sm font-bold" for="blogSlug">Slug</label>
+                        <input
+                            pInputText
+                            id="blogSlug"
+                            class="w-full"
+                            formControlName="slug"
+                            maxlength="220"
+                            placeholder="Generated from the title"
+                            [invalid]="controls.slug.invalid && submitAttempted()"
+                        />
+                        <p class="mt-1.5 text-xs text-(--mawrid-text-muted)">
+                            Optional. Leave blank to generate a unique URL slug from the title.
+                        </p>
+                        @if (submitAttempted() && controls.slug.hasError('maxlength')) {
+                            <p-message severity="error" size="small" variant="simple">
+                                Slug cannot exceed 220 characters.
+                            </p-message>
+                        }
+                        @for (message of serverErrors()['slug'] ?? []; track message) {
+                            <p-message severity="error" size="small" variant="simple" [text]="message" />
+                        }
+                    </div>
+
+                    <div class="mt-5">
+                        <label class="mb-2 block text-sm font-bold" for="blogExcerpt">Excerpt</label>
+                        <textarea
+                            pTextarea
+                            id="blogExcerpt"
+                            class="min-h-24 w-full"
+                            formControlName="excerpt"
+                            maxlength="500"
+                            placeholder="A short summary shown on blog cards."
+                            [autoResize]="true"
+                            [invalid]="controls.excerpt.invalid && submitAttempted()"
+                        ></textarea>
+                        <p class="mt-1.5 text-right text-xs text-(--mawrid-text-muted)">
+                            {{ controls.excerpt.value.length }}/500
+                        </p>
+                        @if (submitAttempted() && controls.excerpt.hasError('maxlength')) {
+                            <p-message severity="error" size="small" variant="simple">
+                                Excerpt cannot exceed 500 characters.
+                            </p-message>
+                        }
+                        @for (message of serverErrors()['excerpt'] ?? []; track message) {
+                            <p-message severity="error" size="small" variant="simple" [text]="message" />
+                        }
+                    </div>
+                </section>
+
+                <section
+                    class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+                    aria-labelledby="blog-content-title"
+                >
+                    <div class="mb-4">
+                        <h2 id="blog-content-title" class="text-xl font-bold">Content</h2>
+                        <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+                            Only the formatting options in this toolbar are stored. Unsafe HTML is removed before submission and by the API.
+                        </p>
+                    </div>
+
+                    <div
+                        class="overflow-hidden rounded-xl border border-(--mawrid-border)"
+                        [class.border-red-500]="submitAttempted() && controls.content.invalid"
+                    >
+                        <div
+                            class="flex flex-wrap gap-1 border-b border-(--mawrid-border) bg-(--mawrid-header) p-2"
+                            role="toolbar"
+                            aria-label="Blog formatting"
+                        >
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('bold')" [disabled]="!editorReady()" aria-label="Bold" (click)="run('bold')"><i class="pi pi-bold" aria-hidden="true"></i></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('italic')" [disabled]="!editorReady()" aria-label="Italic" (click)="run('italic')"><i class="pi pi-italic" aria-hidden="true"></i></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('strike')" [disabled]="!editorReady()" aria-label="Strikethrough" (click)="run('strike')"><span class="font-bold line-through">S</span></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('heading', { level: 2 })" [disabled]="!editorReady()" aria-label="Heading 2" (click)="run('heading2')">H2</button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('heading', { level: 3 })" [disabled]="!editorReady()" aria-label="Heading 3" (click)="run('heading3')">H3</button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('bulletList')" [disabled]="!editorReady()" aria-label="Bullet list" (click)="run('bulletList')"><i class="pi pi-list" aria-hidden="true"></i></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('orderedList')" [disabled]="!editorReady()" aria-label="Numbered list" (click)="run('orderedList')"><span class="font-bold">1.</span></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('blockquote')" [disabled]="!editorReady()" aria-label="Block quote" (click)="run('blockquote')"><i class="pi pi-comment" aria-hidden="true"></i></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('codeBlock')" [disabled]="!editorReady()" aria-label="Code block" (click)="run('codeBlock')"><i class="pi pi-code" aria-hidden="true"></i></button>
+                            <button type="button" class="editor-tool" [class.editor-tool-active]="isActive('link')" [disabled]="!editorReady()" aria-label="Add or edit link" (click)="editLink()"><i class="pi pi-link" aria-hidden="true"></i></button>
+                            <span class="mx-1 w-px bg-(--mawrid-border)" aria-hidden="true"></span>
+                            <button type="button" class="editor-tool" [disabled]="!editorReady()" aria-label="Undo" (click)="run('undo')"><i class="pi pi-undo" aria-hidden="true"></i></button>
+                            <button type="button" class="editor-tool" [disabled]="!editorReady()" aria-label="Redo" (click)="run('redo')"><i class="pi pi-refresh" aria-hidden="true"></i></button>
+                        </div>
+                        <tiptap-editor
+                            class="blog-editor bg-(--mawrid-card) text-(--mawrid-font-primary)"
+                            [editor]="editor"
+                        />
+                    </div>
+                    @if (submitAttempted() && controls.content.hasError('required')) {
+                        <p-message severity="error" size="small" variant="simple">
+                            Blog content is required.
+                        </p-message>
+                    }
+                    @if (submitAttempted() && controls.content.hasError('maxlength')) {
+                        <p-message severity="error" size="small" variant="simple">
+                            Content cannot exceed 100,000 characters.
+                        </p-message>
+                    }
+                    @for (message of serverErrors()['content'] ?? []; track message) {
+                        <p-message severity="error" size="small" variant="simple" [text]="message" />
+                    }
+                </section>
+            </div>
+
+            <aside class="grid content-start gap-6">
+                <section
+                    class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow)"
+                    aria-labelledby="blog-publishing-title"
+                >
+                    <h2 id="blog-publishing-title" class="text-lg font-bold">Publishing</h2>
+                    <div class="mt-4 flex items-center justify-between gap-4">
+                        <div>
+                            <label class="font-bold" for="blogPublished">Published</label>
+                            <p class="mt-1 text-xs text-(--mawrid-text-muted)">
+                                {{ controls.isPublished.value ? 'Visible to readers.' : 'Saved as a draft.' }}
+                            </p>
+                        </div>
+                        <p-toggleswitch inputId="blogPublished" formControlName="isPublished" />
+                    </div>
+                </section>
+
+                <section
+                    class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow)"
+                    aria-labelledby="blog-image-title"
+                >
+                    <h2 id="blog-image-title" class="text-lg font-bold">Featured image</h2>
+                    <p class="mt-1 text-xs leading-5 text-(--mawrid-text-muted)">
+                        Upload one JPEG, PNG or WebP image up to 5 MB.
+                    </p>
+                    <p-fileupload
+                        styleClass="mt-4"
+                        name="blogFeaturedImage"
+                        accept="image/jpeg,image/png,image/webp"
+                        chooseLabel="Choose image"
+                        cancelLabel="Clear image"
+                        [multiple]="false"
+                        [maxFileSize]="maxImageBytes"
+                        [fileLimit]="1"
+                        [customUpload]="true"
+                        [showUploadButton]="false"
+                        [showCancelButton]="true"
+                        [disabled]="submitting()"
+                        [files]="selectedImageFiles()"
+                        invalidFileTypeMessageSummary="Unsupported image type"
+                        invalidFileTypeMessageDetail="Choose a JPEG, PNG or WebP image."
+                        invalidFileSizeMessageSummary="Image is too large"
+                        invalidFileSizeMessageDetail="The image must be 5 MB or smaller."
+                        invalidFileLimitMessageSummary="Only one featured image is allowed"
+                        invalidFileLimitMessageDetail="Remove the current image before choosing another."
+                        (onSelect)="onImageSelected($event)"
+                        (onRemove)="onImageRemoved($event)"
+                        (onClear)="clearImage()"
+                    >
+                        <ng-template
+                            #header
+                            let-chooseCallback="chooseCallback"
+                            let-clearCallback="clearCallback"
+                        >
+                            @if (selectedImage()) {
+                                <button
+                                    pButton
+                                    type="button"
+                                    severity="secondary"
+                                    variant="text"
+                                    rounded
+                                    aria-label="Remove featured image"
+                                    [disabled]="submitting()"
+                                    (click)="clearCallback()"
+                                >
+                                    <i class="pi pi-times" aria-hidden="true"></i>
+                                </button>
+                            } @else {
+                                <button
+                                    pButton
+                                    type="button"
+                                    [disabled]="submitting()"
+                                    (click)="chooseCallback()"
+                                >
+                                    <i class="pi pi-plus" aria-hidden="true"></i>
+                                    <span>Choose image</span>
+                                </button>
+                            }
+                        </ng-template>
+                        <ng-template #file let-file>
+                            <div class="min-w-0 py-2">
+                                @if (imagePreviewUrl(); as previewUrl) {
+                                    <img
+                                        class="aspect-video w-full rounded-lg object-cover"
+                                        [src]="previewUrl"
+                                        [alt]="controls.title.value || 'Featured image preview'"
+                                    />
+                                }
+                                <div class="mt-2 flex min-w-0 items-center gap-2">
+                                    <i
+                                        class="pi pi-image shrink-0 text-(--mawrid-font-accent)"
+                                        aria-hidden="true"
+                                    ></i>
+                                    <span class="truncate text-sm font-bold">{{ file.name }}</span>
+                                </div>
+                            </div>
+                        </ng-template>
+                        <ng-template #empty>
+                            <div class="py-5 text-center text-xs text-(--mawrid-text-muted)">
+                                <i class="pi pi-image mb-2 block text-2xl" aria-hidden="true"></i>
+                                Drag an image here or choose one from your device.
+                            </div>
+                        </ng-template>
+                    </p-fileupload>
+                </section>
+            </aside>
+        </div>
+
+        @if (createdBlog()) {
+            <p-message
+                styleClass="mt-6 w-full"
+                severity="warn"
+                text="The blog details are already saved. Only the featured image upload will be retried."
+            />
+        }
+        @if (errorMessage(); as message) {
+            <p-message styleClass="mt-6 w-full" severity="error" [text]="message" />
+        }
+
+        <div class="mt-6 flex flex-wrap justify-end gap-3">
+            <a pButton severity="secondary" variant="outlined" routerLink="/admin/blog">Cancel</a>
+            <p-button
+                type="submit"
+                [label]="
+                    submitting()
+                        ? createdBlog()
+                            ? 'Uploading image…'
+                            : 'Creating blog…'
+                        : createdBlog()
+                          ? 'Retry image upload'
+                          : 'Create blog'
+                "
+                [loading]="submitting()"
+                [disabled]="submitting() || !editorReady()"
+            />
+        </div>
+    </form>
+</section>
