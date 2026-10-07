@@ -1,0 +1,141 @@
+<section
+    class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
+    aria-labelledby="blog-details-title"
+>
+    <p-toast position="top-center" />
+
+    @if (loading()) {
+        <p class="text-(--mawrid-text-muted)" aria-live="polite">
+            <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i>
+            Loading blog details…
+        </p>
+    } @else if (blog(); as blogDetails) {
+        <div class="flex flex-wrap items-start justify-between gap-5">
+            <div class="max-w-3xl">
+                <p
+                    class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase"
+                >
+                    Blog management
+                </p>
+                <div class="flex flex-wrap items-center gap-3">
+                    <h1 id="blog-details-title" class="text-3xl leading-tight font-bold sm:text-4xl">
+                        {{ blogDetails.title }}
+                    </h1>
+                    <span
+                        class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold"
+                        [style.background-color]="
+                            blogDetails.isPublished
+                                ? 'var(--mawrid-status-published-bg)'
+                                : 'var(--mawrid-status-draft-bg)'
+                        "
+                        [style.color]="
+                            blogDetails.isPublished
+                                ? 'var(--mawrid-status-published-text)'
+                                : 'var(--mawrid-status-draft-text)'
+                        "
+                    >
+                        {{ blogDetails.isPublished ? 'Published' : 'Draft' }}
+                    </span>
+                </div>
+                <p class="mt-2 text-(--mawrid-text-muted)">/{{ blogDetails.slug }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                <a
+                    pButton
+                    severity="secondary"
+                    variant="outlined"
+                    class="no-underline"
+                    routerLink="/admin/blog"
+                >
+                    <i class="pi pi-arrow-left" aria-hidden="true"></i>
+                    <span>Back to blogs</span>
+                </a>
+                <p-button
+                    label="Delete"
+                    icon="pi pi-trash"
+                    severity="danger"
+                    [loading]="deleting()"
+                    [disabled]="deleting()"
+                    (onClick)="deleteBlog(blogDetails)"
+                />
+            </div>
+        </div>
+
+        @if (errorMessage(); as message) {
+            <p
+                class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500"
+                role="alert"
+            >
+                {{ message }}
+            </p>
+        }
+
+        <div class="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+            <main class="grid content-start gap-6">
+                @if (blogDetails.featuredImageUrl) {
+                    <img
+                        class="aspect-[16/9] w-full rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) object-contain shadow-(--mawrid-card-shadow)"
+                        [src]="blogDetails.featuredImageUrl"
+                        [alt]="blogDetails.title"
+                    />
+                }
+
+                @if (blogDetails.excerpt) {
+                    <p
+                        class="rounded-xl border-l-4 border-(--mawrid-accent) bg-(--mawrid-card) p-5 text-lg leading-8 text-(--mawrid-text-muted)"
+                    >
+                        {{ blogDetails.excerpt }}
+                    </p>
+                }
+
+                <article
+                    class="blog-details-content rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-8"
+                    [innerHTML]="blogDetails.content"
+                ></article>
+            </main>
+
+            <aside
+                class="h-fit rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow)"
+                aria-label="Blog metadata"
+            >
+                <h2 class="text-lg font-bold">Details</h2>
+                <dl class="mt-4 grid gap-4">
+                    <div>
+                        <dt class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">
+                            Created
+                        </dt>
+                        <dd class="mt-1">{{ blogDetails.createdAt | date: 'medium' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">
+                            Updated
+                        </dt>
+                        <dd class="mt-1">{{ blogDetails.updatedAt | date: 'medium' }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">
+                            Published
+                        </dt>
+                        <dd class="mt-1">
+                            {{
+                                blogDetails.publishedAt
+                                    ? (blogDetails.publishedAt | date: 'medium')
+                                    : 'Not published'
+                            }}
+                        </dd>
+                    </div>
+                </dl>
+            </aside>
+        </div>
+    } @else {
+        <div class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-8">
+            <p class="text-red-500" role="alert">
+                {{ errorMessage() || 'Unable to load the blog.' }}
+            </p>
+            <a pButton class="mt-6 no-underline" routerLink="/admin/blog">Back to blogs</a>
+        </div>
+    }
+
+    <p-confirmdialog [dismissableMask]="true" />
+</section>
