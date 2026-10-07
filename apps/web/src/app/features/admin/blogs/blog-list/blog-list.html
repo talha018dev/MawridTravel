@@ -1,0 +1,145 @@
+<section
+    class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
+    aria-labelledby="blog-list-title"
+>
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p
+                class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase"
+            >
+                Blog management
+            </p>
+            <h1 id="blog-list-title" class="text-3xl font-bold sm:text-4xl">Blogs</h1>
+            <p class="mt-2 text-(--mawrid-text-muted)">
+                Search, filter and manage your travel articles.
+            </p>
+        </div>
+        <a pButton routerLink="/admin/blog/new" class="no-underline">
+            <i class="pi pi-plus" aria-hidden="true"></i>
+            <span>Create blog</span>
+        </a>
+    </div>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-[minmax(0,1fr)_12rem]">
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="blogSearch">Search blogs</label>
+            <p-iconfield>
+                <p-inputicon class="pi pi-search" />
+                <input
+                    pInputText
+                    id="blogSearch"
+                    class="w-full"
+                    type="search"
+                    placeholder="Title, slug or excerpt"
+                    autocomplete="off"
+                    [formControl]="searchControl"
+                />
+            </p-iconfield>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="blogStatus">Status</label>
+            <p-select
+                inputId="blogStatus"
+                class="w-full"
+                styleClass="w-full"
+                [formControl]="statusControl"
+                [options]="statusOptions"
+                [checkmark]="true"
+                optionLabel="label"
+                optionValue="value"
+            />
+        </div>
+    </div>
+
+    @if (errorMessage(); as message) {
+        <div
+            class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500"
+            role="alert"
+        >
+            <span>{{ message }}</span>
+            <button
+                type="button"
+                class="cursor-pointer rounded-lg border border-current px-3 py-1.5 font-bold"
+                (click)="retry()"
+            >
+                Retry
+            </button>
+        </div>
+    }
+
+    @if (blogs().length > 0) {
+        <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            @for (blog of blogs(); track blog.id) {
+                <article
+                    class="group overflow-hidden rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) shadow-(--mawrid-card-shadow) transition-transform duration-200 hover:-translate-y-1 motion-reduce:transition-none"
+                >
+                    <div class="aspect-video overflow-hidden bg-(--mawrid-header)">
+                        @if (blog.featuredImageUrl) {
+                            <img
+                                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none"
+                                [src]="blog.featuredImageUrl"
+                                [alt]="blog.title"
+                                loading="lazy"
+                            />
+                        } @else {
+                            <div
+                                class="grid h-full place-items-center text-(--mawrid-text-muted)"
+                                aria-hidden="true"
+                            >
+                                <i class="pi pi-image text-4xl"></i>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="p-5">
+                        <div class="mb-3 flex items-center justify-between gap-3">
+                            <span
+                                class="inline-flex rounded-full px-2.5 py-1 text-xs font-bold"
+                                [style.background-color]="
+                                    blog.isPublished
+                                        ? 'var(--mawrid-status-published-bg)'
+                                        : 'var(--mawrid-status-draft-bg)'
+                                "
+                                [style.color]="
+                                    blog.isPublished
+                                        ? 'var(--mawrid-status-published-text)'
+                                        : 'var(--mawrid-status-draft-text)'
+                                "
+                            >
+                                {{ blog.isPublished ? 'Published' : 'Draft' }}
+                            </span>
+                            <time class="text-xs text-(--mawrid-text-muted)" [attr.datetime]="blog.updatedAt">
+                                {{ blog.updatedAt | date: 'mediumDate' }}
+                            </time>
+                        </div>
+
+                        <h2 class="text-xl leading-snug font-bold">{{ blog.title }}</h2>
+                        <p class="mt-2 line-clamp-3 text-sm leading-6 text-(--mawrid-text-muted)">
+                            {{ description(blog) }}
+                        </p>
+                    </div>
+                </article>
+            }
+        </div>
+    } @else if (!loading() && !errorMessage()) {
+        <div
+            class="mt-6 rounded-2xl border border-dashed border-(--mawrid-border) p-12 text-center text-(--mawrid-text-muted)"
+        >
+            <i class="pi pi-file-edit mb-3 block text-4xl" aria-hidden="true"></i>
+            <p class="font-bold">No blogs match your search and filter.</p>
+        </div>
+    }
+
+    <div #loadMoreSentinel class="h-1" aria-hidden="true"></div>
+
+    @if (loading()) {
+        <div class="flex items-center justify-center gap-2 py-8 text-(--mawrid-text-muted)" aria-live="polite">
+            <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+            <span>{{ blogs().length === 0 ? 'Loading blogs…' : 'Loading more blogs…' }}</span>
+        </div>
+    } @else if (blogs().length > 0 && !hasMore()) {
+        <p class="py-8 text-center text-sm text-(--mawrid-text-muted)" aria-live="polite">
+            Showing all {{ totalCount() }} {{ totalCount() === 1 ? 'blog' : 'blogs' }}.
+        </p>
+    }
+</section>

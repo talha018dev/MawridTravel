@@ -45,6 +45,14 @@ export const routes: Routes = [
         title: 'Admin dashboard | Mawrid Travel',
       },
       {
+        path: 'blog',
+        loadComponent: () =>
+          import('@app/features/admin/blogs/blog-list/blog-list').then(
+            ({ BlogList }) => BlogList,
+          ),
+        title: 'Blogs | Mawrid Travel',
+      },
+      {
         path: 'products/list',
         loadComponent: () =>
           import('@app/features/admin/products/product-list/product-list').then(

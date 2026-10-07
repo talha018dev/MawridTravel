@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
     Product,
     ProductAdminService,
@@ -21,20 +21,24 @@ import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { ConfirmationService, MessageService } from '@openng/optimus-ui/api';
 import { TablePageEvent } from '@openng/optimus-ui/types/table';
 import {
-    BehaviorSubject,
     catchError,
-    combineLatest,
     debounceTime,
     distinctUntilChanged,
     finalize,
     map,
     of,
-    startWith,
+    Subject,
     switchMap,
     tap,
 } from 'rxjs';
 
 type ProductStatusFilter = 'all' | 'active' | 'inactive';
+
+interface ProductListRequest {
+    search: string;
+    status: ProductStatusFilter;
+    page: number;
+}
 
 @Component({
     selector: 'app-product-list',
@@ -61,7 +65,9 @@ export class ProductList implements OnInit {
     private readonly confirmationService = inject(ConfirmationService);
     private readonly messageService = inject(MessageService);
     private readonly destroyRef = inject(DestroyRef);
-    private readonly pageChanges = new BehaviorSubject(1);
+    private readonly route = inject(ActivatedRoute);
+    private readonly router = inject(Router);
+    private readonly requestChanges = new Subject<ProductListRequest>();
 
     protected readonly pageSize = 20;
     protected readonly searchControl = new FormControl('', { nonNullable: true });
@@ -84,26 +90,13 @@ export class ProductList implements OnInit {
     protected readonly errorMessage = signal<string | null>(null);
 
     ngOnInit(): void {
-        const search$ = this.searchControl.valueChanges.pipe(
-            startWith(this.searchControl.value),
-            map((value) => value.trim()),
-            debounceTime(350),
-            distinctUntilChanged(),
-            tap(() => this.resetToFirstPage()),
-        );
-        const status$ = this.statusControl.valueChanges.pipe(
-            startWith(this.statusControl.value),
-            distinctUntilChanged(),
-            tap(() => this.resetToFirstPage()),
-        );
-
-        combineLatest([search$, status$, this.pageChanges])
+        this.requestChanges
             .pipe(
                 tap(() => {
                     this.loading.set(true);
                     this.errorMessage.set(null);
                 }),
-                switchMap(([search, status, page]) =>
+                switchMap(({ search, status, page }) =>
                     this.productAdminService
                         .getProducts({
                             search: search || undefined,
@@ -135,10 +128,41 @@ export class ProductList implements OnInit {
                 this.totalCount.set(response.totalCount);
                 this.products.set(response.items);
             });
+
+        this.searchControl.valueChanges
+            .pipe(
+                map((value) => value.trim()),
+                debounceTime(350),
+                distinctUntilChanged(),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe(() => void this.updateUrl());
+
+        this.statusControl.valueChanges
+            .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => void this.updateUrl());
+
+        this.route.queryParamMap
+            .pipe(
+                map((params) => ({
+                    search: params.get('search')?.trim() ?? '',
+                    status: this.parseStatus(params.get('status')),
+                })),
+                distinctUntilChanged(
+                    (previous, current) =>
+                        previous.search === current.search && previous.status === current.status,
+                ),
+                takeUntilDestroyed(this.destroyRef),
+            )
+            .subscribe(({ search, status }) => {
+                this.searchControl.setValue(search, { emitEvent: false });
+                this.statusControl.setValue(status, { emitEvent: false });
+                this.requestPage(1);
+            });
     }
 
     protected changePage(event: TablePageEvent): void {
-        this.pageChanges.next(Math.floor(event.first / event.rows) + 1);
+        this.requestPage(Math.floor(event.first / event.rows) + 1);
     }
 
     protected deleteProduct(product: Product): void {
@@ -172,9 +196,9 @@ export class ProductList implements OnInit {
                     });
 
                     if (this.products().length === 1 && this.page() > 1) {
-                        this.pageChanges.next(this.page() - 1);
+                        this.requestPage(this.page() - 1);
                     } else {
-                        this.pageChanges.next(this.page());
+                        this.requestPage(this.page());
                     }
                 },
                 error: () => this.errorMessage.set('Unable to delete the product. Please try again.'),
@@ -192,9 +216,29 @@ export class ProductList implements OnInit {
         }
     }
 
-    private resetToFirstPage(): void {
-        if (this.pageChanges.value !== 1) {
-            this.pageChanges.next(1);
-        }
+    private updateUrl(): Promise<boolean> {
+        const search = this.searchControl.value.trim();
+        const status = this.statusControl.value;
+
+        return this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+                search: search || null,
+                status: status === 'all' ? null : status,
+            },
+            replaceUrl: true,
+        });
+    }
+
+    private parseStatus(value: string | null): ProductStatusFilter {
+        return value === 'active' || value === 'inactive' ? value : 'all';
+    }
+
+    private requestPage(page: number): void {
+        this.requestChanges.next({
+            search: this.searchControl.value.trim(),
+            status: this.statusControl.value,
+            page,
+        });
     }
 }
