@@ -1,4 +1,5 @@
 using MawridTravel.Api.Domain.Authorization;
+using MawridTravel.Api.Features.Admin.Blogs;
 using MawridTravel.Api.Features.Admin.Dashboard;
 using MawridTravel.Api.Features.Admin.Products;
 
@@ -15,6 +16,7 @@ internal static class AdminEndpoints
             .RequireAuthorization(PolicyNames.Admin);
 
         group.MapDashboardEndpoint();
+        group.MapAdminBlogEndpoints();
         group.MapAdminProductEndpoints();
 
         return endpoints;

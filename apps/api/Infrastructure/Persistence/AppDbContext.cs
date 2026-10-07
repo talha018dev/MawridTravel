@@ -7,6 +7,8 @@ namespace MawridTravel.Api.Infrastructure.Persistence;
 public sealed class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options)
 {
+    public DbSet<BlogPost> BlogPosts => Set<BlogPost>();
+
     public DbSet<Product> Products => Set<Product>();
 
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
