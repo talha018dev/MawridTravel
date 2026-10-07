@@ -45,11 +45,20 @@
                     pButton
                     severity="secondary"
                     variant="outlined"
-                    class="no-underline"
+                    class="border-(--mawrid-secondary)! bg-transparent! text-(--mawrid-secondary)! no-underline hover:bg-(--mawrid-nav-hover)! dark:border-slate-500! dark:text-white!"
                     routerLink="/admin/blog"
                 >
                     <i class="pi pi-arrow-left" aria-hidden="true"></i>
                     <span>Back to blogs</span>
+                </a>
+                <a
+                    pButton
+                    severity="secondary"
+                    class="border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! no-underline hover:border-(--mawrid-secondary)! hover:bg-(--mawrid-secondary)! dark:border-slate-500! dark:bg-transparent! dark:text-white! dark:hover:bg-(--mawrid-nav-hover)!"
+                    [routerLink]="['/admin/blog', blogDetails.id, 'edit']"
+                >
+                    <i class="pi pi-pencil" aria-hidden="true"></i>
+                    <span>Edit</span>
                 </a>
                 <p-button
                     label="Delete"
@@ -75,7 +84,7 @@
             <main class="grid content-start gap-6">
                 @if (blogDetails.featuredImageUrl) {
                     <img
-                        class="aspect-[16/9] w-full rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) object-contain shadow-(--mawrid-card-shadow)"
+                        class="aspect-[16/9] w-full rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) object-contain p-3 shadow-(--mawrid-card-shadow)"
                         [src]="blogDetails.featuredImageUrl"
                         [alt]="blogDetails.title"
                     />

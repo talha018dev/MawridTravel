@@ -4,6 +4,7 @@ import {
     Component,
     DestroyRef,
     inject,
+    OnInit,
     OnDestroy,
     PLATFORM_ID,
     signal,
@@ -17,7 +18,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
     Blog,
     BlogAdminService,
@@ -100,17 +101,24 @@ function richTextRequired(control: AbstractControl): Record<string, boolean> | n
     styleUrl: './blog-create.css',
     encapsulation: ViewEncapsulation.None,
 })
-export class BlogCreate implements OnDestroy {
+export class BlogCreate implements OnInit, OnDestroy {
     private readonly blogAdminService = inject(BlogAdminService);
     private readonly destroyRef = inject(DestroyRef);
     private readonly platformId = inject(PLATFORM_ID);
+    private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
+    private readonly blogId = this.route.snapshot.paramMap.get('id');
 
+    protected readonly isEditMode = this.blogId !== null;
+    protected readonly loading = signal(this.isEditMode);
+    protected readonly loadFailed = signal(false);
     protected readonly submitAttempted = signal(false);
     protected readonly submitting = signal(false);
     protected readonly maxImageBytes = 5 * 1024 * 1024;
     protected readonly selectedImage = signal<File | null>(null);
     protected readonly imagePreviewUrl = signal<string | null>(null);
+    protected readonly existingImageUrl = signal<string | null>(null);
+    protected readonly removeExistingImage = signal(false);
     protected readonly createdBlog = signal<Blog | null>(null);
     protected readonly editorReady = signal(true);
     protected readonly editorVersion = signal(0);
@@ -166,6 +174,39 @@ export class BlogCreate implements OnDestroy {
 
     protected get controls() {
         return this.blogForm.controls;
+    }
+
+    ngOnInit(): void {
+        if (!this.blogId) {
+            return;
+        }
+
+        this.blogAdminService
+            .getBlog(this.blogId)
+            .pipe(finalize(() => this.loading.set(false)))
+            .subscribe({
+                next: (blog) => {
+                    this.blogForm.setValue({
+                        title: blog.title,
+                        slug: blog.slug,
+                        excerpt: blog.excerpt ?? '',
+                        content: blog.content,
+                        isPublished: blog.isPublished,
+                    });
+                    this.editor.commands.setContent(blog.content);
+                    this.existingImageUrl.set(blog.featuredImageUrl);
+                },
+                error: (error: HttpErrorResponse) => {
+                    this.loadFailed.set(true);
+                    this.errorMessage.set(
+                        error.status === 401 || error.status === 403
+                            ? 'Your admin session has expired or you no longer have permission.'
+                            : error.status === 404
+                              ? 'This blog could not be found.'
+                              : 'Unable to load the blog. Please try again.',
+                    );
+                },
+            });
     }
 
     ngOnDestroy(): void {
@@ -253,6 +294,7 @@ export class BlogCreate implements OnDestroy {
         this.revokeImagePreview();
         this.selectedImage.set(image);
         this.imagePreviewUrl.set(image ? URL.createObjectURL(image) : null);
+        this.removeExistingImage.set(false);
         this.errorMessage.set(null);
     }
 
@@ -268,6 +310,15 @@ export class BlogCreate implements OnDestroy {
         this.selectedImage.set(null);
     }
 
+    protected removeCurrentImage(): void {
+        this.clearImage();
+        this.removeExistingImage.set(true);
+    }
+
+    protected keepCurrentImage(): void {
+        this.removeExistingImage.set(false);
+    }
+
     protected selectedImageFiles(): File[] {
         const image = this.selectedImage();
         return image ? [image] : [];
@@ -279,10 +330,8 @@ export class BlogCreate implements OnDestroy {
         this.serverErrors.set({});
 
         const existingBlog = this.createdBlog();
-        if (!existingBlog) {
-            const sanitizedContent = this.sanitizeContent(this.editor?.getHTML() ?? '');
-            this.controls.content.setValue(sanitizedContent);
-        }
+        const sanitizedContent = this.sanitizeContent(this.editor?.getHTML() ?? '');
+        this.controls.content.setValue(sanitizedContent);
 
         if (!existingBlog && this.blogForm.invalid) {
             this.blogForm.markAllAsTouched();
@@ -297,14 +346,24 @@ export class BlogCreate implements OnDestroy {
         this.submitting.set(true);
         const blogRequest$ = existingBlog
             ? of(existingBlog)
-            : this.blogAdminService.createBlog(this.buildRequest());
+            : this.isEditMode
+              ? this.blogAdminService.updateBlog(this.blogId!, this.buildRequest())
+              : this.blogAdminService.createBlog(this.buildRequest());
 
         blogRequest$
             .pipe(
                 switchMap((blog) => {
-                    this.createdBlog.set(blog);
+                    if (!this.isEditMode) {
+                        this.createdBlog.set(blog);
+                    }
                     const image = this.selectedImage();
                     if (!image) {
+                        if (this.isEditMode && this.removeExistingImage()) {
+                            return this.blogAdminService.deleteFeaturedImage(blog.id).pipe(
+                                map(() => ({ blog, imageUploaded: true })),
+                                catchError(() => of({ blog, imageUploaded: false })),
+                            );
+                        }
                         return of({ blog, imageUploaded: true });
                     }
 
@@ -316,17 +375,24 @@ export class BlogCreate implements OnDestroy {
                 finalize(() => this.submitting.set(false)),
             )
             .subscribe({
-                next: ({ imageUploaded }) => {
+                next: ({ blog, imageUploaded }) => {
                     if (!imageUploaded) {
                         this.errorMessage.set(
-                            'The blog was created, but the featured image could not be uploaded. The image remains selected so you can retry.',
+                            this.isEditMode
+                                ? 'The blog details were saved, but the featured image change failed. Try saving again.'
+                                : 'The blog was created, but the featured image could not be uploaded. The image remains selected so you can retry.',
                         );
                         return;
                     }
 
-                    void this.router.navigate(['/admin/blog']);
+                    const destination = this.isEditMode
+                        ? ['/admin/blog', blog.id]
+                        : ['/admin/blog'];
+                    void this.router.navigate(destination, {
+                        queryParams: { updated: this.isEditMode ? 'true' : undefined },
+                    });
                 },
-                error: (error: HttpErrorResponse) => this.handleCreateError(error),
+                error: (error: HttpErrorResponse) => this.handleSaveError(error),
             });
     }
 
@@ -349,7 +415,7 @@ export class BlogCreate implements OnDestroy {
         }).trim();
     }
 
-    private handleCreateError(error: HttpErrorResponse): void {
+    private handleSaveError(error: HttpErrorResponse): void {
         const problem = error.error as ValidationProblem | null;
         if (error.status === 400 && problem?.errors) {
             this.serverErrors.set(problem.errors);
@@ -364,7 +430,9 @@ export class BlogCreate implements OnDestroy {
         this.errorMessage.set(
             error.status === 401 || error.status === 403
                 ? 'Your admin session has expired or you no longer have permission.'
-                : 'Unable to create the blog. Please try again.',
+                : error.status === 404
+                  ? 'This blog no longer exists.'
+                  : `Unable to ${this.isEditMode ? 'update' : 'create'} the blog. Please try again.`,
         );
     }
 

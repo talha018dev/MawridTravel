@@ -38,7 +38,22 @@ export class BlogDetails implements OnInit {
             .getBlog(this.blogId)
             .pipe(finalize(() => this.loading.set(false)))
             .subscribe({
-                next: (blog) => this.blog.set(blog),
+                next: (blog) => {
+                    this.blog.set(blog);
+                    if (this.route.snapshot.queryParamMap.get('updated') === 'true') {
+                        this.messageService.add({
+                            severity: 'success',
+                            summary: 'Blog updated',
+                            detail: `“${blog.title}” was updated successfully.`,
+                        });
+                        void this.router.navigate([], {
+                            relativeTo: this.route,
+                            queryParams: { updated: null },
+                            queryParamsHandling: 'merge',
+                            replaceUrl: true,
+                        });
+                    }
+                },
                 error: (error: HttpErrorResponse) =>
                     this.errorMessage.set(
                         error.status === 404

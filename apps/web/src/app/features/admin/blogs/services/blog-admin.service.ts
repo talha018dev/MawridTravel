@@ -65,6 +65,12 @@ export class BlogAdminService {
         return this.http.post<Blog>(this.apiUrl, request, { withCredentials: true });
     }
 
+    updateBlog(blogId: string, request: BlogWriteRequest): Observable<Blog> {
+        return this.http.put<Blog>(`${this.apiUrl}/${blogId}`, request, {
+            withCredentials: true,
+        });
+    }
+
     getBlog(blogId: string): Observable<Blog> {
         return this.http.get<Blog>(`${this.apiUrl}/${blogId}`, { withCredentials: true });
     }
@@ -76,6 +82,12 @@ export class BlogAdminService {
     uploadFeaturedImage(blogId: string, file: File): Observable<Blog> {
         return this.http.post<Blog>(`${this.apiUrl}/${blogId}/featured-image`, file, {
             headers: { 'Content-Type': file.type },
+            withCredentials: true,
+        });
+    }
+
+    deleteFeaturedImage(blogId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${blogId}/featured-image`, {
             withCredentials: true,
         });
     }

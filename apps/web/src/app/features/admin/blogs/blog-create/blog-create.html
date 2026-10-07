@@ -9,9 +9,15 @@
             >
                 Blog management
             </p>
-            <h1 id="blog-create-title" class="text-3xl font-bold sm:text-4xl">Create blog</h1>
+            <h1 id="blog-create-title" class="text-3xl font-bold sm:text-4xl">
+                {{ isEditMode ? 'Edit blog' : 'Create blog' }}
+            </h1>
             <p class="mt-2 text-(--mawrid-text-muted)">
-                Write a travel article and save it as a draft or publish it immediately.
+                {{
+                    isEditMode
+                        ? 'Update the article details, content, publishing state and featured image.'
+                        : 'Write a travel article and save it as a draft or publish it immediately.'
+                }}
             </p>
         </div>
         <a
@@ -26,6 +32,16 @@
         </a>
     </div>
 
+    @if (loading()) {
+        <p class="mt-8 text-(--mawrid-text-muted)" aria-live="polite">
+            <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i>
+            Loading blog…
+        </p>
+    } @else if (loadFailed()) {
+        <p class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
+            {{ errorMessage() }}
+        </p>
+    } @else {
     <form class="mt-8" [formGroup]="blogForm" (ngSubmit)="submitBlog()" novalidate>
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
             <div class="grid gap-6">
@@ -192,8 +208,45 @@
                     <p class="mt-1 text-xs leading-5 text-(--mawrid-text-muted)">
                         Upload one JPEG, PNG or WebP image up to 5 MB.
                     </p>
+                    @if (existingImageUrl() && !selectedImage() && !removeExistingImage()) {
+                        <div class="relative mt-4 overflow-hidden rounded-lg border border-(--mawrid-border) bg-(--mawrid-header)">
+                            <img
+                                class="aspect-video w-full object-contain p-3"
+                                [src]="existingImageUrl()"
+                                [alt]="controls.title.value || 'Current featured image'"
+                            />
+                            <button
+                                pButton
+                                type="button"
+                                severity="danger"
+                                rounded
+                                class="absolute! top-2! right-2!"
+                                aria-label="Remove current featured image"
+                                [disabled]="submitting()"
+                                (click)="removeCurrentImage()"
+                            >
+                                <i class="pi pi-times" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    } @else if (existingImageUrl() && removeExistingImage()) {
+                        <div class="mt-4 flex items-center justify-between gap-3 rounded-lg border border-(--mawrid-border) p-3">
+                            <span class="text-sm text-(--mawrid-text-muted)">
+                                The current image will be removed.
+                            </span>
+                            <button
+                                pButton
+                                type="button"
+                                severity="secondary"
+                                variant="text"
+                                [disabled]="submitting()"
+                                (click)="keepCurrentImage()"
+                            >
+                                Keep image
+                            </button>
+                        </div>
+                    }
                     <p-fileupload
-                        styleClass="mt-4"
+                        styleClass="blog-featured-upload mt-4"
                         name="blogFeaturedImage"
                         accept="image/jpeg,image/png,image/webp"
                         chooseLabel="Choose image"
@@ -225,8 +278,7 @@
                                 <button
                                     pButton
                                     type="button"
-                                    severity="secondary"
-                                    variant="text"
+                                    severity="danger"
                                     rounded
                                     aria-label="Remove featured image"
                                     [disabled]="submitting()"
@@ -247,10 +299,10 @@
                             }
                         </ng-template>
                         <ng-template #file let-file>
-                            <div class="min-w-0 py-2">
+                            <div class="blog-featured-file min-w-0 py-2">
                                 @if (imagePreviewUrl(); as previewUrl) {
                                     <img
-                                        class="aspect-video w-full rounded-lg object-cover"
+                                        class="aspect-video w-full rounded-lg object-contain p-3"
                                         [src]="previewUrl"
                                         [alt]="controls.title.value || 'Featured image preview'"
                                     />
@@ -294,14 +346,19 @@
                     submitting()
                         ? createdBlog()
                             ? 'Uploading image…'
-                            : 'Creating blog…'
+                            : isEditMode
+                              ? 'Saving changes…'
+                              : 'Creating blog…'
                         : createdBlog()
                           ? 'Retry image upload'
-                          : 'Create blog'
+                          : isEditMode
+                            ? 'Save changes'
+                            : 'Create blog'
                 "
                 [loading]="submitting()"
                 [disabled]="submitting() || !editorReady()"
             />
         </div>
     </form>
+    }
 </section>

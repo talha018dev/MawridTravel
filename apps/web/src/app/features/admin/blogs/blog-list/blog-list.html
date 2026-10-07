@@ -73,7 +73,7 @@
             @if (blog.featuredImageUrl) {
               <a class="block h-full" [routerLink]="['/admin/blog', blog.id]" tabindex="-1">
                 <img
-                  class="h-full w-full object-contain"
+                                    class="h-full w-full object-contain p-3"
                   [src]="blog.featuredImageUrl"
                   [alt]="blog.title"
                   loading="lazy"

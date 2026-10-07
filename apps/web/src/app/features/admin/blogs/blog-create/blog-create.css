@@ -44,6 +44,24 @@
     box-shadow: inset 0 0 0 1px var(--mawrid-accent);
 }
 
+.blog-featured-upload {
+    position: relative;
+}
+
+.blog-featured-upload .p-progressbar {
+    display: none;
+}
+
+.blog-featured-upload:has(.blog-featured-file) .p-fileupload-header {
+    position: absolute;
+    z-index: 1;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
 .blog-editor .tiptap h2,
 .blog-editor .tiptap h3,
 .blog-editor .tiptap h4 {

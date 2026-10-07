@@ -61,6 +61,14 @@ export const routes: Routes = [
         title: 'Blogs | Mawrid Travel',
       },
       {
+        path: 'blog/:id/edit',
+        loadComponent: () =>
+          import('@app/features/admin/blogs/blog-create/blog-create').then(
+            ({ BlogCreate }) => BlogCreate,
+          ),
+        title: 'Edit blog | Mawrid Travel',
+      },
+      {
         path: 'blog/:id',
         loadComponent: () =>
           import('@app/features/admin/blogs/blog-details/blog-details').then(
