@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
     CatalogProduct,
@@ -29,6 +29,10 @@ export class ProductDetails implements OnInit {
     protected readonly activeImageIndex = signal(0);
     protected readonly selectedColorId = signal<string | null>(null);
     protected readonly selectedSizeId = signal<string | null>(null);
+    protected readonly detailsExpanded = signal(false);
+    protected readonly descriptionIsLong = computed(
+        () => (this.product()?.description?.trim().length ?? 0) > 320,
+    );
 
     ngOnInit(): void {
         const slug = this.route.snapshot.paramMap.get('slug');
@@ -44,6 +48,7 @@ export class ProductDetails implements OnInit {
             .subscribe({
                 next: (product) => {
                     this.product.set(product);
+                    this.detailsExpanded.set(false);
                     this.selectedColorId.set(this.option(product, 'Color')?.values[0]?.id ?? null);
                     this.selectedSizeId.set(this.option(product, 'Size')?.values[0]?.id ?? null);
                     this.configureSeo(product);
@@ -78,6 +83,10 @@ export class ProductDetails implements OnInit {
 
     protected galleryTransform(): string {
         return `translateX(-${this.activeImageIndex() * 100}%)`;
+    }
+
+    protected toggleDetails(): void {
+        this.detailsExpanded.update((expanded) => !expanded);
     }
 
     protected formatPrice(product: CatalogProduct, value = product.price): string {

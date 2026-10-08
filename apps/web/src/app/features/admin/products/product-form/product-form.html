@@ -233,7 +233,7 @@
         <div formArrayName="colors">
           <div class="mb-4 flex items-center justify-between gap-3">
             <div>
-              <h3 class="font-bold">Colors</h3>
+              <h3 class="font-bold">Colors <span class="text-(--mawrid-font-accent)">*</span></h3>
               <p class="mt-1 text-sm text-(--mawrid-text-muted)">
                 Name each color and choose its swatch.
               </p>
@@ -285,9 +285,11 @@
               </div>
             } @empty {
               <p
-                class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)"
+                class="rounded-xl border border-dashed p-5 text-center text-sm text-(--mawrid-text-muted)"
+                [class.border-(--mawrid-accent)]="submitAttempted()"
+                [class.border-(--mawrid-border)]="!submitAttempted()"
               >
-                No color options added.
+                At least one color is required.
               </p>
             }
           </div>
@@ -296,7 +298,7 @@
         <div formArrayName="sizes">
           <div class="mb-4 flex items-center justify-between gap-3">
             <div>
-              <h3 class="font-bold">Sizes</h3>
+              <h3 class="font-bold">Sizes <span class="text-(--mawrid-font-accent)">*</span></h3>
               <p class="mt-1 text-sm text-(--mawrid-text-muted)">
                 Use labels such as S, M, L, or 42.
               </p>
@@ -342,9 +344,11 @@
               </div>
             } @empty {
               <p
-                class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)"
+                class="rounded-xl border border-dashed p-5 text-center text-sm text-(--mawrid-text-muted)"
+                [class.border-(--mawrid-accent)]="submitAttempted()"
+                [class.border-(--mawrid-border)]="!submitAttempted()"
               >
-                No size options added.
+                At least one size is required.
               </p>
             }
           </div>

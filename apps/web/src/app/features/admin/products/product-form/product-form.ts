@@ -106,8 +106,12 @@ export class ProductForm {
             wholeNumberValidator,
         ]),
         isActive: new FormControl(false, { nonNullable: true }),
-        colors: new FormArray<ColorFormGroup>([]),
-        sizes: new FormArray<SizeFormGroup>([]),
+        colors: new FormArray<ColorFormGroup>([], {
+            validators: [Validators.minLength(1)],
+        }),
+        sizes: new FormArray<SizeFormGroup>([], {
+            validators: [Validators.minLength(1)],
+        }),
     });
 
     private loadedProductId: string | null = null;

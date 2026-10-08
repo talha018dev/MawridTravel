@@ -104,14 +104,8 @@
             </section>
 
             <aside class="lg:sticky lg:top-6">
-                <p class="text-sm font-semibold text-(--mawrid-text-muted)">
-                    {{ productDetails.stockQuantity > 0 ? 'In stock' : 'Currently unavailable' }}
-                    · By Mawrid Travel
-                </p>
-                <h1 class="mt-3 text-3xl leading-tight font-bold sm:text-4xl">{{ productDetails.name }}</h1>
-
-                <div class="mt-5 flex flex-wrap items-baseline gap-2">
-                    <p class="text-2xl font-extrabold text-(--mawrid-font-accent)">
+                <div class="flex flex-wrap items-baseline gap-2">
+                    <p class="text-3xl font-extrabold text-(--mawrid-font-accent) sm:text-4xl">
                         {{ formatPrice(productDetails) }}
                     </p>
                     @if (productDetails.compareAtPrice !== null && productDetails.compareAtPrice > productDetails.price) {
@@ -123,6 +117,11 @@
                         <span class="text-sm font-semibold text-(--mawrid-text-muted)">({{ discount }}% off)</span>
                     }
                 </div>
+                <h1 class="mt-4 text-lg leading-snug font-bold sm:text-xl">{{ productDetails.name }}</h1>
+                <p class="mt-3 text-sm font-semibold text-(--mawrid-text-muted)">
+                    {{ productDetails.stockQuantity > 0 ? 'In stock' : 'Currently unavailable' }}
+                    &middot; By Mawrid Travel
+                </p>
 
                 @if (option(productDetails, 'Color'); as colorOption) {
                     <fieldset class="mt-7">
@@ -192,9 +191,31 @@
 
                 <div class="mt-8 border-t border-(--mawrid-border) pt-6">
                     <h2 class="text-lg font-bold">Product details</h2>
-                    <p class="mt-3 whitespace-pre-line leading-7 text-(--mawrid-text-muted)">
+                    <p
+                        id="product-description"
+                        class="mt-3 overflow-hidden whitespace-pre-line leading-7 text-(--mawrid-text-muted) transition-[max-height] duration-500 ease-in-out"
+                        [class.max-h-36]="descriptionIsLong() && !detailsExpanded()"
+                        [class.max-h-[100rem]]="!descriptionIsLong() || detailsExpanded()"
+                    >
                         {{ productDetails.description || 'No additional product details are available.' }}
                     </p>
+                    @if (descriptionIsLong()) {
+                        <button
+                            type="button"
+                            class="mt-3 cursor-pointer font-bold text-(--mawrid-font-accent) transition-colors hover:text-(--mawrid-nav-hover-text) hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                            [attr.aria-expanded]="detailsExpanded()"
+                            aria-controls="product-description"
+                            (click)="toggleDetails()"
+                        >
+                            {{ detailsExpanded() ? 'Show less' : 'Show more' }}
+                            <i
+                                class="pi ml-1 text-xs"
+                                [class.pi-chevron-up]="detailsExpanded()"
+                                [class.pi-chevron-down]="!detailsExpanded()"
+                                aria-hidden="true"
+                            ></i>
+                        </button>
+                    }
                 </div>
             </aside>
         </div>

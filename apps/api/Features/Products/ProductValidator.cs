@@ -63,6 +63,7 @@ internal static class ProductValidator
     {
         if (options is null)
         {
+            errors["options"] = ["At least one color and one size are required."];
             return;
         }
 
@@ -70,6 +71,22 @@ internal static class ProductValidator
         {
             errors["options"] = ["A product cannot have more than five options."];
             return;
+        }
+
+        var requiredOptionErrors = new List<string>();
+        if (!HasOptionWithValue(options, "Color"))
+        {
+            requiredOptionErrors.Add("At least one color is required.");
+        }
+
+        if (!HasOptionWithValue(options, "Size"))
+        {
+            requiredOptionErrors.Add("At least one size is required.");
+        }
+
+        if (requiredOptionErrors.Count > 0)
+        {
+            errors["options"] = [.. requiredOptionErrors];
         }
 
         var optionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -144,6 +161,13 @@ internal static class ProductValidator
             }
         }
     }
+
+    private static bool HasOptionWithValue(
+        IReadOnlyList<ProductOptionWriteRequest> options,
+        string requiredName) =>
+        options.Any(option =>
+            string.Equals(option.Name?.Trim(), requiredName, StringComparison.OrdinalIgnoreCase) &&
+            option.Values?.Any(value => !string.IsNullOrWhiteSpace(value.Value)) == true);
 
     public static Dictionary<string, string[]> ValidateImage(
         string? altText,

@@ -178,6 +178,30 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task CreateProduct_WithoutRequiredOptions_ReturnsValidationProblem()
+    {
+        using var client = await CreateAdminClientAsync();
+
+        var response = await client.PostAsJsonAsync(
+            "/api/admin/products",
+            new
+            {
+                name = "Product without options",
+                price = 100m,
+                currency = "BDT",
+                stockQuantity = 5,
+                isActive = true,
+                options = Array.Empty<object>()
+            });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblem>();
+        Assert.NotNull(problem);
+        Assert.Contains("At least one color is required.", problem.Errors["options"]);
+        Assert.Contains("At least one size is required.", problem.Errors["options"]);
+    }
+
+    [Fact]
     public async Task Admin_CanUploadAndDeleteProductImage()
     {
         var storage = new FakeProductImageStorage();
@@ -364,8 +388,31 @@ public sealed class ProductTests(ApiFactory factory) : IClassFixture<ApiFactory>
             compareAtPrice,
             currency = "bdt",
             stockQuantity,
-            isActive
+            isActive,
+            options = new object[]
+            {
+                new
+                {
+                    name = "Color",
+                    sortOrder = 0,
+                    values = new[]
+                    {
+                        new { value = "Black", colorHex = "#000000", sortOrder = 0 }
+                    }
+                },
+                new
+                {
+                    name = "Size",
+                    sortOrder = 1,
+                    values = new[]
+                    {
+                        new { value = "One size", colorHex = (string?)null, sortOrder = 0 }
+                    }
+                }
+            }
         };
+
+    private sealed record ValidationProblem(Dictionary<string, string[]> Errors);
 
     private sealed record ProductResponse(
         Guid Id,
