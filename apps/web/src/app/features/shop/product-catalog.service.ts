@@ -74,4 +74,8 @@ export class ProductCatalogService {
 
         return this.http.get<CatalogResponse>(this.apiUrl, { params: httpParams });
     }
+
+    getProduct(slug: string): Observable<CatalogProduct> {
+        return this.http.get<CatalogProduct>(`${this.apiUrl}/${encodeURIComponent(slug)}`);
+    }
 }

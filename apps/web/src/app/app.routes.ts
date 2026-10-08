@@ -37,6 +37,14 @@ export const routes: Routes = [
     title: 'Travel essentials shop | Mawrid Travel',
   },
   {
+    path: 'shop/:slug',
+    loadComponent: () =>
+      import('@app/features/shop/product-details/product-details').then(
+        ({ ProductDetails }) => ProductDetails,
+      ),
+    title: 'Product | Mawrid Travel',
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],
