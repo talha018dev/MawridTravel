@@ -1,0 +1,27 @@
+@if (loading()) {
+    <p
+        class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 text-(--mawrid-text-muted) sm:py-12"
+        aria-live="polite"
+    >
+        <i class="pi pi-spin pi-spinner mr-2" aria-hidden="true"></i>
+        Loading blog…
+    </p>
+} @else if (loadFailed()) {
+    <div class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12">
+        <p class="rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
+            {{ errorMessage() }}
+        </p>
+        <a pButton class="mt-6 no-underline" routerLink="/admin/blog">Back to blogs</a>
+    </div>
+} @else {
+    <app-blog-form
+        mode="edit"
+        [blog]="blog()"
+        [submitting]="submitting()"
+        [serverErrors]="serverErrors()"
+        [errorMessage]="errorMessage()"
+        (submitted)="submit($event)"
+        (cancelled)="cancel()"
+        (changed)="clearErrors()"
+    />
+}

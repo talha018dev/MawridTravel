@@ -23,6 +23,7 @@ import { IconField } from '@openng/optimus-ui/iconfield';
 import { InputIcon } from '@openng/optimus-ui/inputicon';
 import { InputText } from '@openng/optimus-ui/inputtext';
 import { Select } from '@openng/optimus-ui/select';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 import { debounceTime, distinctUntilChanged, finalize, map } from 'rxjs';
 
 type BlogStatusFilter = 'all' | 'published' | 'draft';
@@ -38,6 +39,7 @@ type BlogStatusFilter = 'all' | 'published' | 'draft';
         ReactiveFormsModule,
         RouterLink,
         Select,
+        Tooltip,
     ],
     templateUrl: './blog-list.html',
 })

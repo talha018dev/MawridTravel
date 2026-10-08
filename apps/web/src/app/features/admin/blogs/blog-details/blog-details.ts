@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
     Blog,
@@ -17,8 +17,6 @@ import { finalize } from 'rxjs';
     providers: [ConfirmationService, MessageService],
     imports: [Button, ButtonDirective, ConfirmDialog, DatePipe, RouterLink, Toast],
     templateUrl: './blog-details.html',
-    styleUrl: './blog-details.css',
-    encapsulation: ViewEncapsulation.None,
 })
 export class BlogDetails implements OnInit {
     private readonly blogAdminService = inject(BlogAdminService);

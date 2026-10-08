@@ -122,6 +122,32 @@
             <p class="mt-2 line-clamp-3 text-sm leading-6 text-(--mawrid-text-muted)">
               {{ description(blog) }}
             </p>
+            <div class="mt-4 flex justify-end gap-1 border-t border-(--mawrid-border) pt-3">
+              <a
+                pButton
+                text
+                rounded
+                severity="secondary"
+                pTooltip="View details"
+                tooltipPosition="top"
+                [attr.aria-label]="'View ' + blog.title"
+                [routerLink]="['/admin/blog', blog.id]"
+              >
+                <i class="pi pi-eye" aria-hidden="true"></i>
+              </a>
+              <a
+                pButton
+                text
+                rounded
+                severity="secondary"
+                pTooltip="Edit blog"
+                tooltipPosition="top"
+                [attr.aria-label]="'Edit ' + blog.title"
+                [routerLink]="['/admin/blog', blog.id, 'edit']"
+              >
+                <i class="pi pi-pencil" aria-hidden="true"></i>
+              </a>
+            </div>
           </div>
         </article>
       }
