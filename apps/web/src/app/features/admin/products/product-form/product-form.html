@@ -218,6 +218,136 @@
 
       <section
         class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+        aria-labelledby="product-options-title"
+      >
+        <div class="border-b border-(--mawrid-border) pb-4">
+          <h2 id="product-options-title" class="text-xl font-bold">Product options</h2>
+          <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+            Add the colors and sizes customers can choose for this product.
+          </p>
+        </div>
+
+        <div class="mt-6 grid gap-8 lg:grid-cols-2">
+          <div formArrayName="colors">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold">Colors</h3>
+                <p class="mt-1 text-sm text-(--mawrid-text-muted)">Name each color and choose its swatch.</p>
+              </div>
+              <button pButton type="button" severity="secondary" variant="outlined" (click)="addColor()">
+                <i class="pi pi-plus" aria-hidden="true"></i>
+                Add color
+              </button>
+            </div>
+
+            <div class="grid gap-3">
+              @for (color of colors.controls; track color; let index = $index) {
+                <div
+                  class="grid grid-cols-[3rem_minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
+                  [formGroupName]="index"
+                >
+                  <input
+                    type="color"
+                    class="h-10 w-12 cursor-pointer rounded-lg border border-(--mawrid-border) bg-transparent p-1"
+                    formControlName="colorHex"
+                    [attr.aria-label]="'Color swatch ' + (index + 1)"
+                  />
+                  <div>
+                    <input
+                      pInputText
+                      class="w-full"
+                      formControlName="value"
+                      maxlength="100"
+                      [placeholder]="'Color name, e.g. Navy'"
+                      [invalid]="color.controls.value.invalid && submitAttempted()"
+                    />
+                    @if (submitAttempted() && color.controls.value.invalid) {
+                      <p-message severity="error" size="small" variant="simple">
+                        Enter a color name.
+                      </p-message>
+                    }
+                  </div>
+                  <button
+                    pButton
+                    type="button"
+                    severity="danger"
+                    variant="text"
+                    rounded
+                    aria-label="Remove color"
+                    (click)="removeColor(index)"
+                  >
+                    <i class="pi pi-times" aria-hidden="true"></i>
+                  </button>
+                </div>
+              } @empty {
+                <p class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)">
+                  No color options added.
+                </p>
+              }
+            </div>
+          </div>
+
+          <div formArrayName="sizes">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h3 class="font-bold">Sizes</h3>
+                <p class="mt-1 text-sm text-(--mawrid-text-muted)">Use labels such as S, M, L, or 42.</p>
+              </div>
+              <button pButton type="button" severity="secondary" variant="outlined" (click)="addSize()">
+                <i class="pi pi-plus" aria-hidden="true"></i>
+                Add size
+              </button>
+            </div>
+
+            <div class="grid gap-3">
+              @for (size of sizes.controls; track size; let index = $index) {
+                <div
+                  class="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
+                  [formGroupName]="index"
+                >
+                  <div>
+                    <input
+                      pInputText
+                      class="w-full"
+                      formControlName="value"
+                      maxlength="100"
+                      placeholder="Size, e.g. Medium"
+                      [invalid]="size.controls.value.invalid && submitAttempted()"
+                    />
+                    @if (submitAttempted() && size.controls.value.invalid) {
+                      <p-message severity="error" size="small" variant="simple">
+                        Enter a size.
+                      </p-message>
+                    }
+                  </div>
+                  <button
+                    pButton
+                    type="button"
+                    severity="danger"
+                    variant="text"
+                    rounded
+                    aria-label="Remove size"
+                    (click)="removeSize(index)"
+                  >
+                    <i class="pi pi-times" aria-hidden="true"></i>
+                  </button>
+                </div>
+              } @empty {
+                <p class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)">
+                  No size options added.
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+
+        @for (message of serverErrors()['options'] ?? []; track message) {
+          <p-message class="mt-4" severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </section>
+
+      <section
+        class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
         aria-labelledby="edit-product-images-title"
       >
         <div class="mb-6 border-b border-(--mawrid-border) pb-4">

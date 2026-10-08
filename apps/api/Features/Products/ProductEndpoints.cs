@@ -71,6 +71,8 @@ internal static class ProductEndpoints
         var totalCount = await query.CountAsync(cancellationToken);
         var products = await query
             .Include(product => product.Images)
+            .Include(product => product.Options)
+            .ThenInclude(option => option.Values)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
@@ -92,6 +94,8 @@ internal static class ProductEndpoints
         var product = await dbContext.Products
             .AsNoTracking()
             .Include(item => item.Images)
+            .Include(item => item.Options)
+            .ThenInclude(option => option.Values)
             .SingleOrDefaultAsync(
                 item => item.IsActive && item.Slug == normalizedSlug,
                 cancellationToken);

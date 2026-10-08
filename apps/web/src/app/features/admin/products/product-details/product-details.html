@@ -118,6 +118,25 @@
               {{ productDetails.description || 'No description provided.' }}
             </dd>
           </div>
+          @for (option of productDetails.options; track option.id) {
+            <div class="sm:col-span-2">
+              <dt class="text-sm font-bold text-(--mawrid-text-muted)">{{ option.name }}</dt>
+              <dd class="mt-2 flex flex-wrap gap-2">
+                @for (value of option.values; track value.id) {
+                  <span class="inline-flex items-center gap-2 rounded-full border border-(--mawrid-border) px-3 py-1 text-sm font-semibold">
+                    @if (value.colorHex) {
+                      <span
+                        class="size-3 rounded-full border border-black/20"
+                        [style.background-color]="value.colorHex"
+                        aria-hidden="true"
+                      ></span>
+                    }
+                    {{ value.value }}
+                  </span>
+                }
+              </dd>
+            </div>
+          }
         </dl>
       </section>
 

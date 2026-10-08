@@ -27,4 +27,6 @@ public sealed class Product
     public DateTimeOffset UpdatedAt { get; set; }
 
     public ICollection<ProductImage> Images { get; set; } = [];
+
+    public ICollection<ProductOption> Options { get; set; } = [];
 }

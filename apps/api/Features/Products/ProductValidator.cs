@@ -52,7 +52,97 @@ internal static class ProductValidator
             errors["stockQuantity"] = ["Stock quantity must be zero or greater."];
         }
 
+        ValidateOptions(request.Options, errors);
+
         return errors;
+    }
+
+    private static void ValidateOptions(
+        IReadOnlyList<ProductOptionWriteRequest>? options,
+        Dictionary<string, string[]> errors)
+    {
+        if (options is null)
+        {
+            return;
+        }
+
+        if (options.Count > 5)
+        {
+            errors["options"] = ["A product cannot have more than five options."];
+            return;
+        }
+
+        var optionNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        for (var optionIndex = 0; optionIndex < options.Count; optionIndex++)
+        {
+            var option = options[optionIndex];
+            var name = option.Name?.Trim();
+            if (string.IsNullOrWhiteSpace(name) || name.Length > 50)
+            {
+                errors[$"options[{optionIndex}].name"] =
+                    ["Option name is required and must not exceed 50 characters."];
+            }
+            else if (!optionNames.Add(name))
+            {
+                errors[$"options[{optionIndex}].name"] = ["Option names must be unique."];
+            }
+
+            if (option.SortOrder < 0)
+            {
+                errors[$"options[{optionIndex}].sortOrder"] =
+                    ["Sort order must be zero or greater."];
+            }
+
+            if (option.Values is null || option.Values.Count == 0)
+            {
+                errors[$"options[{optionIndex}].values"] =
+                    ["Each option must contain at least one value."];
+                continue;
+            }
+
+            if (option.Values.Count > 50)
+            {
+                errors[$"options[{optionIndex}].values"] =
+                    ["An option cannot contain more than 50 values."];
+                continue;
+            }
+
+            var values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (var valueIndex = 0; valueIndex < option.Values.Count; valueIndex++)
+            {
+                var value = option.Values[valueIndex];
+                var normalizedValue = value.Value?.Trim();
+                var key = $"options[{optionIndex}].values[{valueIndex}]";
+                if (string.IsNullOrWhiteSpace(normalizedValue) || normalizedValue.Length > 100)
+                {
+                    errors[$"{key}.value"] =
+                        ["Option value is required and must not exceed 100 characters."];
+                }
+                else if (!values.Add(normalizedValue))
+                {
+                    errors[$"{key}.value"] = ["Option values must be unique."];
+                }
+
+                if (value.ColorHex is not null &&
+                    !System.Text.RegularExpressions.Regex.IsMatch(
+                        value.ColorHex,
+                        "^#[0-9A-Fa-f]{6}$"))
+                {
+                    errors[$"{key}.colorHex"] =
+                        ["Color must be a six-digit hex value such as #1D4ED8."];
+                }
+                else if (string.Equals(name, "Color", StringComparison.OrdinalIgnoreCase) &&
+                         value.ColorHex is null)
+                {
+                    errors[$"{key}.colorHex"] = ["A swatch color is required."];
+                }
+
+                if (value.SortOrder < 0)
+                {
+                    errors[$"{key}.sortOrder"] = ["Sort order must be zero or greater."];
+                }
+            }
+        }
     }
 
     public static Dictionary<string, string[]> ValidateImage(

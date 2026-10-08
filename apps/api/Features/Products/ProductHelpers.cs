@@ -35,6 +35,21 @@ internal static class ProductHelpers
                     image.AltText,
                     image.SortOrder,
                     image.IsPrimary))
+                .ToArray(),
+            product.Options
+                .OrderBy(option => option.SortOrder)
+                .Select(option => new ProductOptionResponse(
+                    option.Id,
+                    option.Name,
+                    option.SortOrder,
+                    option.Values
+                        .OrderBy(value => value.SortOrder)
+                        .Select(value => new ProductOptionValueResponse(
+                            value.Id,
+                            value.Value,
+                            value.ColorHex,
+                            value.SortOrder))
+                        .ToArray()))
                 .ToArray());
 
     public static async Task<string> CreateUniqueSlugAsync(

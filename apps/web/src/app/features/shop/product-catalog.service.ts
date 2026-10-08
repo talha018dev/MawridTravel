@@ -22,6 +22,21 @@ export interface CatalogProduct {
     currency: string;
     stockQuantity: number;
     images: CatalogProductImage[];
+    options: CatalogProductOption[];
+}
+
+export interface CatalogProductOptionValue {
+    id: string;
+    value: string;
+    colorHex: string | null;
+    sortOrder: number;
+}
+
+export interface CatalogProductOption {
+    id: string;
+    name: string;
+    sortOrder: number;
+    values: CatalogProductOptionValue[];
 }
 
 export interface CatalogResponse {

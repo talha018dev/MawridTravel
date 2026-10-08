@@ -123,15 +123,20 @@
                         (mouseenter)="startImageRotation(product)"
                         (mouseleave)="stopImageRotation(product.id)"
                     >
-                        @if (activeImage(product); as image) {
-                            <img
-                                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.025] motion-reduce:transition-none"
-                                [src]="image.url"
-                                [alt]="image.altText || product.name"
-                                loading="lazy"
-                                width="640"
-                                height="800"
-                            />
+                        @if (product.images.length > 0) {
+                            @for (image of product.images; track image.id; let imageIndex = $index) {
+                                <img
+                                    class="absolute inset-0 h-full w-full object-cover transition-transform duration-800 ease-out motion-reduce:transition-none"
+                                    [class.z-10]="imageIndex === activeImageIndex(product.id)"
+                                    [style.transform]="imageTransform(product.id, imageIndex)"
+                                    [style.opacity]="imageOpacity(product.id, imageIndex)"
+                                    [src]="image.url"
+                                    [alt]="image.altText || product.name"
+                                    loading="lazy"
+                                    width="640"
+                                    height="800"
+                                />
+                            }
                         } @else {
                             <div class="grid h-full place-items-center text-slate-400" aria-hidden="true">
                                 <i class="pi pi-image text-5xl"></i>
@@ -150,18 +155,30 @@
                         }
                     </div>
                     <div class="flex flex-1 flex-col pt-3">
-                        <div class="mb-2 flex h-3 items-center gap-1.5" aria-label="{{ product.images.length }} product images">
-                            @for (image of product.images.slice(0, 4); track image.id; let imageIndex = $index) {
-                                <span
-                                    class="size-2.5 rounded-full border border-black/10"
-                                    [class.bg-(--mawrid-font-primary)]="imageIndex === activeImageIndex(product.id)"
-                                    [class.bg-(--mawrid-border)]="imageIndex !== activeImageIndex(product.id)"
-                                    aria-hidden="true"
-                                ></span>
-                            } @empty {
-                                <span class="size-2.5 rounded-full bg-(--mawrid-border)" aria-hidden="true"></span>
-                            }
-                        </div>
+                        @if (productOption(product, 'Color'); as colorOption) {
+                            <div class="mb-2 flex h-4 items-center gap-1.5" aria-label="Available colors">
+                                @for (color of colorOption.values; track color.id) {
+                                    <span
+                                        class="size-3 rounded-full border border-black/20 shadow-sm"
+                                        [style.background-color]="color.colorHex || 'transparent'"
+                                        [title]="color.value"
+                                    ></span>
+                                }
+                            </div>
+                        } @else {
+                            <div class="mb-2 flex h-3 items-center gap-1.5" aria-label="{{ product.images.length }} product images">
+                                @for (image of product.images.slice(0, 4); track image.id; let imageIndex = $index) {
+                                    <span
+                                        class="size-2.5 rounded-full border border-black/10"
+                                        [class.bg-(--mawrid-font-primary)]="imageIndex === activeImageIndex(product.id)"
+                                        [class.bg-(--mawrid-border)]="imageIndex !== activeImageIndex(product.id)"
+                                        aria-hidden="true"
+                                    ></span>
+                                } @empty {
+                                    <span class="size-2.5 rounded-full bg-(--mawrid-border)" aria-hidden="true"></span>
+                                }
+                            </div>
+                        }
                         <h2 class="truncate text-sm leading-5 font-medium" [title]="product.name">
                             {{ product.name }}
                         </h2>
@@ -175,6 +192,15 @@
                                 aria-label="Mawrid Travel product"
                             ></i>
                         </p>
+                        @if (productOption(product, 'Size'); as sizeOption) {
+                            <div class="mt-2 flex flex-wrap gap-1.5" aria-label="Available sizes">
+                                @for (size of sizeOption.values; track size.id) {
+                                    <span class="rounded-md border border-(--mawrid-border) px-2 py-0.5 text-xs font-semibold">
+                                        {{ size.value }}
+                                    </span>
+                                }
+                            </div>
+                        }
                         <div class="mt-2 flex flex-wrap items-baseline gap-x-1 gap-y-1">
                             <p class="text-base font-extrabold text-(--mawrid-font-accent)">
                                 {{ formatPrice(product) }}

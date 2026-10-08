@@ -6,7 +6,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import {
     CatalogProduct,
-    CatalogProductImage,
+    CatalogProductOption,
     ProductCatalogService,
 } from '@app/features/shop/product-catalog.service';
 import { ButtonDirective } from '@openng/optimus-ui/button';
@@ -45,6 +45,7 @@ export class ProductCatalog implements OnInit {
     private readonly title = inject(Title);
     private readonly pageSize = 20;
     private readonly imageRotationTimers = new Map<string, ReturnType<typeof setInterval>>();
+    private readonly imageTransitionTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
     protected readonly searchControl = new FormControl('', { nonNullable: true });
     protected readonly stockControl = new FormControl<StockFilter>('all', { nonNullable: true });
@@ -68,10 +69,12 @@ export class ProductCatalog implements OnInit {
     protected readonly loading = signal(true);
     protected readonly errorMessage = signal<string | null>(null);
     protected readonly activeImageIndexes = signal<Record<string, number>>({});
+    protected readonly previousImageIndexes = signal<Record<string, number>>({});
 
     constructor() {
         this.destroyRef.onDestroy(() => {
             this.imageRotationTimers.forEach((timer) => clearInterval(timer));
+            this.imageTransitionTimers.forEach((timer) => clearTimeout(timer));
         });
     }
 
@@ -138,25 +141,47 @@ export class ProductCatalog implements OnInit {
         return Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100);
     }
 
-    protected activeImage(product: CatalogProduct): CatalogProductImage | undefined {
-        return product.images[this.activeImageIndex(product.id)] ?? product.images[0];
-    }
-
     protected activeImageIndex(productId: string): number {
         return this.activeImageIndexes()[productId] ?? 0;
+    }
+
+    protected previousImageIndex(productId: string): number | null {
+        return this.previousImageIndexes()[productId] ?? null;
+    }
+
+    protected imageTransform(productId: string, imageIndex: number): string {
+        if (imageIndex === this.activeImageIndex(productId)) return 'translateX(0)';
+        if (imageIndex === this.previousImageIndex(productId)) return 'translateX(-100%)';
+
+        return 'translateX(100%)';
+    }
+
+    protected imageOpacity(productId: string, imageIndex: number): number {
+        return imageIndex === this.activeImageIndex(productId) ||
+            imageIndex === this.previousImageIndex(productId)
+            ? 1
+            : 0;
+    }
+
+    protected productOption(
+        product: CatalogProduct,
+        name: string,
+    ): CatalogProductOption | undefined {
+        return product.options?.find(
+            (option) => option.name.toLowerCase() === name.toLowerCase(),
+        );
     }
 
     protected startImageRotation(product: CatalogProduct): void {
         if (product.images.length < 2 || this.imageRotationTimers.has(product.id)) return;
 
-        const timer = setInterval(() => {
-            this.activeImageIndexes.update((indexes) => ({
-                ...indexes,
-                [product.id]: ((indexes[product.id] ?? 0) + 1) % product.images.length,
-            }));
-        }, 2000);
+        const initialTimer = setTimeout(() => {
+            this.advanceProductImage(product);
+            const rotationTimer = setInterval(() => this.advanceProductImage(product), 2000);
+            this.imageRotationTimers.set(product.id, rotationTimer);
+        }, 500);
 
-        this.imageRotationTimers.set(product.id, timer);
+        this.imageRotationTimers.set(product.id, initialTimer);
     }
 
     protected stopImageRotation(productId: string): void {
@@ -165,7 +190,39 @@ export class ProductCatalog implements OnInit {
         if (timer) clearInterval(timer);
 
         this.imageRotationTimers.delete(productId);
-        this.activeImageIndexes.update((indexes) => ({ ...indexes, [productId]: 0 }));
+        this.transitionToImage(productId, 0);
+    }
+
+    private advanceProductImage(product: CatalogProduct): void {
+        const currentIndex = this.activeImageIndex(product.id);
+        this.transitionToImage(product.id, (currentIndex + 1) % product.images.length);
+    }
+
+    private transitionToImage(productId: string, nextIndex: number): void {
+        const currentIndex = this.activeImageIndex(productId);
+        if (currentIndex === nextIndex) return;
+
+        const existingTimer = this.imageTransitionTimers.get(productId);
+        if (existingTimer) clearTimeout(existingTimer);
+
+        this.previousImageIndexes.update((indexes) => ({
+            ...indexes,
+            [productId]: currentIndex,
+        }));
+        this.activeImageIndexes.update((indexes) => ({
+            ...indexes,
+            [productId]: nextIndex,
+        }));
+
+        const transitionTimer = setTimeout(() => {
+            this.previousImageIndexes.update((indexes) => {
+                const updatedIndexes = { ...indexes };
+                delete updatedIndexes[productId];
+                return updatedIndexes;
+            });
+            this.imageTransitionTimers.delete(productId);
+        }, 800);
+        this.imageTransitionTimers.set(productId, transitionTimer);
     }
 
     protected pageQuery(page: number): Params {

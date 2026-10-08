@@ -9,7 +9,18 @@ internal sealed record ProductWriteRequest(
     decimal? CompareAtPrice,
     string? Currency,
     int StockQuantity,
-    bool IsActive);
+    bool IsActive,
+    IReadOnlyList<ProductOptionWriteRequest>? Options);
+
+internal sealed record ProductOptionWriteRequest(
+    string? Name,
+    int SortOrder,
+    IReadOnlyList<ProductOptionValueWriteRequest>? Values);
+
+internal sealed record ProductOptionValueWriteRequest(
+    string? Value,
+    string? ColorHex,
+    int SortOrder);
 
 internal sealed record ProductResponse(
     Guid Id,
@@ -24,7 +35,20 @@ internal sealed record ProductResponse(
     bool IsActive,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt,
-    IReadOnlyList<ProductImageResponse> Images);
+    IReadOnlyList<ProductImageResponse> Images,
+    IReadOnlyList<ProductOptionResponse> Options);
+
+internal sealed record ProductOptionResponse(
+    Guid Id,
+    string Name,
+    int SortOrder,
+    IReadOnlyList<ProductOptionValueResponse> Values);
+
+internal sealed record ProductOptionValueResponse(
+    Guid Id,
+    string Value,
+    string? ColorHex,
+    int SortOrder);
 
 internal sealed record ProductImageResponse(
     Guid Id,

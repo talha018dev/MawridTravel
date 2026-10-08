@@ -38,6 +38,8 @@ internal static class ProductHandlers
         var totalCount = await query.CountAsync(cancellationToken);
         var products = await query
             .Include(product => product.Images)
+            .Include(product => product.Options)
+            .ThenInclude(option => option.Values)
             .OrderByDescending(product => product.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
@@ -59,6 +61,8 @@ internal static class ProductHandlers
         var product = await dbContext.Products
             .AsNoTracking()
             .Include(item => item.Images)
+            .Include(item => item.Options)
+            .ThenInclude(option => option.Values)
             .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
 
         return product is null
@@ -111,7 +115,8 @@ internal static class ProductHandlers
             StockQuantity = request.StockQuantity,
             IsActive = request.IsActive,
             CreatedAt = now,
-            UpdatedAt = now
+            UpdatedAt = now,
+            Options = CreateOptions(request.Options)
         };
 
         dbContext.Products.Add(product);
@@ -138,6 +143,8 @@ internal static class ProductHandlers
 
         var product = await dbContext.Products
             .Include(item => item.Images)
+            .Include(item => item.Options)
+            .ThenInclude(option => option.Values)
             .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
         if (product is null)
         {
@@ -172,6 +179,9 @@ internal static class ProductHandlers
         product.StockQuantity = request.StockQuantity;
         product.IsActive = request.IsActive;
         product.UpdatedAt = timeProvider.GetUtcNow();
+
+        dbContext.ProductOptions.RemoveRange(product.Options);
+        product.Options = CreateOptions(request.Options);
 
         await dbContext.SaveChangesAsync(cancellationToken);
         return Results.Ok(product.ToResponse(imageStorage));
@@ -215,4 +225,27 @@ internal static class ProductHandlers
 
     private static string? NormalizeSku(string? value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim().ToUpperInvariant();
+
+    private static List<ProductOption> CreateOptions(
+        IReadOnlyList<ProductOptionWriteRequest>? requests) =>
+        requests?
+            .Where(option => !string.IsNullOrWhiteSpace(option.Name))
+            .Select(option => new ProductOption
+            {
+                Id = Guid.NewGuid(),
+                Name = option.Name!.Trim(),
+                SortOrder = option.SortOrder,
+                Values = option.Values?
+                    .Where(value => !string.IsNullOrWhiteSpace(value.Value))
+                    .Select(value => new ProductOptionValue
+                    {
+                        Id = Guid.NewGuid(),
+                        Value = value.Value!.Trim(),
+                        ColorHex = NormalizeOptional(value.ColorHex)?.ToUpperInvariant(),
+                        SortOrder = value.SortOrder
+                    })
+                    .ToList() ?? []
+            })
+            .Where(option => option.Values.Count > 0)
+            .ToList() ?? [];
 }

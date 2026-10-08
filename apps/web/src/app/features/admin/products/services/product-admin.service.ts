@@ -13,6 +13,30 @@ export interface CreateProductRequest {
     currency: string;
     stockQuantity: number;
     isActive: boolean;
+    options: ProductOptionRequest[];
+}
+
+export interface ProductOptionRequest {
+    name: string;
+    sortOrder: number;
+    values: ProductOptionValueRequest[];
+}
+
+export interface ProductOptionValueRequest {
+    value: string;
+    colorHex: string | null;
+    sortOrder: number;
+}
+
+export interface ProductOptionValue extends ProductOptionValueRequest {
+    id: string;
+}
+
+export interface ProductOption {
+    id: string;
+    name: string;
+    sortOrder: number;
+    values: ProductOptionValue[];
 }
 
 export interface ProductImage {
@@ -38,6 +62,7 @@ export interface Product {
     createdAt: string;
     updatedAt: string;
     images: ProductImage[];
+    options: ProductOption[];
 }
 
 export interface ProductListResponse {

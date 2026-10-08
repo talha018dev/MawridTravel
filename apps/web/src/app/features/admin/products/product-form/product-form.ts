@@ -1,6 +1,7 @@
 import { Component, computed, effect, input, output, signal } from '@angular/core';
 import {
     AbstractControl,
+    FormArray,
     FormControl,
     FormGroup,
     ReactiveFormsModule,
@@ -30,6 +31,15 @@ function wholeNumberValidator(control: AbstractControl): Record<string, boolean>
     const value = control.value as number | null;
     return value === null || Number.isInteger(value) ? null : { wholeNumber: true };
 }
+
+type ColorFormGroup = FormGroup<{
+    value: FormControl<string>;
+    colorHex: FormControl<string>;
+}>;
+
+type SizeFormGroup = FormGroup<{
+    value: FormControl<string>;
+}>;
 
 @Component({
     selector: 'app-product-form',
@@ -94,6 +104,8 @@ export class ProductForm {
             wholeNumberValidator,
         ]),
         isActive: new FormControl(false, { nonNullable: true }),
+        colors: new FormArray<ColorFormGroup>([]),
+        sizes: new FormArray<SizeFormGroup>([]),
     });
 
     private loadedProductId: string | null = null;
@@ -106,7 +118,7 @@ export class ProductForm {
             }
 
             this.loadedProductId = product.id;
-            this.productForm.setValue({
+            this.productForm.patchValue({
                 name: product.name,
                 slug: product.slug,
                 description: product.description ?? '',
@@ -117,6 +129,7 @@ export class ProductForm {
                 stockQuantity: product.stockQuantity,
                 isActive: product.isActive,
             });
+            this.loadOptions(product);
             this.existingImages.set(product.images);
         });
 
@@ -125,6 +138,30 @@ export class ProductForm {
 
     protected get controls() {
         return this.productForm.controls;
+    }
+
+    protected get colors(): FormArray<ColorFormGroup> {
+        return this.controls.colors;
+    }
+
+    protected get sizes(): FormArray<SizeFormGroup> {
+        return this.controls.sizes;
+    }
+
+    protected addColor(): void {
+        this.colors.push(this.createColorGroup('', '#000000'));
+    }
+
+    protected removeColor(index: number): void {
+        this.colors.removeAt(index);
+    }
+
+    protected addSize(): void {
+        this.sizes.push(this.createSizeGroup(''));
+    }
+
+    protected removeSize(index: number): void {
+        this.sizes.removeAt(index);
     }
 
     protected submitForm(): void {
@@ -146,6 +183,30 @@ export class ProductForm {
                 currency: value.currency.trim().toUpperCase(),
                 stockQuantity: value.stockQuantity!,
                 isActive: value.isActive,
+                options: [
+                    ...(value.colors.length > 0
+                        ? [{
+                              name: 'Color',
+                              sortOrder: 0,
+                              values: value.colors.map((color, index) => ({
+                                  value: color.value.trim(),
+                                  colorHex: color.colorHex.toUpperCase(),
+                                  sortOrder: index,
+                              })),
+                          }]
+                        : []),
+                    ...(value.sizes.length > 0
+                        ? [{
+                              name: 'Size',
+                              sortOrder: 1,
+                              values: value.sizes.map((size, index) => ({
+                                  value: size.value.trim(),
+                                  colorHex: null,
+                                  sortOrder: index,
+                              })),
+                          }]
+                        : []),
+                ],
             },
             newImages: this.selectedImages(),
             imageIdsToDelete: this.imageIdsToDelete(),
@@ -198,5 +259,49 @@ export class ProductForm {
     private optionalValue(value: string): string | null {
         const normalized = value.trim();
         return normalized || null;
+    }
+
+    private createColorGroup(value: string, colorHex: string): ColorFormGroup {
+        return new FormGroup({
+            value: new FormControl(value, {
+                nonNullable: true,
+                validators: [Validators.required, Validators.maxLength(100)],
+            }),
+            colorHex: new FormControl(colorHex, {
+                nonNullable: true,
+                validators: [Validators.required, Validators.pattern(/^#[0-9A-Fa-f]{6}$/)],
+            }),
+        });
+    }
+
+    private createSizeGroup(value: string): SizeFormGroup {
+        return new FormGroup({
+            value: new FormControl(value, {
+                nonNullable: true,
+                validators: [Validators.required, Validators.maxLength(100)],
+            }),
+        });
+    }
+
+    private loadOptions(product: Product): void {
+        this.colors.clear({ emitEvent: false });
+        this.sizes.clear({ emitEvent: false });
+
+        const colorOption = product.options.find(
+            (option) => option.name.toLowerCase() === 'color',
+        );
+        colorOption?.values.forEach((value) =>
+            this.colors.push(
+                this.createColorGroup(value.value, value.colorHex ?? '#000000'),
+                { emitEvent: false },
+            ),
+        );
+
+        const sizeOption = product.options.find(
+            (option) => option.name.toLowerCase() === 'size',
+        );
+        sizeOption?.values.forEach((value) =>
+            this.sizes.push(this.createSizeGroup(value.value), { emitEvent: false }),
+        );
     }
 }
