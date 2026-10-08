@@ -24,6 +24,7 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
             phone = "01700000000",
             email = (string?)null,
             address = "1 Test Road, Dhaka",
+            deliveryArea = "InsideDhaka",
             paymentMethod = "CashOnDelivery",
             items = new[]
             {
@@ -54,6 +55,39 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Checkout_OutsideDhaka_UsesOutsideDhakaDeliveryFee()
+    {
+        var product = await CreateProductAsync(stockQuantity: 1);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
+
+        var response = await client.PostAsJsonAsync("/api/checkout", new
+        {
+            fullName = "Outside Dhaka Customer",
+            phone = "01600000000",
+            address = "Test address, Chattogram",
+            deliveryArea = "OutsideDhaka",
+            paymentMethod = "CashOnDelivery",
+            items = new[]
+            {
+                new
+                {
+                    productId = product.ProductId,
+                    colorOptionValueId = product.ColorId,
+                    sizeOptionValueId = product.SizeId,
+                    quantity = 1
+                }
+            }
+        });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var order = await response.Content.ReadFromJsonAsync<OrderResponse>();
+        Assert.NotNull(order);
+        Assert.Equal(130m, order.DeliveryFee);
+        Assert.Equal(230m, order.Total);
+    }
+
+    [Fact]
     public async Task Admin_CanMoveOrderThroughFulfilmentStatuses()
     {
         var product = await CreateProductAsync(stockQuantity: 2);
@@ -64,6 +98,7 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
             fullName = "Status Customer",
             phone = "01800000000",
             address = "2 Test Road, Dhaka",
+            deliveryArea = "InsideDhaka",
             paymentMethod = "CashOnDelivery",
             items = new[]
             {
@@ -119,6 +154,7 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
             fullName = "Retry Customer",
             phone = "01900000000",
             address = "3 Test Road, Dhaka",
+            deliveryArea = "InsideDhaka",
             paymentMethod = "CashOnDelivery",
             items = new[]
             {
