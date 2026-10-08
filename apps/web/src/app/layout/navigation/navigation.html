@@ -16,40 +16,44 @@
         }}</a
       >
     }
-    @if (authenticated()) {
-      <a
-        class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-        routerLink="/profile"
-        (click)="closeDrawer()"
-      >
-        <i class="pi pi-user relative top-0.5 mr-2" aria-hidden="true"></i>
-        Profile
-      </a>
-      <button
-        type="button"
-        class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) disabled:cursor-not-allowed disabled:opacity-60"
-        [disabled]="loggingOut()"
-        (click)="logout()"
-      >
-        <i class="pi pi-sign-out relative top-0.5 mr-2" aria-hidden="true"></i>
-        {{ loggingOut() ? 'Logging out...' : 'Logout' }}
-      </button>
-    } @else {
-      <a
-        class="mt-2 rounded-lg bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
-        routerLink="/login"
-        (click)="closeDrawer()"
-        >Login</a
-      >
+    @if (showAccount()) {
+      @if (authenticated()) {
+        <a
+          class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+          routerLink="/profile"
+          (click)="closeDrawer()"
+        >
+          <i class="pi pi-user relative top-0.5 mr-2" aria-hidden="true"></i>
+          Profile
+        </a>
+        <button
+          type="button"
+          class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) disabled:cursor-not-allowed disabled:opacity-60"
+          [disabled]="loggingOut()"
+          (click)="logout()"
+        >
+          <i class="pi pi-sign-out relative top-0.5 mr-2" aria-hidden="true"></i>
+          {{ loggingOut() ? 'Logging out...' : 'Logout' }}
+        </button>
+      } @else {
+        <a
+          class="mt-2 rounded-lg bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
+          routerLink="/login"
+          (click)="closeDrawer()"
+          >Login</a
+        >
+      }
     }
-    <a
-      class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
-      routerLink="/cart"
-      (click)="closeDrawer()"
-    >
-      <i class="pi pi-shopping-cart relative top-0.5 mr-2" aria-hidden="true"></i>
-      Cart
-    </a>
+    @if (showCart()) {
+      <a
+        class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+        routerLink="/cart"
+        (click)="closeDrawer()"
+      >
+        <i class="pi pi-shopping-cart relative top-0.5 mr-2" aria-hidden="true"></i>
+        Cart
+      </a>
+    }
   </nav>
 } @else {
   <nav
@@ -118,6 +122,8 @@
         <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
       }
     }
-    <app-cart-button />
+    @if (showCart()) {
+      <app-cart-button />
+    }
   </nav>
 }

@@ -15,6 +15,7 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(product => product.Price).HasPrecision(18, 2);
         builder.Property(product => product.CompareAtPrice).HasPrecision(18, 2);
         builder.Property(product => product.Currency).HasMaxLength(3);
+        builder.Property(product => product.StockQuantity).IsConcurrencyToken();
 
         builder.HasIndex(product => product.Slug).IsUnique();
         builder.HasIndex(product => product.Sku).IsUnique();

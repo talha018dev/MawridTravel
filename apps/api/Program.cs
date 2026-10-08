@@ -4,6 +4,7 @@ using MawridTravel.Api.Features.Auth;
 using MawridTravel.Api.Features.Health;
 using MawridTravel.Api.Features.Blogs;
 using MawridTravel.Api.Features.Products;
+using MawridTravel.Api.Features.Orders;
 using MawridTravel.Api.Infrastructure.Authentication;
 using MawridTravel.Api.Infrastructure.Persistence;
 using MawridTravel.Api.Infrastructure.Storage;
@@ -60,6 +61,7 @@ app.MapHealthEndpoints();
 app.MapAuthEndpoints();
 app.MapAdminEndpoints();
 app.MapProductEndpoints();
+app.MapOrderEndpoints();
 
 app.Run();
 

@@ -2,6 +2,7 @@ using MawridTravel.Api.Domain.Authorization;
 using MawridTravel.Api.Features.Admin.Blogs;
 using MawridTravel.Api.Features.Admin.Dashboard;
 using MawridTravel.Api.Features.Admin.Products;
+using MawridTravel.Api.Features.Admin.Orders;
 
 namespace MawridTravel.Api.Features.Admin;
 
@@ -18,6 +19,7 @@ internal static class AdminEndpoints
         group.MapDashboardEndpoint();
         group.MapAdminBlogEndpoints();
         group.MapAdminProductEndpoints();
+        group.MapAdminOrderEndpoints();
 
         return endpoints;
     }

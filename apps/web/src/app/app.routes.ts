@@ -50,6 +50,11 @@ export const routes: Routes = [
     title: 'Shopping cart | Mawrid Travel',
   },
   {
+    path: 'checkout',
+    loadComponent: () => import('@app/features/checkout/checkout').then(({ Checkout }) => Checkout),
+    title: 'Checkout | Mawrid Travel',
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],
@@ -64,6 +69,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('@app/features/admin/dashboard/dashboard').then(({ Dashboard }) => Dashboard),
         title: 'Admin dashboard | Mawrid Travel',
+      },
+      {
+        path: 'orders',
+        loadComponent: () =>
+          import('@app/features/admin/orders/order-list/order-list').then(
+            ({ OrderList }) => OrderList,
+          ),
+        title: 'Orders | Mawrid Travel',
       },
       {
         path: 'blog/new',

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CartItem, CartService } from '@app/features/cart/cart.service';
 import { ButtonDirective } from '@openng/optimus-ui/button';
 import { Tooltip } from '@openng/optimus-ui/tooltip';
@@ -11,6 +11,12 @@ import { Tooltip } from '@openng/optimus-ui/tooltip';
 })
 export class Cart {
     protected readonly cart = inject(CartService);
+    private readonly router = inject(Router);
+
+    protected proceedToCheckout(): void {
+        if (this.cart.items().length === 0) return;
+        void this.router.navigateByUrl('/checkout');
+    }
 
     protected formatPrice(item: Pick<CartItem, 'currency' | 'price'>, value = item.price): string {
         if (item.currency.toUpperCase() === 'BDT') {

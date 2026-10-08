@@ -34,6 +34,7 @@ export class Navigation {
   readonly drawer = input(false);
   readonly showMenu = input(true);
   readonly showAccount = input(true);
+  readonly showCart = input(true);
   readonly showThemeToggle = input(false);
   readonly navigated = output<void>();
   protected readonly authenticated = this.authService.authenticated;
