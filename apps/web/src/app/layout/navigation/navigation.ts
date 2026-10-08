@@ -4,6 +4,7 @@ import { ButtonDirective } from '@openng/optimus-ui/button';
 import { Popover } from '@openng/optimus-ui/popover';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/features/auth/auth.service';
+import { ThemeToggle } from '@app/layout/theme-toggle/theme-toggle';
 import { finalize } from 'rxjs';
 
 const ADMIN_MENU_ITEMS = [
@@ -22,7 +23,7 @@ const PUBLIC_MENU_ITEMS = [
 
 @Component({
   selector: 'app-navigation',
-  imports: [Avatar, ButtonDirective, Popover, RouterLink],
+  imports: [Avatar, ButtonDirective, Popover, RouterLink, ThemeToggle],
   templateUrl: './navigation.html',
 })
 export class Navigation {
@@ -32,6 +33,7 @@ export class Navigation {
   readonly drawer = input(false);
   readonly showMenu = input(true);
   readonly showAccount = input(true);
+  readonly showThemeToggle = input(false);
   readonly navigated = output<void>();
   protected readonly authenticated = this.authService.authenticated;
   protected readonly admin = computed(

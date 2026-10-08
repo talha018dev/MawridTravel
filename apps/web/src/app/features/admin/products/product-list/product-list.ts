@@ -206,6 +206,13 @@ export class ProductList implements OnInit {
     }
 
     protected formatPrice(product: Product): string {
+        if (product.currency.toUpperCase() === 'BDT') {
+            return `৳ ${new Intl.NumberFormat('en-BD', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(product.price)}`;
+        }
+
         try {
             return new Intl.NumberFormat(undefined, {
                 style: 'currency',

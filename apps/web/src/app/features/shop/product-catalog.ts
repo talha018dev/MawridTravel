@@ -6,6 +6,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import {
     CatalogProduct,
+    CatalogProductImage,
     ProductCatalogService,
 } from '@app/features/shop/product-catalog.service';
 import { ButtonDirective } from '@openng/optimus-ui/button';
@@ -43,6 +44,7 @@ export class ProductCatalog implements OnInit {
     private readonly router = inject(Router);
     private readonly title = inject(Title);
     private readonly pageSize = 20;
+    private readonly imageRotationTimers = new Map<string, ReturnType<typeof setInterval>>();
 
     protected readonly searchControl = new FormControl('', { nonNullable: true });
     protected readonly stockControl = new FormControl<StockFilter>('all', { nonNullable: true });
@@ -65,6 +67,13 @@ export class ProductCatalog implements OnInit {
     protected readonly totalCount = signal(0);
     protected readonly loading = signal(true);
     protected readonly errorMessage = signal<string | null>(null);
+    protected readonly activeImageIndexes = signal<Record<string, number>>({});
+
+    constructor() {
+        this.destroyRef.onDestroy(() => {
+            this.imageRotationTimers.forEach((timer) => clearInterval(timer));
+        });
+    }
 
     ngOnInit(): void {
         this.configureSeo();
@@ -102,6 +111,15 @@ export class ProductCatalog implements OnInit {
     }
 
     protected formatPrice(product: CatalogProduct, value = product.price): string {
+        if (product.currency.toUpperCase() === 'BDT') {
+            const amount = new Intl.NumberFormat('en-BD', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+            }).format(value);
+
+            return `৳ ${amount}`;
+        }
+
         try {
             return new Intl.NumberFormat('en-BD', {
                 style: 'currency',
@@ -112,6 +130,42 @@ export class ProductCatalog implements OnInit {
         } catch {
             return `${product.currency} ${value.toFixed(2)}`;
         }
+    }
+
+    protected discountPercentage(product: CatalogProduct): number | null {
+        if (product.compareAtPrice === null || product.compareAtPrice <= product.price) return null;
+
+        return Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100);
+    }
+
+    protected activeImage(product: CatalogProduct): CatalogProductImage | undefined {
+        return product.images[this.activeImageIndex(product.id)] ?? product.images[0];
+    }
+
+    protected activeImageIndex(productId: string): number {
+        return this.activeImageIndexes()[productId] ?? 0;
+    }
+
+    protected startImageRotation(product: CatalogProduct): void {
+        if (product.images.length < 2 || this.imageRotationTimers.has(product.id)) return;
+
+        const timer = setInterval(() => {
+            this.activeImageIndexes.update((indexes) => ({
+                ...indexes,
+                [product.id]: ((indexes[product.id] ?? 0) + 1) % product.images.length,
+            }));
+        }, 2000);
+
+        this.imageRotationTimers.set(product.id, timer);
+    }
+
+    protected stopImageRotation(productId: string): void {
+        const timer = this.imageRotationTimers.get(productId);
+
+        if (timer) clearInterval(timer);
+
+        this.imageRotationTimers.delete(productId);
+        this.activeImageIndexes.update((indexes) => ({ ...indexes, [productId]: 0 }));
     }
 
     protected pageQuery(page: number): Params {

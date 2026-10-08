@@ -53,11 +53,22 @@ export class ProductDetails implements OnInit {
     }
 
     protected formatPrice(amount: number, currency: string): string {
+        if (currency.toUpperCase() === 'BDT') {
+            return `৳ ${new Intl.NumberFormat('en-BD', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(amount)}`;
+        }
+
         try {
             return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(amount);
         } catch {
             return `${amount.toFixed(2)} ${currency}`;
         }
+    }
+
+    protected displayCurrency(currency: string): string {
+        return currency.toUpperCase() === 'BDT' ? '৳' : currency;
     }
 
     private confirmDelete(product: Product): void {

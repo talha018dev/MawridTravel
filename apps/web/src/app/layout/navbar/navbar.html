@@ -3,11 +3,7 @@
     class="mx-auto flex h-19.5 w-[min(80rem,calc(100%-2rem))] items-center gap-7 max-[620px]:h-17 max-[620px]:w-[calc(100%-1.5rem)]"
   >
     <div class="mr-auto"><app-logo /></div>
-    <app-navigation [showAccount]="false" />
-    <div class="flex items-center gap-3 max-[900px]:hidden">
-      <app-theme-toggle />
-      <app-navigation [showMenu]="false" />
-    </div>
+    <app-navigation [showThemeToggle]="true" />
     <div class="min-[900.01px]:hidden"><app-theme-toggle /></div>
     <p-button
       class="min-[900.01px]:hidden"

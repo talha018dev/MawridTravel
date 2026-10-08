@@ -124,5 +124,8 @@
         <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
       }
     }
+    @if (showThemeToggle()) {
+      <app-theme-toggle />
+    }
   </nav>
 }

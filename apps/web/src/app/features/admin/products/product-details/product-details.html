@@ -102,7 +102,7 @@
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Currency</dt>
-            <dd class="mt-1">{{ productDetails.currency }}</dd>
+            <dd class="mt-1">{{ displayCurrency(productDetails.currency) }}</dd>
           </div>
           <div>
             <dt class="text-sm font-bold text-(--mawrid-text-muted)">Created</dt>
@@ -147,7 +147,7 @@
                 class="relative mx-2 overflow-hidden rounded-xl border border-(--mawrid-border)"
               >
                 <img
-                  class="aspect-square w-full bg-slate-900 object-contain p-4"
+                  class="aspect-square w-full object-contain p-4"
                   [src]="image.url"
                   [alt]="image.altText || productDetails.name"
                 />
