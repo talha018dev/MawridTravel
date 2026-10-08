@@ -29,6 +29,14 @@ export const routes: Routes = [
     title: 'Verify email | Mawrid Travel',
   },
   {
+    path: 'shop',
+    loadComponent: () =>
+      import('@app/features/shop/product-catalog').then(
+        ({ ProductCatalog }) => ProductCatalog,
+      ),
+    title: 'Travel essentials shop | Mawrid Travel',
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],

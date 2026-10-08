@@ -1,0 +1,211 @@
+<section class="mx-auto w-[min(80rem,calc(100%-2rem))] py-10 sm:py-14" aria-labelledby="shop-title">
+    <header class="max-w-3xl">
+        <p class="text-sm font-bold tracking-[.14em] text-(--mawrid-font-accent) uppercase">
+            Mawrid Travel shop
+        </p>
+        <h1 id="shop-title" class="mt-2 text-4xl leading-tight font-extrabold sm:text-5xl">
+            Travel better, wherever you go
+        </h1>
+        <p class="mt-4 text-lg leading-8 text-(--mawrid-text-muted)">
+            Thoughtfully selected essentials for more comfortable, organized journeys.
+        </p>
+    </header>
+
+    <div class="mt-10 grid items-end gap-4 lg:grid-cols-[minmax(16rem,1fr)_13rem_10rem_10rem_13rem]">
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="shopSearch">Search products</label>
+            <p-iconfield>
+                <p-inputicon class="pi pi-search" />
+                <input
+                    pInputText
+                    id="shopSearch"
+                    class="w-full pl-10!"
+                    type="search"
+                    placeholder="Search by product name"
+                    autocomplete="off"
+                    [formControl]="searchControl"
+                />
+            </p-iconfield>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="shopStock">Availability</label>
+            <p-select
+                inputId="shopStock"
+                styleClass="w-full"
+                optionLabel="label"
+                optionValue="value"
+                [options]="stockOptions"
+                [formControl]="stockControl"
+            />
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="shopMinPrice">Min price</label>
+            <p-inputnumber
+                inputId="shopMinPrice"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+                placeholder="0"
+                [min]="0"
+                [maxFractionDigits]="2"
+                [formControl]="minPriceControl"
+            />
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="shopMaxPrice">Max price</label>
+            <p-inputnumber
+                inputId="shopMaxPrice"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+                placeholder="Any"
+                [min]="0"
+                [maxFractionDigits]="2"
+                [formControl]="maxPriceControl"
+            />
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-bold" for="shopSort">Sort by</label>
+            <p-select
+                inputId="shopSort"
+                styleClass="w-full"
+                optionLabel="label"
+                optionValue="value"
+                [options]="sortOptions"
+                [formControl]="sortControl"
+            />
+        </div>
+    </div>
+
+    <div class="mt-7 flex flex-wrap items-center justify-between gap-3 border-b border-(--mawrid-border) pb-4">
+        <p class="text-sm text-(--mawrid-text-muted)" aria-live="polite">
+            @if (!loading()) {
+                {{ totalCount() }} {{ totalCount() === 1 ? 'product' : 'products' }}
+            } @else {
+                Finding products…
+            }
+        </p>
+        @if (
+            searchControl.value ||
+            stockControl.value !== 'all' ||
+            minPriceControl.value !== null ||
+            maxPriceControl.value !== null ||
+            sortControl.value !== 'newest'
+        ) {
+            <button pButton type="button" severity="secondary" variant="text" (click)="clearFilters()">
+                Clear filters
+            </button>
+        }
+    </div>
+
+    @if (errorMessage(); as message) {
+        <div class="mt-8 rounded-2xl border border-red-500 bg-red-500/10 p-6 text-center" role="alert">
+            <p class="text-red-500">{{ message }}</p>
+            <button pButton type="button" class="mt-4" (click)="retry()">Try again</button>
+        </div>
+    } @else if (loading()) {
+        <div class="grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" aria-label="Loading products">
+            @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
+                <div class="animate-pulse overflow-hidden rounded-2xl border border-(--mawrid-border)">
+                    <div class="aspect-square bg-(--mawrid-header)"></div>
+                    <div class="space-y-3 p-5">
+                        <div class="h-5 w-3/4 rounded bg-(--mawrid-header)"></div>
+                        <div class="h-4 w-1/2 rounded bg-(--mawrid-header)"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    } @else if (products().length > 0) {
+        <div class="grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            @for (product of products(); track product.id) {
+                <article class="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) shadow-(--mawrid-card-shadow) transition duration-200 hover:-translate-y-1 hover:shadow-lg motion-reduce:transform-none motion-reduce:transition-none">
+                    <div class="relative aspect-square overflow-hidden bg-slate-900">
+                        @if (product.images[0]; as image) {
+                            <img
+                                class="h-full w-full object-contain p-5 transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none"
+                                [src]="image.url"
+                                [alt]="image.altText || product.name"
+                                loading="lazy"
+                                width="640"
+                                height="640"
+                            />
+                        } @else {
+                            <div class="grid h-full place-items-center text-slate-400" aria-hidden="true">
+                                <i class="pi pi-image text-5xl"></i>
+                            </div>
+                        }
+                        <span
+                            class="absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-bold"
+                            [class.bg-emerald-100]="product.stockQuantity > 0"
+                            [class.text-emerald-800]="product.stockQuantity > 0"
+                            [class.bg-slate-200]="product.stockQuantity === 0"
+                            [class.text-slate-700]="product.stockQuantity === 0"
+                        >
+                            {{ product.stockQuantity > 0 ? 'In stock' : 'Out of stock' }}
+                        </span>
+                    </div>
+                    <div class="flex flex-1 flex-col p-5">
+                        <h2 class="line-clamp-2 text-xl leading-snug font-bold">{{ product.name }}</h2>
+                        @if (product.description) {
+                            <p class="mt-2 line-clamp-2 text-sm leading-6 text-(--mawrid-text-muted)">
+                                {{ product.description }}
+                            </p>
+                        }
+                        <div class="mt-auto flex items-end justify-between gap-3 pt-5">
+                            <div>
+                                <p class="text-xl font-extrabold text-(--mawrid-font-accent)">
+                                    {{ formatPrice(product) }}
+                                </p>
+                                @if (product.compareAtPrice !== null && product.compareAtPrice > product.price) {
+                                    <p class="text-sm text-(--mawrid-text-muted) line-through">
+                                        {{ formatPrice(product, product.compareAtPrice) }}
+                                    </p>
+                                }
+                            </div>
+                            <span class="text-xs font-bold text-(--mawrid-text-muted)">
+                                {{ product.stockQuantity > 0 ? product.stockQuantity + ' available' : 'Unavailable' }}
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (totalPages() > 1) {
+            <nav class="flex items-center justify-center gap-3 py-4" aria-label="Product pages">
+                @if (page() > 1) {
+                    <a
+                        pButton
+                        severity="secondary"
+                        variant="outlined"
+                        class="no-underline"
+                        routerLink="/shop"
+                        [queryParams]="pageQuery(page() - 1)"
+                        aria-label="Previous product page"
+                    >
+                        <i class="pi pi-arrow-left" aria-hidden="true"></i>
+                        Previous
+                    </a>
+                }
+                <span class="px-3 text-sm font-bold">Page {{ page() }} of {{ totalPages() }}</span>
+                @if (page() < totalPages()) {
+                    <a
+                        pButton
+                        class="no-underline"
+                        routerLink="/shop"
+                        [queryParams]="pageQuery(page() + 1)"
+                        aria-label="Next product page"
+                    >
+                        Next
+                        <i class="pi pi-arrow-right" aria-hidden="true"></i>
+                    </a>
+                }
+            </nav>
+        }
+    } @else {
+        <div class="py-20 text-center">
+            <i class="pi pi-search mb-4 block text-5xl text-(--mawrid-text-muted)" aria-hidden="true"></i>
+            <h2 class="text-2xl font-bold">No products found</h2>
+            <p class="mt-2 text-(--mawrid-text-muted)">Try changing your search or filters.</p>
+            <button pButton type="button" class="mt-5" (click)="clearFilters()">Clear filters</button>
+        </div>
+    }
+</section>
