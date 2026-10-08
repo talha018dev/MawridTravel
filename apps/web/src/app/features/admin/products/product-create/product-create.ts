@@ -1,246 +1,103 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-    AbstractControl,
-    FormControl,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
-} from '@angular/forms';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-    CreateProductRequest,
+    ProductForm,
+    ProductFormSubmission,
+} from '@app/features/admin/products/product-form/product-form';
+import {
     Product,
     ProductAdminService,
 } from '@app/features/admin/products/services/product-admin.service';
-import { Button } from '@openng/optimus-ui/button';
-import { FileUpload } from '@openng/optimus-ui/fileupload';
-import { InputNumber } from '@openng/optimus-ui/inputnumber';
-import { InputText } from '@openng/optimus-ui/inputtext';
-import { Message } from '@openng/optimus-ui/message';
-import { Textarea } from '@openng/optimus-ui/textarea';
-import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
-import { FileRemoveEvent, FileSelectEvent } from '@openng/optimus-ui/types/fileupload';
-import {
-    catchError,
-    concatMap,
-    finalize,
-    from,
-    map,
-    Observable,
-    of,
-    switchMap,
-    toArray,
-} from 'rxjs';
-
-interface ImageUploadResult {
-    file: File;
-    succeeded: boolean;
-}
+import { catchError, concatMap, finalize, from, map, of, switchMap, toArray } from 'rxjs';
 
 interface ValidationProblem {
-    title?: string;
     errors?: Record<string, string[]>;
-}
-
-function wholeNumberValidator(control: AbstractControl): Record<string, boolean> | null {
-    const value = control.value as number | null;
-    return value === null || Number.isInteger(value) ? null : { wholeNumber: true };
 }
 
 @Component({
     selector: 'app-product-create',
-    imports: [
-        Button,
-        FileUpload,
-        InputNumber,
-        InputText,
-        Message,
-        ReactiveFormsModule,
-        Textarea,
-        ToggleSwitch,
-    ],
+    imports: [ProductForm],
     templateUrl: './product-create.html',
 })
 export class ProductCreate {
     private readonly productAdminService = inject(ProductAdminService);
     private readonly router = inject(Router);
-    private readonly destroyRef = inject(DestroyRef);
+    private readonly form = viewChild(ProductForm);
 
-    protected readonly maxImageBytes = 5 * 1024 * 1024;
-    protected readonly submitAttempted = signal(false);
     protected readonly submitting = signal(false);
-    protected readonly selectedImages = signal<File[]>([]);
-    protected readonly createdProduct = signal<Product | null>(null);
     protected readonly errorMessage = signal<string | null>(null);
     protected readonly serverErrors = signal<Record<string, string[]>>({});
+    private readonly createdProduct = signal<Product | null>(null);
 
-    protected readonly productForm = new FormGroup(
-        {
-            name: new FormControl('', {
-                nonNullable: true,
-                validators: [Validators.required, Validators.maxLength(200)],
-            }),
-            slug: new FormControl('', {
-                nonNullable: true,
-                validators: [Validators.maxLength(220)],
-            }),
-            description: new FormControl('', {
-                nonNullable: true,
-                validators: [Validators.maxLength(10_000)],
-            }),
-            sku: new FormControl('', {
-                nonNullable: true,
-                validators: [Validators.maxLength(64)],
-            }),
-            price: new FormControl<number | null>(null, {
-                validators: [Validators.required, Validators.min(0)],
-            }),
-            compareAtPrice: new FormControl<number | null>(null, {
-                validators: [Validators.min(0)],
-            }),
-            currency: new FormControl('BDT', {
-                nonNullable: true,
-                validators: [Validators.required, Validators.pattern(/^[A-Za-z]{3}$/)],
-            }),
-            stockQuantity: new FormControl<number | null>(0, {
-                validators: [Validators.required, Validators.min(0), wholeNumberValidator],
-            }),
-            isActive: new FormControl(false, { nonNullable: true }),
-        },
-    );
-
-    constructor() {
-        for (const [field, control] of Object.entries(this.productForm.controls)) {
-            this.clearServerErrorOnChange(field, control);
-        }
-    }
-
-    protected get controls() {
-        return this.productForm.controls;
-    }
-
-    protected onImagesSelected(event: FileSelectEvent): void {
-        this.selectedImages.set(event.currentFiles);
-        this.errorMessage.set(null);
-    }
-
-    protected onImageRemoved(event: FileRemoveEvent): void {
-        this.selectedImages.update((files) => files.filter((file) => file !== event.file));
-    }
-
-    protected clearImages(): void {
-        this.selectedImages.set([]);
-    }
-
-    protected selectedImagePreview(file: File): string {
-        return (file as File & { objectURL?: string }).objectURL ?? '';
-    }
-
-    protected formatFileSize(bytes: number): string {
-        return `${(bytes / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} KB`;
-    }
-
-    protected cancel(): void {
-        void this.router.navigate(['/admin/dashboard']);
-    }
-
-    protected submitProduct(): void {
-        this.submitAttempted.set(true);
+    protected submit(submission: ProductFormSubmission): void {
         this.errorMessage.set(null);
         this.serverErrors.set({});
+        this.submitting.set(true);
 
         const existingProduct = this.createdProduct();
-        if (!existingProduct && this.productForm.invalid) {
-            this.productForm.markAllAsTouched();
-            return;
-        }
+        const product$ = existingProduct
+            ? this.productAdminService.updateProduct(existingProduct.id, submission.product)
+            : this.productAdminService.createProduct(submission.product);
 
-        if (existingProduct && this.selectedImages().length === 0) {
-            void this.router.navigate(['/admin/dashboard']);
-            return;
-        }
-
-        this.submitting.set(true);
-        const productRequest$ = existingProduct
-            ? of(existingProduct)
-            : this.productAdminService.createProduct(this.buildRequest());
-
-        productRequest$
+        product$
             .pipe(
                 switchMap((product) => {
                     this.createdProduct.set(product);
-                    return this.uploadSelectedImages(product, existingProduct === null);
+                    return from(submission.newImages).pipe(
+                        concatMap((file, index) =>
+                            this.productAdminService
+                                .uploadImage(
+                                    product.id,
+                                    file,
+                                    product.name,
+                                    existingProduct === null && index === 0,
+                                )
+                                .pipe(
+                                    map(() => ({ file, succeeded: true })),
+                                    catchError(() => of({ file, succeeded: false })),
+                                ),
+                        ),
+                        toArray(),
+                        map((results) => ({ product, results })),
+                    );
                 }),
                 finalize(() => this.submitting.set(false)),
             )
             .subscribe({
-                next: (results) => {
+                next: ({ results }) => {
                     const failedFiles = results
                         .filter((result) => !result.succeeded)
                         .map((result) => result.file);
                     if (failedFiles.length > 0) {
-                        this.selectedImages.set(failedFiles);
+                        this.form()?.retainFailedImageChanges(failedFiles);
                         this.errorMessage.set(
                             `The product was created, but ${failedFiles.length} image${failedFiles.length === 1 ? '' : 's'} could not be uploaded. The failed images remain selected so you can retry.`,
                         );
                         return;
                     }
 
-                    void this.router.navigate(['/admin/dashboard'], {
-                        queryParams: { productCreated: 'true' },
+                    void this.router.navigate(['/admin/products/list'], {
+                        queryParams: { created: 'true' },
                     });
                 },
-                error: (error: HttpErrorResponse) => this.handleCreateError(error),
+                error: (error: HttpErrorResponse) => this.handleError(error),
             });
     }
 
-    private buildRequest(): CreateProductRequest {
-        const value = this.productForm.getRawValue();
-        return {
-            name: value.name.trim(),
-            slug: this.optionalValue(value.slug),
-            description: this.optionalValue(value.description),
-            sku: this.optionalValue(value.sku),
-            price: value.price!,
-            compareAtPrice: value.compareAtPrice,
-            currency: value.currency.trim().toUpperCase(),
-            stockQuantity: value.stockQuantity!,
-            isActive: value.isActive,
-        };
+    protected clearErrors(): void {
+        this.errorMessage.set(null);
+        this.serverErrors.set({});
     }
 
-    private uploadSelectedImages(
-        product: Product,
-        makeFirstImagePrimary: boolean,
-    ): Observable<ImageUploadResult[]> {
-        const images = this.selectedImages();
-        if (images.length === 0) {
-            return of([]);
-        }
-
-        return from(images).pipe(
-            concatMap((file, index) =>
-                this.productAdminService
-                    .uploadImage(product.id, file, product.name, makeFirstImagePrimary && index === 0)
-                    .pipe(
-                        map(() => ({ file, succeeded: true })),
-                        catchError(() => of({ file, succeeded: false })),
-                    ),
-            ),
-            toArray(),
-        );
+    protected cancel(): void {
+        void this.router.navigate(['/admin/products/list']);
     }
 
-    private handleCreateError(error: HttpErrorResponse): void {
+    private handleError(error: HttpErrorResponse): void {
         const problem = error.error as ValidationProblem | null;
         if (error.status === 400 && problem?.errors) {
             this.serverErrors.set(problem.errors);
-            for (const field of Object.keys(problem.errors)) {
-                const control = this.productForm.get(field);
-                control?.setErrors({ ...control.errors, server: true });
-            }
             this.errorMessage.set('Please review the highlighted fields and try again.');
             return;
         }
@@ -250,26 +107,5 @@ export class ProductCreate {
                 ? 'Your admin session has expired or you no longer have permission.'
                 : 'Unable to create the product. Please try again.',
         );
-    }
-
-    private optionalValue(value: string): string | null {
-        const normalized = value.trim();
-        return normalized || null;
-    }
-
-    private clearServerErrorOnChange(field: string, control: AbstractControl): void {
-        control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-            const errors = this.serverErrors();
-            if (!errors[field]) {
-                return;
-            }
-
-            const remainingErrors = { ...errors };
-            delete remainingErrors[field];
-            this.serverErrors.set(remainingErrors);
-            if (Object.keys(remainingErrors).length === 0) {
-                this.errorMessage.set(null);
-            }
-        });
     }
 }
