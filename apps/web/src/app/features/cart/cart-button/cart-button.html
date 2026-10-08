@@ -1,0 +1,15 @@
+<a
+    class="relative inline-grid size-10 shrink-0 place-items-center rounded-full border border-(--mawrid-border) bg-transparent text-(--mawrid-font-primary) no-underline transition-colors hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+    routerLink="/cart"
+    aria-label="Open cart"
+>
+    <i class="pi pi-shopping-cart" aria-hidden="true"></i>
+    @if (cart.itemCount() > 0) {
+        <span
+            class="absolute -top-1.5 -right-1.5 grid min-h-5 min-w-5 place-items-center rounded-full bg-(--mawrid-accent) px-1 text-[0.65rem] leading-none font-extrabold text-(--mawrid-primary) ring-2 ring-(--mawrid-header)"
+            aria-hidden="true"
+        >
+            {{ cart.itemCount() > 99 ? '99+' : cart.itemCount() }}
+        </span>
+    }
+</a>

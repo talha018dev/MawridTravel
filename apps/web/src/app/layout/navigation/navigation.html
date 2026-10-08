@@ -42,6 +42,14 @@
         >Login</a
       >
     }
+    <a
+      class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+      routerLink="/cart"
+      (click)="closeDrawer()"
+    >
+      <i class="pi pi-shopping-cart relative top-0.5 mr-2" aria-hidden="true"></i>
+      Cart
+    </a>
   </nav>
 } @else {
   <nav
@@ -67,6 +75,9 @@
           {{ item.label }}
         </a>
       }
+    }
+    @if (showThemeToggle()) {
+      <app-theme-toggle />
     }
     @if (showAccount()) {
       @if (authenticated()) {
@@ -107,8 +118,6 @@
         <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
       }
     }
-    @if (showThemeToggle()) {
-      <app-theme-toggle />
-    }
+    <app-cart-button />
   </nav>
 }

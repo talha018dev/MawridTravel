@@ -2,7 +2,16 @@
   class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
   aria-labelledby="product-form-title"
 >
-  <div class="flex flex-wrap items-end justify-between gap-4">
+  <button
+    type="button"
+    class="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-(--mawrid-text-muted) transition-colors hover:text-(--mawrid-font-primary) hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+    (click)="cancelled.emit()"
+  >
+    <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
+    Back to products
+  </button>
+
+  <div class="mt-4 flex flex-wrap items-end justify-between gap-4">
     <div>
       <p class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase">
         Product management
@@ -11,15 +20,36 @@
         {{ mode() === 'edit' ? 'Edit product' : 'Create product' }}
       </h1>
     </div>
-    <button
-      pButton
-      type="button"
-          severity="contrast"
-      variant="outlined"
-      (click)="cancelled.emit()"
-    >
-      Back to products
-    </button>
+    <div class="flex items-center gap-3">
+      <button
+        pButton
+        type="button"
+        class="border-transparent! bg-(--mawrid-nav-hover)! text-(--mawrid-nav-hover-text)! hover:bg-(--mawrid-accent)! hover:text-(--mawrid-primary)!"
+        [disabled]="submitting()"
+        (click)="cancelled.emit()"
+      >
+        Cancel
+      </button>
+      <button
+        pButton
+        type="submit"
+        form="product-form"
+        [disabled]="submitting()"
+      >
+        @if (submitting()) {
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+        }
+        {{
+          submitting()
+            ? mode() === 'edit'
+              ? 'Saving…'
+              : 'Creating product…'
+            : mode() === 'edit'
+              ? 'Save changes'
+              : 'Create product'
+        }}
+      </button>
+    </div>
   </div>
 
   @if (errorMessage(); as message) {
@@ -28,7 +58,7 @@
     </p>
   }
 
-  <form class="mt-8" [formGroup]="productForm" (ngSubmit)="submitForm()" novalidate>
+  <form id="product-form" class="mt-8" [formGroup]="productForm" (ngSubmit)="submitForm()" novalidate>
     <div
       class="grid gap-5 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:grid-cols-2 sm:p-7"
     >
@@ -39,6 +69,7 @@
           id="editProductName"
           class="w-full"
           formControlName="name"
+          placeholder="e.g. Compact travel organizer"
           maxlength="200"
           required
           [invalid]="controls.name.invalid && submitAttempted()"
@@ -64,6 +95,7 @@
           id="editProductSlug"
           class="w-full"
           formControlName="slug"
+          placeholder="e.g. compact-travel-organizer"
           maxlength="220"
           [invalid]="controls.slug.invalid && submitAttempted()"
         />
@@ -83,6 +115,7 @@
           id="editProductSku"
           class="w-full"
           formControlName="sku"
+          placeholder="e.g. MWT-ORG-001"
           maxlength="64"
           [invalid]="controls.sku.invalid && submitAttempted()"
         />
@@ -102,6 +135,7 @@
           id="editProductDescription"
           class="min-h-36 w-full"
           formControlName="description"
+          placeholder="Describe the product, its features, materials, and ideal use."
           maxlength="10000"
           [autoResize]="true"
           [invalid]="controls.description.invalid && submitAttempted()"
@@ -120,6 +154,7 @@
         <p-inputnumber
           inputId="editProductPrice"
           formControlName="price"
+          placeholder="0.00"
           [min]="0"
           [minFractionDigits]="2"
           [maxFractionDigits]="2"
@@ -144,6 +179,7 @@
         <p-inputnumber
           inputId="editComparePrice"
           formControlName="compareAtPrice"
+          placeholder="Optional original price"
           [min]="0"
           [minFractionDigits]="2"
           [maxFractionDigits]="2"
@@ -168,6 +204,7 @@
           class="w-full uppercase"
           maxlength="3"
           formControlName="currency"
+          placeholder="e.g. BDT"
           required
           [invalid]="controls.currency.invalid && submitAttempted()"
         />
@@ -188,6 +225,7 @@
         <p-inputnumber
           inputId="editProductStock"
           formControlName="stockQuantity"
+          placeholder="0"
           [min]="0"
           [maxFractionDigits]="0"
           [useGrouping]="false"
@@ -496,30 +534,5 @@
       }
     </section>
 
-    <div class="mt-6 flex justify-end gap-3">
-      <button
-        pButton
-        type="button"
-        class="border-transparent! bg-(--mawrid-nav-hover)! text-(--mawrid-nav-hover-text)! hover:bg-(--mawrid-accent)! hover:text-(--mawrid-primary)!"
-        [disabled]="submitting()"
-        (click)="cancelled.emit()"
-      >
-        Cancel
-      </button>
-      <p-button
-        type="submit"
-        [label]="
-          submitting()
-            ? mode() === 'edit'
-              ? 'Saving…'
-              : 'Creating product…'
-            : mode() === 'edit'
-              ? 'Save changes'
-              : 'Create product'
-        "
-        [loading]="submitting()"
-        [disabled]="submitting()"
-      />
-    </div>
   </form>
 </section>

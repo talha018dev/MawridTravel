@@ -16,6 +16,7 @@ import { InputText } from '@openng/optimus-ui/inputtext';
 import { Select } from '@openng/optimus-ui/select';
 import { Meta, Title } from '@angular/platform-browser';
 import { debounceTime, distinctUntilChanged, finalize, map } from 'rxjs';
+import { CartService } from '@app/features/cart/cart.service';
 
 type StockFilter = 'all' | 'in-stock' | 'out-of-stock';
 type CatalogSort = 'newest' | 'price-asc' | 'price-desc' | 'name';
@@ -35,6 +36,7 @@ type CatalogSort = 'newest' | 'price-asc' | 'price-desc' | 'name';
 })
 export class ProductCatalog implements OnInit {
     private readonly catalogService = inject(ProductCatalogService);
+    private readonly cart = inject(CartService);
     private readonly destroyRef = inject(DestroyRef);
     private readonly document = inject(DOCUMENT);
     private readonly meta = inject(Meta);
@@ -223,6 +225,14 @@ export class ProductCatalog implements OnInit {
 
     protected retry(): void {
         this.loadProducts();
+    }
+
+    protected addToCart(product: CatalogProduct): void {
+        const color = this.productOption(product, 'Color')?.values[0];
+        const size = this.productOption(product, 'Size')?.values[0];
+        if (!color || !size) return;
+
+        this.cart.add(product, color, size);
     }
 
     private updateUrl(): Promise<boolean> {

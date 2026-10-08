@@ -12,7 +12,7 @@ import {
     Product,
     ProductImage,
 } from '@app/features/admin/products/services/product-admin.service';
-import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { ButtonDirective } from '@openng/optimus-ui/button';
 import { FileUpload } from '@openng/optimus-ui/fileupload';
 import { InputNumber } from '@openng/optimus-ui/inputnumber';
 import { InputText } from '@openng/optimus-ui/inputtext';
@@ -45,7 +45,6 @@ type SizeFormGroup = FormGroup<{
 @Component({
     selector: 'app-product-form',
     imports: [
-        Button,
         ButtonDirective,
         FileUpload,
         InputNumber,

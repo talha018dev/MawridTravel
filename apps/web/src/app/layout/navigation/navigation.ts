@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@app/features/auth/auth.service';
 import { ThemeToggle } from '@app/layout/theme-toggle/theme-toggle';
 import { finalize } from 'rxjs';
+import { CartButton } from '@app/features/cart/cart-button/cart-button';
 
 const ADMIN_MENU_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: 'pi pi-home' },
@@ -23,7 +24,7 @@ const PUBLIC_MENU_ITEMS = [
 
 @Component({
   selector: 'app-navigation',
-  imports: [Avatar, ButtonDirective, Popover, RouterLink, ThemeToggle],
+  imports: [Avatar, ButtonDirective, CartButton, Popover, RouterLink, ThemeToggle],
   templateUrl: './navigation.html',
 })
 export class Navigation {

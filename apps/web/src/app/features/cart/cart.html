@@ -1,0 +1,71 @@
+<main class="mx-auto w-[min(80rem,calc(100%-2rem))] py-10 sm:py-14">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+            <p class="text-sm font-bold tracking-[0.12em] text-(--mawrid-font-accent) uppercase">Your order</p>
+            <h1 class="mt-2 text-3xl font-extrabold sm:text-4xl">Shopping cart</h1>
+        </div>
+        @if (cart.items().length > 0) {
+            <button
+                type="button"
+                class="cursor-pointer text-sm font-bold text-(--mawrid-font-accent) hover:underline"
+                (click)="cart.clear()"
+            >
+                Clear cart
+            </button>
+        }
+    </div>
+
+    @if (cart.items().length === 0) {
+        <section class="mt-10 grid min-h-80 place-items-center rounded-3xl border border-(--mawrid-border) bg-(--mawrid-card) p-8 text-center shadow-(--mawrid-card-shadow)">
+            <div>
+                <i class="pi pi-shopping-cart text-5xl text-(--mawrid-font-accent)" aria-hidden="true"></i>
+                <h2 class="mt-5 text-2xl font-bold">Your cart is empty</h2>
+                <p class="mt-2 text-(--mawrid-text-muted)">Explore the shop and add something for your next journey.</p>
+                <a pButton class="mt-6 no-underline" routerLink="/shop">Continue shopping</a>
+            </div>
+        </section>
+    } @else {
+        <div class="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <section class="grid gap-4" aria-label="Cart items">
+                @for (item of cart.items(); track item.key) {
+                    <article class="grid grid-cols-[6rem_minmax(0,1fr)] gap-4 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-4 shadow-(--mawrid-card-shadow) sm:grid-cols-[8rem_minmax(0,1fr)_auto]">
+                        <a class="aspect-square overflow-hidden rounded-xl border border-(--mawrid-border)" [routerLink]="['/shop', item.slug]">
+                            @if (item.imageUrl) {
+                                <img class="size-full object-contain p-2" [src]="item.imageUrl" [alt]="item.imageAlt" />
+                            } @else {
+                                <span class="grid size-full place-items-center text-(--mawrid-text-muted)"><i class="pi pi-image text-3xl" aria-hidden="true"></i></span>
+                            }
+                        </a>
+                        <div class="min-w-0">
+                            <a class="font-bold text-(--mawrid-font-primary) no-underline hover:underline" [routerLink]="['/shop', item.slug]">{{ item.name }}</a>
+                            <dl class="mt-2 grid gap-1 text-sm text-(--mawrid-text-muted)">
+                                <div><dt class="inline font-semibold">Color:</dt> <dd class="inline capitalize">{{ item.color.value }}</dd></div>
+                                <div><dt class="inline font-semibold">Size:</dt> <dd class="inline capitalize">{{ item.size.value }}</dd></div>
+                            </dl>
+                            <div class="mt-4 inline-flex items-center overflow-hidden rounded-full border border-(--mawrid-border)">
+                                <button type="button" class="grid size-9 cursor-pointer place-items-center hover:bg-(--mawrid-nav-hover) disabled:cursor-not-allowed disabled:opacity-40" [disabled]="item.quantity <= 1" [attr.aria-label]="'Decrease quantity for ' + item.name" (click)="cart.setQuantity(item.key, item.quantity - 1)"><i class="pi pi-minus text-xs" aria-hidden="true"></i></button>
+                                <span class="min-w-10 text-center text-sm font-bold" aria-live="polite">{{ item.quantity }}</span>
+                                <button type="button" class="grid size-9 cursor-pointer place-items-center hover:bg-(--mawrid-nav-hover) disabled:cursor-not-allowed disabled:opacity-40" [disabled]="item.quantity >= item.stockQuantity" [attr.aria-label]="'Increase quantity for ' + item.name" (click)="cart.setQuantity(item.key, item.quantity + 1)"><i class="pi pi-plus text-xs" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end">
+                            <p class="font-extrabold text-(--mawrid-font-accent)">{{ formatPrice(item, item.price * item.quantity) }}</p>
+                            <button type="button" class="cursor-pointer text-sm font-bold text-(--mawrid-font-accent) hover:underline" (click)="cart.remove(item.key)">Remove</button>
+                        </div>
+                    </article>
+                }
+            </section>
+
+            <aside class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow) lg:sticky lg:top-28">
+                <h2 class="text-xl font-bold">Order summary</h2>
+                <div class="mt-5 flex justify-between gap-4 border-b border-(--mawrid-border) pb-5">
+                    <span class="text-(--mawrid-text-muted)">Subtotal ({{ cart.itemCount() }} items)</span>
+                    <strong>{{ formatPrice(cart.items()[0], cart.subtotal()) }}</strong>
+                </div>
+                <p class="mt-4 text-sm leading-6 text-(--mawrid-text-muted)">Shipping and final availability are confirmed at checkout.</p>
+                <button pButton type="button" class="mt-6 w-full! justify-center! rounded-full! py-3.5!">Proceed to checkout</button>
+                <a class="mt-4 block text-center text-sm font-bold text-(--mawrid-font-primary) hover:underline" routerLink="/shop">Continue shopping</a>
+            </aside>
+        </div>
+    }
+</main>

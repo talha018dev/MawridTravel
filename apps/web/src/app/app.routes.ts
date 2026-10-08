@@ -45,6 +45,11 @@ export const routes: Routes = [
     title: 'Product | Mawrid Travel',
   },
   {
+    path: 'cart',
+    loadComponent: () => import('@app/features/cart/cart').then(({ Cart }) => Cart),
+    title: 'Shopping cart | Mawrid Travel',
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],

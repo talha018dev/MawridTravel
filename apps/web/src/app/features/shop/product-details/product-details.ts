@@ -1,7 +1,8 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CartService } from '@app/features/cart/cart.service';
 import {
     CatalogProduct,
     CatalogProductOption,
@@ -18,9 +19,11 @@ import { finalize } from 'rxjs';
 })
 export class ProductDetails implements OnInit {
     private readonly catalogService = inject(ProductCatalogService);
+    private readonly cart = inject(CartService);
     private readonly document = inject(DOCUMENT);
     private readonly meta = inject(Meta);
     private readonly route = inject(ActivatedRoute);
+    private readonly router = inject(Router);
     private readonly title = inject(Title);
 
     protected readonly product = signal<CatalogProduct | null>(null);
@@ -30,6 +33,7 @@ export class ProductDetails implements OnInit {
     protected readonly selectedColorId = signal<string | null>(null);
     protected readonly selectedSizeId = signal<string | null>(null);
     protected readonly detailsExpanded = signal(false);
+    protected readonly cartMessage = signal<string | null>(null);
     protected readonly descriptionIsLong = computed(
         () => (this.product()?.description?.trim().length ?? 0) > 320,
     );
@@ -87,6 +91,25 @@ export class ProductDetails implements OnInit {
 
     protected toggleDetails(): void {
         this.detailsExpanded.update((expanded) => !expanded);
+    }
+
+    protected addToCart(product: CatalogProduct, buyNow = false): void {
+        const color = this.option(product, 'Color')?.values.find(
+            (value) => value.id === this.selectedColorId(),
+        );
+        const size = this.option(product, 'Size')?.values.find(
+            (value) => value.id === this.selectedSizeId(),
+        );
+        if (!color || !size || product.stockQuantity < 1) return;
+
+        this.cart.add(product, color, size);
+        if (buyNow) {
+            void this.router.navigateByUrl('/cart');
+            return;
+        }
+
+        this.cartMessage.set('Added to your cart.');
+        setTimeout(() => this.cartMessage.set(null), 2500);
     }
 
     protected formatPrice(product: CatalogProduct, value = product.price): string {
