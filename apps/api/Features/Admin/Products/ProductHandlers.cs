@@ -232,14 +232,12 @@ internal static class ProductHandlers
             .Where(option => !string.IsNullOrWhiteSpace(option.Name))
             .Select(option => new ProductOption
             {
-                Id = Guid.NewGuid(),
                 Name = option.Name!.Trim(),
                 SortOrder = option.SortOrder,
                 Values = option.Values?
                     .Where(value => !string.IsNullOrWhiteSpace(value.Value))
                     .Select(value => new ProductOptionValue
                     {
-                        Id = Guid.NewGuid(),
                         Value = value.Value!.Trim(),
                         ColorHex = NormalizeOptional(value.ColorHex)?.ToUpperInvariant(),
                         SortOrder = value.SortOrder

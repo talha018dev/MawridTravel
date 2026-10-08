@@ -14,6 +14,7 @@ import {
     Blog,
     BlogWriteRequest,
 } from '@app/features/admin/blogs/services/blog-admin.service';
+import { RemoveButton } from '@app/shared/components/remove-button/remove-button';
 import { Button, ButtonDirective } from '@openng/optimus-ui/button';
 import { FileUpload } from '@openng/optimus-ui/fileupload';
 import { InputText } from '@openng/optimus-ui/inputtext';
@@ -68,6 +69,7 @@ function richTextRequired(control: AbstractControl): Record<string, boolean> | n
         InputText,
         Message,
         ReactiveFormsModule,
+        RemoveButton,
         Textarea,
         TiptapEditorDirective,
         ToggleSwitch,

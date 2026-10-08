@@ -11,7 +11,13 @@
         {{ mode() === 'edit' ? 'Edit product' : 'Create product' }}
       </h1>
     </div>
-    <button pButton type="button" severity="secondary" variant="outlined" (click)="cancelled.emit()">
+    <button
+      pButton
+      type="button"
+      severity="secondary"
+      variant="outlined"
+      (click)="cancelled.emit()"
+    >
       Back to products
     </button>
   </div>
@@ -22,493 +28,495 @@
     </p>
   }
 
-    <form class="mt-8" [formGroup]="productForm" (ngSubmit)="submitForm()" novalidate>
-      <div
-        class="grid gap-5 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:grid-cols-2 sm:p-7"
-      >
-        <div class="sm:col-span-2">
-          <label class="mb-2 block text-sm font-bold" for="editProductName">Name</label>
-          <input
-            pInputText
-            id="editProductName"
-            class="w-full"
-            formControlName="name"
-            maxlength="200"
-            required
-            [invalid]="controls.name.invalid && submitAttempted()"
-          />
-          @if (submitAttempted() && controls.name.hasError('required')) {
-            <p-message severity="error" size="small" variant="simple"
-              >Product name is required.</p-message
-            >
-          }
-          @if (submitAttempted() && controls.name.hasError('maxlength')) {
-            <p-message severity="error" size="small" variant="simple"
-              >Name cannot exceed 200 characters.</p-message
-            >
-          }
-          @for (message of serverErrors()['name'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-bold" for="editProductSlug">Slug</label>
-          <input
-            pInputText
-            id="editProductSlug"
-            class="w-full"
-            formControlName="slug"
-            maxlength="220"
-            [invalid]="controls.slug.invalid && submitAttempted()"
-          />
-          @if (submitAttempted() && controls.slug.hasError('maxlength')) {
-            <p-message severity="error" size="small" variant="simple"
-              >Slug cannot exceed 220 characters.</p-message
-            >
-          }
-          @for (message of serverErrors()['slug'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-bold" for="editProductSku">SKU</label>
-          <input
-            pInputText
-            id="editProductSku"
-            class="w-full"
-            formControlName="sku"
-            maxlength="64"
-            [invalid]="controls.sku.invalid && submitAttempted()"
-          />
-          @if (submitAttempted() && controls.sku.hasError('maxlength')) {
-            <p-message severity="error" size="small" variant="simple"
-              >SKU cannot exceed 64 characters.</p-message
-            >
-          }
-          @for (message of serverErrors()['sku'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
-        <div class="sm:col-span-2">
-          <label class="mb-2 block text-sm font-bold" for="editProductDescription"
-            >Description</label
+  <form class="mt-8" [formGroup]="productForm" (ngSubmit)="submitForm()" novalidate>
+    <div
+      class="grid gap-5 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:grid-cols-2 sm:p-7"
+    >
+      <div class="sm:col-span-2">
+        <label class="mb-2 block text-sm font-bold" for="editProductName">Name</label>
+        <input
+          pInputText
+          id="editProductName"
+          class="w-full"
+          formControlName="name"
+          maxlength="200"
+          required
+          [invalid]="controls.name.invalid && submitAttempted()"
+        />
+        @if (submitAttempted() && controls.name.hasError('required')) {
+          <p-message severity="error" size="small" variant="simple"
+            >Product name is required.</p-message
           >
-          <textarea
-            pTextarea
-            id="editProductDescription"
-            class="min-h-36 w-full"
-            formControlName="description"
-            maxlength="10000"
-            [autoResize]="true"
-            [invalid]="controls.description.invalid && submitAttempted()"
-          ></textarea>
-          @if (submitAttempted() && controls.description.hasError('maxlength')) {
-            <p-message severity="error" size="small" variant="simple"
-              >Description cannot exceed 10,000 characters.</p-message
-            >
-          }
-          @for (message of serverErrors()['description'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-bold" for="editProductPrice">Price</label>
-          <p-inputnumber
-            inputId="editProductPrice"
-            formControlName="price"
-            [min]="0"
-            [minFractionDigits]="2"
-            [maxFractionDigits]="2"
-            [invalid]="controls.price.invalid && submitAttempted()"
-            styleClass="w-full"
-            inputStyleClass="w-full"
-          />
-          @if (
-            submitAttempted() &&
-            (controls.price.hasError('required') || controls.price.hasError('min'))
-          ) {
-            <p-message severity="error" size="small" variant="simple"
-              >Enter a price of zero or more.</p-message
-            >
-          }
-          @for (message of serverErrors()['price'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
-        <div>
-          <label class="mb-2 block text-sm font-bold" for="editComparePrice"
-            >Compare-at price</label
+        }
+        @if (submitAttempted() && controls.name.hasError('maxlength')) {
+          <p-message severity="error" size="small" variant="simple"
+            >Name cannot exceed 200 characters.</p-message
           >
-          <p-inputnumber
-            inputId="editComparePrice"
-            formControlName="compareAtPrice"
-            [min]="0"
-            [minFractionDigits]="2"
-            [maxFractionDigits]="2"
-            [invalid]="controls.compareAtPrice.invalid && submitAttempted()"
-            styleClass="w-full"
-            inputStyleClass="w-full"
-          />
-          @if (submitAttempted() && controls.compareAtPrice.hasError('min')) {
-            <p-message severity="error" size="small" variant="simple"
-              >Compare-at price must be zero or greater.</p-message
-            >
-          }
-          @for (message of serverErrors()['compareAtPrice'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
+        }
+        @for (message of serverErrors()['name'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-bold" for="editProductSlug">Slug</label>
+        <input
+          pInputText
+          id="editProductSlug"
+          class="w-full"
+          formControlName="slug"
+          maxlength="220"
+          [invalid]="controls.slug.invalid && submitAttempted()"
+        />
+        @if (submitAttempted() && controls.slug.hasError('maxlength')) {
+          <p-message severity="error" size="small" variant="simple"
+            >Slug cannot exceed 220 characters.</p-message
+          >
+        }
+        @for (message of serverErrors()['slug'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-bold" for="editProductSku">SKU</label>
+        <input
+          pInputText
+          id="editProductSku"
+          class="w-full"
+          formControlName="sku"
+          maxlength="64"
+          [invalid]="controls.sku.invalid && submitAttempted()"
+        />
+        @if (submitAttempted() && controls.sku.hasError('maxlength')) {
+          <p-message severity="error" size="small" variant="simple"
+            >SKU cannot exceed 64 characters.</p-message
+          >
+        }
+        @for (message of serverErrors()['sku'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div class="sm:col-span-2">
+        <label class="mb-2 block text-sm font-bold" for="editProductDescription">Description</label>
+        <textarea
+          pTextarea
+          id="editProductDescription"
+          class="min-h-36 w-full"
+          formControlName="description"
+          maxlength="10000"
+          [autoResize]="true"
+          [invalid]="controls.description.invalid && submitAttempted()"
+        ></textarea>
+        @if (submitAttempted() && controls.description.hasError('maxlength')) {
+          <p-message severity="error" size="small" variant="simple"
+            >Description cannot exceed 10,000 characters.</p-message
+          >
+        }
+        @for (message of serverErrors()['description'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-bold" for="editProductPrice">Price</label>
+        <p-inputnumber
+          inputId="editProductPrice"
+          formControlName="price"
+          [min]="0"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          [invalid]="controls.price.invalid && submitAttempted()"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+        />
+        @if (
+          submitAttempted() &&
+          (controls.price.hasError('required') || controls.price.hasError('min'))
+        ) {
+          <p-message severity="error" size="small" variant="simple"
+            >Enter a price of zero or more.</p-message
+          >
+        }
+        @for (message of serverErrors()['price'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-bold" for="editComparePrice">Compare-at price</label>
+        <p-inputnumber
+          inputId="editComparePrice"
+          formControlName="compareAtPrice"
+          [min]="0"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          [invalid]="controls.compareAtPrice.invalid && submitAttempted()"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+        />
+        @if (submitAttempted() && controls.compareAtPrice.hasError('min')) {
+          <p-message severity="error" size="small" variant="simple"
+            >Compare-at price must be zero or greater.</p-message
+          >
+        }
+        @for (message of serverErrors()['compareAtPrice'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-bold" for="editProductCurrency">Currency</label>
+        <input
+          pInputText
+          id="editProductCurrency"
+          class="w-full uppercase"
+          maxlength="3"
+          formControlName="currency"
+          required
+          [invalid]="controls.currency.invalid && submitAttempted()"
+        />
+        @if (
+          submitAttempted() &&
+          (controls.currency.hasError('required') || controls.currency.hasError('pattern'))
+        ) {
+          <p-message severity="error" size="small" variant="simple"
+            >Enter a three-letter currency code such as BDT or USD.</p-message
+          >
+        }
+        @for (message of serverErrors()['currency'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div>
+        <label class="mb-2 block text-sm font-bold" for="editProductStock">Stock</label>
+        <p-inputnumber
+          inputId="editProductStock"
+          formControlName="stockQuantity"
+          [min]="0"
+          [maxFractionDigits]="0"
+          [useGrouping]="false"
+          [invalid]="controls.stockQuantity.invalid && submitAttempted()"
+          styleClass="w-full"
+          inputStyleClass="w-full"
+        />
+        @if (
+          submitAttempted() &&
+          (controls.stockQuantity.hasError('required') ||
+            controls.stockQuantity.hasError('min') ||
+            controls.stockQuantity.hasError('wholeNumber'))
+        ) {
+          <p-message severity="error" size="small" variant="simple"
+            >Enter a whole-number stock quantity of zero or more.</p-message
+          >
+        }
+        @for (message of serverErrors()['stockQuantity'] ?? []; track message) {
+          <p-message severity="error" size="small" variant="simple" [text]="message" />
+        }
+      </div>
+      <div class="flex items-center justify-between gap-4 sm:col-span-2">
         <div>
-          <label class="mb-2 block text-sm font-bold" for="editProductCurrency">Currency</label>
-          <input
-            pInputText
-            id="editProductCurrency"
-            class="w-full uppercase"
-            maxlength="3"
-            formControlName="currency"
-            required
-            [invalid]="controls.currency.invalid && submitAttempted()"
-          />
-          @if (
-            submitAttempted() &&
-            (controls.currency.hasError('required') || controls.currency.hasError('pattern'))
-          ) {
-            <p-message severity="error" size="small" variant="simple"
-              >Enter a three-letter currency code such as BDT or USD.</p-message
-            >
-          }
-          @for (message of serverErrors()['currency'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
+          <p class="font-bold">Active</p>
+          <p class="mt-1 text-sm text-(--mawrid-text-muted)">Show this product to customers.</p>
         </div>
-        <div>
-          <label class="mb-2 block text-sm font-bold" for="editProductStock">Stock</label>
-          <p-inputnumber
-            inputId="editProductStock"
-            formControlName="stockQuantity"
-            [min]="0"
-            [maxFractionDigits]="0"
-            [useGrouping]="false"
-            [invalid]="controls.stockQuantity.invalid && submitAttempted()"
-            styleClass="w-full"
-            inputStyleClass="w-full"
-          />
-          @if (
-            submitAttempted() &&
-            (controls.stockQuantity.hasError('required') ||
-              controls.stockQuantity.hasError('min') ||
-              controls.stockQuantity.hasError('wholeNumber'))
-          ) {
-            <p-message severity="error" size="small" variant="simple"
-              >Enter a whole-number stock quantity of zero or more.</p-message
+        <p-toggleswitch inputId="editProductActive" formControlName="isActive" />
+      </div>
+    </div>
+
+    <section
+      class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+      aria-labelledby="product-options-title"
+    >
+      <div class="border-b border-(--mawrid-border) pb-4">
+        <h2 id="product-options-title" class="text-xl font-bold">Product options</h2>
+        <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+          Add the colors and sizes customers can choose for this product.
+        </p>
+      </div>
+
+      <div class="mt-6 grid gap-8 lg:grid-cols-2">
+        <div formArrayName="colors">
+          <div class="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold">Colors</h3>
+              <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+                Name each color and choose its swatch.
+              </p>
+            </div>
+            <button
+              pButton
+              type="button"
+              severity="secondary"
+              variant="outlined"
+              (click)="addColor()"
             >
-          }
-          @for (message of serverErrors()['stockQuantity'] ?? []; track message) {
-            <p-message severity="error" size="small" variant="simple" [text]="message" />
-          }
-        </div>
-        <div class="flex items-center justify-between gap-4 sm:col-span-2">
-          <div>
-            <p class="font-bold">Active</p>
-            <p class="mt-1 text-sm text-(--mawrid-text-muted)">Show this product to customers.</p>
+              <i class="pi pi-plus" aria-hidden="true"></i>
+              Add color
+            </button>
           </div>
-          <p-toggleswitch inputId="editProductActive" formControlName="isActive" />
+
+          <div class="grid gap-3">
+            @for (color of colors.controls; track color; let index = $index) {
+              <div
+                class="grid grid-cols-[3rem_minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
+                [formGroupName]="index"
+              >
+                <input
+                  type="color"
+                  class="h-10 w-12 cursor-pointer rounded-lg border border-(--mawrid-border) bg-transparent p-1"
+                  formControlName="colorHex"
+                  [attr.aria-label]="'Color swatch ' + (index + 1)"
+                />
+                <div>
+                  <input
+                    pInputText
+                    class="w-full"
+                    formControlName="value"
+                    maxlength="100"
+                    [placeholder]="'Color name, e.g. Navy'"
+                    [invalid]="color.controls.value.invalid && submitAttempted()"
+                  />
+                  @if (submitAttempted() && color.controls.value.invalid) {
+                    <p-message severity="error" size="small" variant="simple">
+                      Enter a color name.
+                    </p-message>
+                  }
+                </div>
+                <app-remove-button
+                  ariaLabel="Remove color"
+                  [disabled]="submitting()"
+                  (removed)="removeColor(index)"
+                />
+              </div>
+            } @empty {
+              <p
+                class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)"
+              >
+                No color options added.
+              </p>
+            }
+          </div>
+        </div>
+
+        <div formArrayName="sizes">
+          <div class="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h3 class="font-bold">Sizes</h3>
+              <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+                Use labels such as S, M, L, or 42.
+              </p>
+            </div>
+            <button
+              pButton
+              type="button"
+              severity="secondary"
+              variant="outlined"
+              (click)="addSize()"
+            >
+              <i class="pi pi-plus" aria-hidden="true"></i>
+              Add size
+            </button>
+          </div>
+
+          <div class="grid gap-3">
+            @for (size of sizes.controls; track size; let index = $index) {
+              <div
+                class="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
+                [formGroupName]="index"
+              >
+                <div>
+                  <input
+                    pInputText
+                    class="w-full"
+                    formControlName="value"
+                    maxlength="100"
+                    placeholder="Size, e.g. Medium"
+                    [invalid]="size.controls.value.invalid && submitAttempted()"
+                  />
+                  @if (submitAttempted() && size.controls.value.invalid) {
+                    <p-message severity="error" size="small" variant="simple">
+                      Enter a size.
+                    </p-message>
+                  }
+                </div>
+                <app-remove-button
+                  ariaLabel="Remove size"
+                  [disabled]="submitting()"
+                  (removed)="removeSize(index)"
+                />
+              </div>
+            } @empty {
+              <p
+                class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)"
+              >
+                No size options added.
+              </p>
+            }
+          </div>
         </div>
       </div>
 
-      <section
-        class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
-        aria-labelledby="product-options-title"
-      >
-        <div class="border-b border-(--mawrid-border) pb-4">
-          <h2 id="product-options-title" class="text-xl font-bold">Product options</h2>
-          <p class="mt-1 text-sm text-(--mawrid-text-muted)">
-            Add the colors and sizes customers can choose for this product.
-          </p>
-        </div>
+      @for (message of serverErrors()['options'] ?? []; track message) {
+        <p-message class="mt-4" severity="error" size="small" variant="simple" [text]="message" />
+      }
+    </section>
 
-        <div class="mt-6 grid gap-8 lg:grid-cols-2">
-          <div formArrayName="colors">
-            <div class="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h3 class="font-bold">Colors</h3>
-                <p class="mt-1 text-sm text-(--mawrid-text-muted)">Name each color and choose its swatch.</p>
-              </div>
-              <button pButton type="button" severity="secondary" variant="outlined" (click)="addColor()">
-                <i class="pi pi-plus" aria-hidden="true"></i>
-                Add color
-              </button>
-            </div>
+    <section
+      class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+      aria-labelledby="edit-product-images-title"
+    >
+      <div class="mb-6 border-b border-(--mawrid-border) pb-4">
+        <h2 id="edit-product-images-title" class="text-xl font-bold">Images</h2>
+        <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+          Keep, remove, or add up to 10 JPEG, PNG or WebP images. Each image can be up to 5 MB.
+        </p>
+      </div>
 
-            <div class="grid gap-3">
-              @for (color of colors.controls; track color; let index = $index) {
-                <div
-                  class="grid grid-cols-[3rem_minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
-                  [formGroupName]="index"
+      @if (existingImages().length > 0) {
+        <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          @for (image of existingImages(); track image.id) {
+            <div
+              class="relative overflow-hidden rounded-xl border border-(--mawrid-border)"
+              [class.opacity-50]="imageWillBeRemoved(image.id)"
+            >
+              <img
+                class="aspect-square w-full object-contain p-3"
+                [src]="image.url"
+                [alt]="image.altText || controls.name.value"
+              />
+              @if (image.isPrimary) {
+                <span
+                  class="absolute bottom-2 left-2 rounded-full bg-(--mawrid-primary) px-2.5 py-1 text-xs font-bold text-white"
                 >
-                  <input
-                    type="color"
-                    class="h-10 w-12 cursor-pointer rounded-lg border border-(--mawrid-border) bg-transparent p-1"
-                    formControlName="colorHex"
-                    [attr.aria-label]="'Color swatch ' + (index + 1)"
-                  />
-                  <div>
-                    <input
-                      pInputText
-                      class="w-full"
-                      formControlName="value"
-                      maxlength="100"
-                      [placeholder]="'Color name, e.g. Navy'"
-                      [invalid]="color.controls.value.invalid && submitAttempted()"
-                    />
-                    @if (submitAttempted() && color.controls.value.invalid) {
-                      <p-message severity="error" size="small" variant="simple">
-                        Enter a color name.
-                      </p-message>
-                    }
-                  </div>
-                  <button
-                    pButton
-                    type="button"
-                    severity="danger"
-                    variant="text"
-                    rounded
-                    aria-label="Remove color"
-                    (click)="removeColor(index)"
-                  >
-                    <i class="pi pi-times" aria-hidden="true"></i>
-                  </button>
-                </div>
-              } @empty {
-                <p class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)">
-                  No color options added.
-                </p>
+                  Primary
+                </span>
               }
-            </div>
-          </div>
-
-          <div formArrayName="sizes">
-            <div class="mb-4 flex items-center justify-between gap-3">
-              <div>
-                <h3 class="font-bold">Sizes</h3>
-                <p class="mt-1 text-sm text-(--mawrid-text-muted)">Use labels such as S, M, L, or 42.</p>
-              </div>
-              <button pButton type="button" severity="secondary" variant="outlined" (click)="addSize()">
-                <i class="pi pi-plus" aria-hidden="true"></i>
-                Add size
-              </button>
-            </div>
-
-            <div class="grid gap-3">
-              @for (size of sizes.controls; track size; let index = $index) {
-                <div
-                  class="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
-                  [formGroupName]="index"
-                >
-                  <div>
-                    <input
-                      pInputText
-                      class="w-full"
-                      formControlName="value"
-                      maxlength="100"
-                      placeholder="Size, e.g. Medium"
-                      [invalid]="size.controls.value.invalid && submitAttempted()"
-                    />
-                    @if (submitAttempted() && size.controls.value.invalid) {
-                      <p-message severity="error" size="small" variant="simple">
-                        Enter a size.
-                      </p-message>
-                    }
-                  </div>
-                  <button
-                    pButton
-                    type="button"
-                    severity="danger"
-                    variant="text"
-                    rounded
-                    aria-label="Remove size"
-                    (click)="removeSize(index)"
-                  >
-                    <i class="pi pi-times" aria-hidden="true"></i>
-                  </button>
-                </div>
-              } @empty {
-                <p class="rounded-xl border border-dashed border-(--mawrid-border) p-5 text-center text-sm text-(--mawrid-text-muted)">
-                  No size options added.
-                </p>
-              }
-            </div>
-          </div>
-        </div>
-
-        @for (message of serverErrors()['options'] ?? []; track message) {
-          <p-message class="mt-4" severity="error" size="small" variant="simple" [text]="message" />
-        }
-      </section>
-
-      <section
-        class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
-        aria-labelledby="edit-product-images-title"
-      >
-        <div class="mb-6 border-b border-(--mawrid-border) pb-4">
-          <h2 id="edit-product-images-title" class="text-xl font-bold">Images</h2>
-          <p class="mt-1 text-sm text-(--mawrid-text-muted)">
-            Keep, remove, or add up to 10 JPEG, PNG or WebP images. Each image can be up to 5 MB.
-          </p>
-        </div>
-
-        @if (existingImages().length > 0) {
-          <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            @for (image of existingImages(); track image.id) {
-              <div
-                class="relative overflow-hidden rounded-xl border border-(--mawrid-border)"
-                [class.opacity-50]="imageWillBeRemoved(image.id)"
-              >
-                <img
-                  class="aspect-square w-full object-contain p-3"
-                  [src]="image.url"
-                  [alt]="image.altText || controls.name.value"
-                />
-                @if (image.isPrimary) {
-                  <span
-                    class="absolute bottom-2 left-2 rounded-full bg-(--mawrid-primary) px-2.5 py-1 text-xs font-bold text-white"
-                  >
-                    Primary
-                  </span>
-                }
+              @if (imageWillBeRemoved(image.id)) {
                 <button
                   pButton
                   type="button"
-                  class="absolute! top-2! right-2! h-9! w-9! rounded-full! p-0!"
-                  [severity]="imageWillBeRemoved(image.id) ? 'secondary' : 'danger'"
-                  [attr.aria-label]="
-                    imageWillBeRemoved(image.id) ? 'Keep image' : 'Remove image'
-                  "
+                  severity="secondary"
+                  rounded
+                  class="absolute! top-2! right-2! h-10! w-10! rounded-full! p-0!"
+                  aria-label="Keep image"
                   [disabled]="submitting()"
                   (click)="toggleImageRemoval(image.id)"
                 >
-                  <i
-                    class="pi"
-                    [class.pi-undo]="imageWillBeRemoved(image.id)"
-                    [class.pi-times]="!imageWillBeRemoved(image.id)"
-                    aria-hidden="true"
-                  ></i>
+                  <i class="pi pi-undo" aria-hidden="true"></i>
                 </button>
+              } @else {
+                <app-remove-button
+                  class="absolute top-2 right-2"
+                  ariaLabel="Remove image"
+                  [disabled]="submitting()"
+                  (removed)="toggleImageRemoval(image.id)"
+                />
+              }
+            </div>
+          }
+        </div>
+      }
+
+      @if (remainingImageSlots() > 0) {
+        <p-fileupload
+          styleClass="product-edit-upload"
+          name="productImages"
+          accept="image/jpeg,image/png,image/webp"
+          chooseLabel="Choose images"
+          cancelLabel="Clear images"
+          [multiple]="true"
+          [maxFileSize]="maxImageBytes"
+          [fileLimit]="remainingImageSlots()"
+          [customUpload]="true"
+          [showUploadButton]="false"
+          [showCancelButton]="true"
+          [disabled]="submitting()"
+          [files]="selectedImages()"
+          invalidFileTypeMessageSummary="Unsupported image type"
+          invalidFileTypeMessageDetail="Choose a JPEG, PNG or WebP image."
+          invalidFileSizeMessageSummary="Image is too large"
+          invalidFileSizeMessageDetail="Each image must be 5 MB or smaller."
+          invalidFileLimitMessageSummary="Too many images"
+          invalidFileLimitMessageDetail="Remove an existing image before choosing more."
+          (onSelect)="onImagesSelected($event)"
+          (onRemove)="onImageRemoved($event)"
+          (onClear)="clearImages()"
+        >
+          <ng-template #content let-files let-removeFileCallback="removeFileCallback">
+            @if (files.length > 0) {
+              <div class="grid gap-3">
+                @for (
+                  file of files;
+                  track file.name + file.size + file.lastModified;
+                  let index = $index
+                ) {
+                  <div
+                    class="flex items-center gap-4 rounded-lg border border-(--mawrid-border) p-3"
+                  >
+                    @if (selectedImagePreview(file)) {
+                      <img
+                        class="h-14 w-14 shrink-0 rounded-lg object-contain p-1"
+                        [src]="selectedImagePreview(file)"
+                        alt=""
+                      />
+                    } @else {
+                      <i
+                        class="pi pi-image text-2xl text-(--mawrid-font-accent)"
+                        aria-hidden="true"
+                      ></i>
+                    }
+                    <div class="min-w-0 flex-1">
+                      <p class="truncate text-sm font-bold">{{ file.name }}</p>
+                      <p class="mt-1 text-xs text-(--mawrid-text-muted)">
+                        {{ formatFileSize(file.size) }}
+                      </p>
+                    </div>
+                    <app-remove-button
+                      ariaLabel="Remove selected image"
+                      [disabled]="submitting()"
+                      (removed)="removeFileCallback($event, index)"
+                    />
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="py-8 text-center text-sm text-(--mawrid-text-muted)">
+                <i
+                  class="pi pi-images mb-3 block text-3xl text-(--mawrid-font-accent)"
+                  aria-hidden="true"
+                ></i>
+                Drag images here or choose them from your device.
               </div>
             }
-          </div>
-        }
+          </ng-template>
+        </p-fileupload>
+      } @else {
+        <p class="text-sm text-(--mawrid-text-muted)">
+          This product already has the maximum of 10 images. Remove one to add another.
+        </p>
+      }
+    </section>
 
-        @if (remainingImageSlots() > 0) {
-          <p-fileupload
-            styleClass="product-edit-upload"
-            name="productImages"
-            accept="image/jpeg,image/png,image/webp"
-            chooseLabel="Choose images"
-            cancelLabel="Clear images"
-            [multiple]="true"
-            [maxFileSize]="maxImageBytes"
-            [fileLimit]="remainingImageSlots()"
-            [customUpload]="true"
-            [showUploadButton]="false"
-            [showCancelButton]="true"
-            [disabled]="submitting()"
-            [files]="selectedImages()"
-            invalidFileTypeMessageSummary="Unsupported image type"
-            invalidFileTypeMessageDetail="Choose a JPEG, PNG or WebP image."
-            invalidFileSizeMessageSummary="Image is too large"
-            invalidFileSizeMessageDetail="Each image must be 5 MB or smaller."
-            invalidFileLimitMessageSummary="Too many images"
-            invalidFileLimitMessageDetail="Remove an existing image before choosing more."
-            (onSelect)="onImagesSelected($event)"
-            (onRemove)="onImageRemoved($event)"
-            (onClear)="clearImages()"
-          >
-            <ng-template
-              #content
-              let-files
-              let-removeFileCallback="removeFileCallback"
-            >
-              @if (files.length > 0) {
-                <div class="grid gap-3">
-                  @for (file of files; track file.name + file.size + file.lastModified; let index = $index) {
-                    <div class="flex items-center gap-4 rounded-lg border border-(--mawrid-border) p-3">
-                      @if (selectedImagePreview(file)) {
-                        <img
-                          class="h-14 w-14 shrink-0 rounded-lg object-contain p-1"
-                          [src]="selectedImagePreview(file)"
-                          alt=""
-                        />
-                      } @else {
-                        <i
-                          class="pi pi-image text-2xl text-(--mawrid-font-accent)"
-                          aria-hidden="true"
-                        ></i>
-                      }
-                      <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-bold">{{ file.name }}</p>
-                        <p class="mt-1 text-xs text-(--mawrid-text-muted)">
-                          {{ formatFileSize(file.size) }}
-                        </p>
-                      </div>
-                      <button
-                        pButton
-                        type="button"
-                        severity="danger"
-                        rounded
-                        class="h-9! w-9! rounded-full! p-0!"
-                        aria-label="Remove selected image"
-                        [disabled]="submitting()"
-                        (click)="removeFileCallback($event, index)"
-                      >
-                        <i class="pi pi-times" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                  }
-                </div>
-              } @else {
-                <div class="py-8 text-center text-sm text-(--mawrid-text-muted)">
-                  <i
-                    class="pi pi-images mb-3 block text-3xl text-(--mawrid-font-accent)"
-                    aria-hidden="true"
-                  ></i>
-                  Drag images here or choose them from your device.
-                </div>
-              }
-            </ng-template>
-          </p-fileupload>
-        } @else {
-          <p class="text-sm text-(--mawrid-text-muted)">
-            This product already has the maximum of 10 images. Remove one to add another.
-          </p>
-        }
-      </section>
-
-      <div class="mt-6 flex justify-end gap-3">
-        <button
-          pButton
-          type="button"
-          severity="secondary"
-          variant="outlined"
-          [disabled]="submitting()"
-          (click)="cancelled.emit()"
-        >
-          Cancel
-        </button>
-        <p-button
-          type="submit"
-          [label]="
-            submitting()
-              ? mode() === 'edit'
-                ? 'Saving…'
-                : 'Creating product…'
-              : mode() === 'edit'
-                ? 'Save changes'
-                : 'Create product'
-          "
-          [loading]="submitting()"
-          [disabled]="submitting()"
-        />
-      </div>
-    </form>
+    <div class="mt-6 flex justify-end gap-3">
+      <button
+        pButton
+        type="button"
+        severity="secondary"
+        variant="outlined"
+        [disabled]="submitting()"
+        (click)="cancelled.emit()"
+      >
+        Cancel
+      </button>
+      <p-button
+        type="submit"
+        [label]="
+          submitting()
+            ? mode() === 'edit'
+              ? 'Saving…'
+              : 'Creating product…'
+            : mode() === 'edit'
+              ? 'Save changes'
+              : 'Create product'
+        "
+        [loading]="submitting()"
+        [disabled]="submitting()"
+      />
+    </div>
+  </form>
 </section>

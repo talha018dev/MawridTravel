@@ -123,7 +123,9 @@
               <dt class="text-sm font-bold text-(--mawrid-text-muted)">{{ option.name }}</dt>
               <dd class="mt-2 flex flex-wrap gap-2">
                 @for (value of option.values; track value.id) {
-                  <span class="inline-flex items-center gap-2 rounded-full border border-(--mawrid-border) px-3 py-1 text-sm font-semibold">
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full border border-(--mawrid-border) px-3 py-1 text-sm font-semibold"
+                  >
                     @if (value.colorHex) {
                       <span
                         class="size-3 rounded-full border border-black/20"
@@ -166,7 +168,7 @@
                 class="relative mx-2 overflow-hidden rounded-xl border border-(--mawrid-border)"
               >
                 <img
-                  class="aspect-square w-full object-contain p-4"
+                  class="aspect-square w-full object-contain"
                   [src]="image.url"
                   [alt]="image.altText || productDetails.name"
                 />

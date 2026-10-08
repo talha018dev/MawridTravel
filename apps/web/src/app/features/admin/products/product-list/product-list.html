@@ -90,7 +90,7 @@
           <div class="flex items-center gap-3">
             @if (product.images[0]; as image) {
               <img
-                class="size-11 rounded-lg bg-slate-900 object-contain p-1"
+                class="size-11 rounded-lg object-cover"
                 [src]="image.url"
                 [alt]="image.altText || ''"
               />

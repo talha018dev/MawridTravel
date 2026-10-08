@@ -12,7 +12,6 @@ import {
 import { ButtonDirective } from '@openng/optimus-ui/button';
 import { IconField } from '@openng/optimus-ui/iconfield';
 import { InputIcon } from '@openng/optimus-ui/inputicon';
-import { InputNumber } from '@openng/optimus-ui/inputnumber';
 import { InputText } from '@openng/optimus-ui/inputtext';
 import { Select } from '@openng/optimus-ui/select';
 import { Meta, Title } from '@angular/platform-browser';
@@ -27,7 +26,6 @@ type CatalogSort = 'newest' | 'price-asc' | 'price-desc' | 'name';
         ButtonDirective,
         IconField,
         InputIcon,
-        InputNumber,
         InputText,
         ReactiveFormsModule,
         RouterLink,
@@ -50,8 +48,6 @@ export class ProductCatalog implements OnInit {
     protected readonly searchControl = new FormControl('', { nonNullable: true });
     protected readonly stockControl = new FormControl<StockFilter>('all', { nonNullable: true });
     protected readonly sortControl = new FormControl<CatalogSort>('newest', { nonNullable: true });
-    protected readonly minPriceControl = new FormControl<number | null>(null);
-    protected readonly maxPriceControl = new FormControl<number | null>(null);
     protected readonly stockOptions = [
         { label: 'All availability', value: 'all' as const },
         { label: 'In stock', value: 'in-stock' as const },
@@ -83,12 +79,6 @@ export class ProductCatalog implements OnInit {
         this.searchControl.valueChanges
             .pipe(map((value) => value.trim()), debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => void this.updateUrl());
-        this.minPriceControl.valueChanges
-            .pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => void this.updateUrl());
-        this.maxPriceControl.valueChanges
-            .pipe(debounceTime(350), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
-            .subscribe(() => void this.updateUrl());
         this.stockControl.valueChanges
             .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
             .subscribe(() => void this.updateUrl());
@@ -102,8 +92,6 @@ export class ProductCatalog implements OnInit {
                 this.searchControl.setValue(params.get('search')?.trim() ?? '', { emitEvent: false });
                 this.stockControl.setValue(this.parseStock(params.get('stock')), { emitEvent: false });
                 this.sortControl.setValue(this.parseSort(params.get('sort')), { emitEvent: false });
-                this.minPriceControl.setValue(this.parsePrice(params.get('minPrice')), { emitEvent: false });
-                this.maxPriceControl.setValue(this.parsePrice(params.get('maxPrice')), { emitEvent: false });
                 this.page.set(this.parsePage(params.get('page')));
                 this.loadProducts();
             });
@@ -250,8 +238,6 @@ export class ProductCatalog implements OnInit {
         return {
             search: this.searchControl.value.trim() || null,
             stock: stock === 'all' ? null : stock,
-            minPrice: this.minPriceControl.value,
-            maxPrice: this.maxPriceControl.value,
             sort: sort === 'newest' ? null : sort,
         };
     }
@@ -264,8 +250,6 @@ export class ProductCatalog implements OnInit {
             .getProducts({
                 search: this.searchControl.value.trim() || undefined,
                 inStock: stock === 'all' ? undefined : stock === 'in-stock',
-                minPrice: this.minPriceControl.value ?? undefined,
-                maxPrice: this.maxPriceControl.value ?? undefined,
                 sort: this.sortControl.value === 'newest' ? undefined : this.sortControl.value,
                 page: this.page(),
                 pageSize: this.pageSize,
@@ -343,11 +327,6 @@ export class ProductCatalog implements OnInit {
 
     private parseSort(value: string | null): CatalogSort {
         return value === 'price-asc' || value === 'price-desc' || value === 'name' ? value : 'newest';
-    }
-
-    private parsePrice(value: string | null): number | null {
-        const price = value === null ? Number.NaN : Number(value);
-        return Number.isFinite(price) && price >= 0 ? price : null;
     }
 
     private parsePage(value: string | null): number {

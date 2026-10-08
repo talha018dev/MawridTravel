@@ -20,6 +20,7 @@ import { Message } from '@openng/optimus-ui/message';
 import { Textarea } from '@openng/optimus-ui/textarea';
 import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
 import { FileRemoveEvent, FileSelectEvent } from '@openng/optimus-ui/types/fileupload';
+import { RemoveButton } from '@app/shared/components/remove-button/remove-button';
 
 export interface ProductFormSubmission {
     product: CreateProductRequest;
@@ -51,6 +52,7 @@ type SizeFormGroup = FormGroup<{
         InputText,
         Message,
         ReactiveFormsModule,
+        RemoveButton,
         Textarea,
         ToggleSwitch,
     ],
@@ -117,7 +119,6 @@ export class ProductForm {
                 return;
             }
 
-            this.loadedProductId = product.id;
             this.productForm.patchValue({
                 name: product.name,
                 slug: product.slug,
@@ -131,6 +132,7 @@ export class ProductForm {
             });
             this.loadOptions(product);
             this.existingImages.set(product.images);
+            this.loadedProductId = product.id;
         });
 
         this.productForm.valueChanges.subscribe(() => this.changed.emit());
@@ -186,25 +188,25 @@ export class ProductForm {
                 options: [
                     ...(value.colors.length > 0
                         ? [{
-                              name: 'Color',
-                              sortOrder: 0,
-                              values: value.colors.map((color, index) => ({
-                                  value: color.value.trim(),
-                                  colorHex: color.colorHex.toUpperCase(),
-                                  sortOrder: index,
-                              })),
-                          }]
+                            name: 'Color',
+                            sortOrder: 0,
+                            values: value.colors.map((color, index) => ({
+                                value: color.value.trim(),
+                                colorHex: color.colorHex.toUpperCase(),
+                                sortOrder: index,
+                            })),
+                        }]
                         : []),
                     ...(value.sizes.length > 0
                         ? [{
-                              name: 'Size',
-                              sortOrder: 1,
-                              values: value.sizes.map((size, index) => ({
-                                  value: size.value.trim(),
-                                  colorHex: null,
-                                  sortOrder: index,
-                              })),
-                          }]
+                            name: 'Size',
+                            sortOrder: 1,
+                            values: value.sizes.map((size, index) => ({
+                                value: size.value.trim(),
+                                colorHex: null,
+                                sortOrder: index,
+                            })),
+                        }]
                         : []),
                 ],
             },
@@ -287,7 +289,8 @@ export class ProductForm {
         this.colors.clear({ emitEvent: false });
         this.sizes.clear({ emitEvent: false });
 
-        const colorOption = product.options.find(
+        const options = product.options ?? [];
+        const colorOption = options.find(
             (option) => option.name.toLowerCase() === 'color',
         );
         colorOption?.values.forEach((value) =>
@@ -297,7 +300,7 @@ export class ProductForm {
             ),
         );
 
-        const sizeOption = product.options.find(
+        const sizeOption = options.find(
             (option) => option.name.toLowerCase() === 'size',
         );
         sizeOption?.values.forEach((value) =>

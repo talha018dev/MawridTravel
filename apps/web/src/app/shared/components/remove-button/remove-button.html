@@ -1,0 +1,12 @@
+<button
+  pButton
+  type="button"
+  severity="danger"
+  rounded
+  class="h-9! w-9! min-w-9! cursor-pointer rounded-full! p-0! disabled:cursor-not-allowed"
+  [attr.aria-label]="ariaLabel()"
+  [disabled]="disabled()"
+  (click)="removed.emit($event)"
+>
+  <i class="pi pi-times text-xs" aria-hidden="true"></i>
+</button>
