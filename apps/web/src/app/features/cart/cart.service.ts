@@ -21,6 +21,7 @@ export interface CartItem {
 }
 
 const CART_STORAGE_KEY = 'mawrid.cart.v1';
+export type AddToCartResult = 'added' | 'stock-limit' | 'unavailable';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
@@ -44,16 +45,18 @@ export class CartService {
         color: CatalogProductOptionValue,
         size: CatalogProductOptionValue,
         quantity = 1,
-    ): void {
+    ): AddToCartResult {
         const key = this.createKey(product.id, color.id, size.id);
         const existingItem = this.cartItems().find((item) => item.key === key);
 
         if (existingItem) {
-            this.setQuantity(key, Math.min(existingItem.quantity + quantity, product.stockQuantity));
-            return;
+            if (existingItem.quantity >= product.stockQuantity) return 'stock-limit';
+
+            this.setQuantity(key, existingItem.quantity + quantity);
+            return 'added';
         }
 
-        if (product.stockQuantity < 1) return;
+        if (product.stockQuantity < 1) return 'unavailable';
 
         const primaryImage = product.images.find((image) => image.isPrimary) ?? product.images[0];
         this.updateItems([
@@ -73,6 +76,7 @@ export class CartService {
                 quantity: Math.min(Math.max(1, quantity), product.stockQuantity),
             },
         ]);
+        return 'added';
     }
 
     setQuantity(key: string, quantity: number): void {

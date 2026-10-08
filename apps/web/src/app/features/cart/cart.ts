@@ -2,10 +2,11 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CartItem, CartService } from '@app/features/cart/cart.service';
 import { ButtonDirective } from '@openng/optimus-ui/button';
+import { Tooltip } from '@openng/optimus-ui/tooltip';
 
 @Component({
     selector: 'app-cart',
-    imports: [ButtonDirective, RouterLink],
+    imports: [ButtonDirective, RouterLink, Tooltip],
     templateUrl: './cart.html',
 })
 export class Cart {

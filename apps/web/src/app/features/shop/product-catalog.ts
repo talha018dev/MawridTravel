@@ -68,6 +68,7 @@ export class ProductCatalog implements OnInit {
     protected readonly errorMessage = signal<string | null>(null);
     protected readonly activeImageIndexes = signal<Record<string, number>>({});
     protected readonly previousImageIndexes = signal<Record<string, number>>({});
+    protected readonly cartMessages = signal<Record<string, string>>({});
 
     constructor() {
         this.destroyRef.onDestroy(() => {
@@ -232,7 +233,21 @@ export class ProductCatalog implements OnInit {
         const size = this.productOption(product, 'Size')?.values[0];
         if (!color || !size) return;
 
-        this.cart.add(product, color, size);
+        const result = this.cart.add(product, color, size);
+        const message = result === 'stock-limit'
+            ? 'No more of this item is available in stock.'
+            : result === 'unavailable'
+                ? 'This item is currently unavailable.'
+                : 'Added to your cart.';
+
+        this.cartMessages.update((messages) => ({ ...messages, [product.id]: message }));
+        setTimeout(() => {
+            this.cartMessages.update((messages) => {
+                const updatedMessages = { ...messages };
+                delete updatedMessages[product.id];
+                return updatedMessages;
+            });
+        }, result === 'added' ? 2500 : 3500);
     }
 
     private updateUrl(): Promise<boolean> {

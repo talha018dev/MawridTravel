@@ -102,7 +102,18 @@ export class ProductDetails implements OnInit {
         );
         if (!color || !size || product.stockQuantity < 1) return;
 
-        this.cart.add(product, color, size);
+        const result = this.cart.add(product, color, size);
+        if (result === 'stock-limit') {
+            this.cartMessage.set('There are no more of this item available in stock.');
+            setTimeout(() => this.cartMessage.set(null), 3500);
+            return;
+        }
+
+        if (result === 'unavailable') {
+            this.cartMessage.set('This item is currently unavailable.');
+            return;
+        }
+
         if (buyNow) {
             void this.router.navigateByUrl('/cart');
             return;
