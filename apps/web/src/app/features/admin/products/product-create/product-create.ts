@@ -134,6 +134,14 @@ export class ProductCreate {
         this.selectedImages.set([]);
     }
 
+    protected selectedImagePreview(file: File): string {
+        return (file as File & { objectURL?: string }).objectURL ?? '';
+    }
+
+    protected formatFileSize(bytes: number): string {
+        return `${(bytes / 1024).toLocaleString(undefined, { maximumFractionDigits: 1 })} KB`;
+    }
+
     protected cancel(): void {
         void this.router.navigate(['/admin/dashboard']);
     }

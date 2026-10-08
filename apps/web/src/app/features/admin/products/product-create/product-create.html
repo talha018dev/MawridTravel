@@ -322,14 +322,57 @@
         (onRemove)="onImageRemoved($event)"
         (onClear)="clearImages()"
       >
-        <ng-template #empty>
-          <div class="py-8 text-center text-sm text-(--mawrid-text-muted)">
-            <i
-              class="pi pi-images mb-3 block text-3xl text-(--mawrid-font-accent)"
-              aria-hidden="true"
-            ></i>
-            Drag images here or choose them from your device.
-          </div>
+        <ng-template
+          #content
+          let-files
+          let-removeFileCallback="removeFileCallback"
+        >
+          @if (files.length > 0) {
+            <div class="grid gap-3">
+              @for (file of files; track file.name + file.size + file.lastModified; let index = $index) {
+                <div class="flex items-center gap-4 rounded-lg border border-(--mawrid-border) p-3">
+                  @if (selectedImagePreview(file)) {
+                    <img
+                      class="h-14 w-14 shrink-0 rounded-lg bg-slate-900 object-contain p-1"
+                      [src]="selectedImagePreview(file)"
+                      alt=""
+                    />
+                  } @else {
+                    <i
+                      class="pi pi-image text-2xl text-(--mawrid-font-accent)"
+                      aria-hidden="true"
+                    ></i>
+                  }
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-bold">{{ file.name }}</p>
+                    <p class="mt-1 text-xs text-(--mawrid-text-muted)">
+                      {{ formatFileSize(file.size) }}
+                    </p>
+                  </div>
+                  <button
+                    pButton
+                    type="button"
+                    severity="danger"
+                    rounded
+                    class="h-9! w-9! rounded-full! p-0!"
+                    aria-label="Remove selected image"
+                    [disabled]="submitting()"
+                    (click)="removeFileCallback($event, index)"
+                  >
+                    <i class="pi pi-times" aria-hidden="true"></i>
+                  </button>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="py-8 text-center text-sm text-(--mawrid-text-muted)">
+              <i
+                class="pi pi-images mb-3 block text-3xl text-(--mawrid-font-accent)"
+                aria-hidden="true"
+              ></i>
+              Drag images here or choose them from your device.
+            </div>
+          }
         </ng-template>
       </p-fileupload>
     </section>
