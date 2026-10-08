@@ -111,4 +111,10 @@ export class ProductAdminService {
             withCredentials: true,
         });
     }
+
+    deleteImage(productId: string, imageId: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${productId}/images/${imageId}`, {
+            withCredentials: true,
+        });
+    }
 }

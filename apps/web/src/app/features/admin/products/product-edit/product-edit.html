@@ -226,6 +226,144 @@
         </div>
       </div>
 
+      <section
+        class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+        aria-labelledby="edit-product-images-title"
+      >
+        <div class="mb-6 border-b border-(--mawrid-border) pb-4">
+          <h2 id="edit-product-images-title" class="text-xl font-bold">Images</h2>
+          <p class="mt-1 text-sm text-(--mawrid-text-muted)">
+            Keep, remove, or add up to 10 JPEG, PNG or WebP images. Each image can be up to 5 MB.
+          </p>
+        </div>
+
+        @if (existingImages().length > 0) {
+          <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            @for (image of existingImages(); track image.id) {
+              <div
+                class="relative overflow-hidden rounded-xl border border-(--mawrid-border) bg-(--mawrid-header)"
+                [class.opacity-50]="imageWillBeRemoved(image.id)"
+              >
+                <img
+                  class="aspect-square w-full object-contain p-3"
+                  [src]="image.url"
+                  [alt]="image.altText || controls.name.value"
+                />
+                @if (image.isPrimary) {
+                  <span
+                    class="absolute bottom-2 left-2 rounded-full bg-(--mawrid-primary) px-2.5 py-1 text-xs font-bold text-white"
+                  >
+                    Primary
+                  </span>
+                }
+                <button
+                  pButton
+                  type="button"
+                  class="absolute! top-2! right-2! h-9! w-9! rounded-full! p-0!"
+                  [severity]="imageWillBeRemoved(image.id) ? 'secondary' : 'danger'"
+                  [attr.aria-label]="
+                    imageWillBeRemoved(image.id) ? 'Keep image' : 'Remove image'
+                  "
+                  [disabled]="saving()"
+                  (click)="toggleImageRemoval(image.id)"
+                >
+                  <i
+                    class="pi"
+                    [class.pi-undo]="imageWillBeRemoved(image.id)"
+                    [class.pi-times]="!imageWillBeRemoved(image.id)"
+                    aria-hidden="true"
+                  ></i>
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        @if (remainingImageSlots() > 0) {
+          <p-fileupload
+            styleClass="product-edit-upload"
+            name="productImages"
+            accept="image/jpeg,image/png,image/webp"
+            chooseLabel="Choose images"
+            cancelLabel="Clear images"
+            [multiple]="true"
+            [maxFileSize]="maxImageBytes"
+            [fileLimit]="remainingImageSlots()"
+            [customUpload]="true"
+            [showUploadButton]="false"
+            [showCancelButton]="true"
+            [disabled]="saving()"
+            [files]="selectedImages()"
+            invalidFileTypeMessageSummary="Unsupported image type"
+            invalidFileTypeMessageDetail="Choose a JPEG, PNG or WebP image."
+            invalidFileSizeMessageSummary="Image is too large"
+            invalidFileSizeMessageDetail="Each image must be 5 MB or smaller."
+            invalidFileLimitMessageSummary="Too many images"
+            invalidFileLimitMessageDetail="Remove an existing image before choosing more."
+            (onSelect)="onImagesSelected($event)"
+            (onRemove)="onImageRemoved($event)"
+            (onClear)="clearImages()"
+          >
+            <ng-template
+              #content
+              let-files
+              let-removeFileCallback="removeFileCallback"
+            >
+              @if (files.length > 0) {
+                <div class="grid gap-3">
+                  @for (file of files; track file.name + file.size + file.lastModified; let index = $index) {
+                    <div class="flex items-center gap-4 rounded-lg border border-(--mawrid-border) p-3">
+                      @if (selectedImagePreview(file)) {
+                        <img
+                          class="h-14 w-14 shrink-0 rounded-lg object-contain p-1"
+                          [src]="selectedImagePreview(file)"
+                          alt=""
+                        />
+                      } @else {
+                        <i
+                          class="pi pi-image text-2xl text-(--mawrid-font-accent)"
+                          aria-hidden="true"
+                        ></i>
+                      }
+                      <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-bold">{{ file.name }}</p>
+                        <p class="mt-1 text-xs text-(--mawrid-text-muted)">
+                          {{ formatFileSize(file.size) }}
+                        </p>
+                      </div>
+                      <button
+                        pButton
+                        type="button"
+                        severity="danger"
+                        rounded
+                        class="h-9! w-9! rounded-full! p-0!"
+                        aria-label="Remove selected image"
+                        [disabled]="saving()"
+                        (click)="removeFileCallback($event, index)"
+                      >
+                        <i class="pi pi-times" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="py-8 text-center text-sm text-(--mawrid-text-muted)">
+                  <i
+                    class="pi pi-images mb-3 block text-3xl text-(--mawrid-font-accent)"
+                    aria-hidden="true"
+                  ></i>
+                  Drag images here or choose them from your device.
+                </div>
+              }
+            </ng-template>
+          </p-fileupload>
+        } @else {
+          <p class="text-sm text-(--mawrid-text-muted)">
+            This product already has the maximum of 10 images. Remove one to add another.
+          </p>
+        }
+      </section>
+
       <div class="mt-6 flex justify-end gap-3">
         <a pButton severity="secondary" variant="outlined" routerLink="/admin/products/list">
           Cancel
