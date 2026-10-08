@@ -93,7 +93,7 @@
         >
             @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
                 <div class="animate-pulse">
-                    <div class="aspect-[4/5] rounded-xl bg-(--mawrid-header)"></div>
+                    <div class="aspect-4/5 rounded-xl bg-(--mawrid-header)"></div>
                     <div class="space-y-3 pt-3">
                         <div class="h-5 w-3/4 rounded bg-(--mawrid-header)"></div>
                         <div class="h-4 w-1/2 rounded bg-(--mawrid-header)"></div>
@@ -107,7 +107,7 @@
             @for (product of products(); track product.id) {
                 <article class="group flex min-w-0 flex-col">
                     <a
-                        class="relative block aspect-[4/5] overflow-hidden rounded-xl shadow-sm transition-shadow duration-200 group-hover:shadow-lg motion-reduce:transition-none"
+                        class="relative block aspect-4/5 overflow-hidden rounded-xl shadow-sm transition-shadow duration-200 group-hover:shadow-lg motion-reduce:transition-none"
                         [routerLink]="['/shop', product.slug]"
                         [attr.aria-label]="'View ' + product.name"
                         (mouseenter)="startImageRotation(product)"
