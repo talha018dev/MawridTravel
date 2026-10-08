@@ -41,6 +41,11 @@ export class Navigation {
   );
   protected readonly adminMenuItems = ADMIN_MENU_ITEMS;
   protected readonly publicMenuItems = PUBLIC_MENU_ITEMS;
+  protected readonly menuItems = computed(() =>
+    this.admin()
+      ? [...this.adminMenuItems, ...this.publicMenuItems]
+      : this.publicMenuItems,
+  );
   protected readonly loggingOut = signal(false);
   protected readonly userInitials = computed(() => {
     const user = this.authService.user();

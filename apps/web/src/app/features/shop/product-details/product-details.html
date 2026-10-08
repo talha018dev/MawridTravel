@@ -174,7 +174,7 @@
                     <button
                         pButton
                         type="button"
-                        class="w-full! justify-center! rounded-full! py-3!"
+                        class="w-full! justify-center! rounded-full! border-(--mawrid-primary)! bg-(--mawrid-primary)! py-3! text-white! hover:brightness-110!"
                         [disabled]="productDetails.stockQuantity === 0"
                     >
                         <i class="pi pi-shopping-cart" aria-hidden="true"></i>
@@ -183,9 +183,7 @@
                     <button
                         pButton
                         type="button"
-                        severity="secondary"
-                        variant="outlined"
-                        class="w-full! justify-center! rounded-full! py-3!"
+                        class="w-full! justify-center! rounded-full! border-(--mawrid-accent)! bg-(--mawrid-accent)! py-3.5! text-base! font-bold! text-(--mawrid-primary)! shadow-lg! shadow-orange-950/15! transition-all! hover:-translate-y-0.5! hover:brightness-105! hover:shadow-xl! focus-visible:ring-2! focus-visible:ring-(--mawrid-accent)! focus-visible:ring-offset-2!"
                         [disabled]="productDetails.stockQuantity === 0"
                     >
                         Buy now
