@@ -14,15 +14,19 @@ import { IconField } from '@openng/optimus-ui/iconfield';
 import { InputIcon } from '@openng/optimus-ui/inputicon';
 import { InputText } from '@openng/optimus-ui/inputtext';
 import { Select } from '@openng/optimus-ui/select';
+import { ProductCardSkeleton } from '@app/features/shop/product-card-skeleton/product-card-skeleton';
 import { Meta, Title } from '@angular/platform-browser';
 import { debounceTime, distinctUntilChanged, finalize, map } from 'rxjs';
 import { CartService } from '@app/features/cart/cart.service';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Toast } from '@openng/optimus-ui/toast';
 
 type StockFilter = 'all' | 'in-stock' | 'out-of-stock';
 type CatalogSort = 'newest' | 'price-asc' | 'price-desc' | 'name';
 
 @Component({
     selector: 'app-product-catalog',
+    providers: [MessageService],
     imports: [
         ButtonDirective,
         IconField,
@@ -31,6 +35,8 @@ type CatalogSort = 'newest' | 'price-asc' | 'price-desc' | 'name';
         ReactiveFormsModule,
         RouterLink,
         Select,
+        ProductCardSkeleton,
+        Toast,
     ],
     templateUrl: './product-catalog.html',
 })
@@ -40,6 +46,7 @@ export class ProductCatalog implements OnInit {
     private readonly destroyRef = inject(DestroyRef);
     private readonly document = inject(DOCUMENT);
     private readonly meta = inject(Meta);
+    private readonly messageService = inject(MessageService);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly title = inject(Title);
@@ -68,7 +75,6 @@ export class ProductCatalog implements OnInit {
     protected readonly errorMessage = signal<string | null>(null);
     protected readonly activeImageIndexes = signal<Record<string, number>>({});
     protected readonly previousImageIndexes = signal<Record<string, number>>({});
-    protected readonly cartMessages = signal<Record<string, string>>({});
 
     constructor() {
         this.destroyRef.onDestroy(() => {
@@ -231,23 +237,31 @@ export class ProductCatalog implements OnInit {
     protected addToCart(product: CatalogProduct): void {
         const color = this.productOption(product, 'Color')?.values[0];
         const size = this.productOption(product, 'Size')?.values[0];
-        if (!color || !size) return;
+        if (!color || !size) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Item not added',
+                detail: 'This product does not have the required color and size options.',
+            });
+            return;
+        }
 
         const result = this.cart.add(product, color, size);
-        const message = result === 'stock-limit'
-            ? 'No more of this item is available in stock.'
-            : result === 'unavailable'
-                ? 'This item is currently unavailable.'
-                : 'Added to your cart.';
-
-        this.cartMessages.update((messages) => ({ ...messages, [product.id]: message }));
-        setTimeout(() => {
-            this.cartMessages.update((messages) => {
-                const updatedMessages = { ...messages };
-                delete updatedMessages[product.id];
-                return updatedMessages;
-            });
-        }, result === 'added' ? 2500 : 3500);
+        this.messageService.add(
+            result === 'added'
+                ? {
+                    severity: 'success',
+                    summary: 'Added to cart',
+                    detail: `“${product.name}” was added to your cart.`,
+                }
+                : {
+                    severity: 'error',
+                    summary: 'Item not added',
+                    detail: result === 'stock-limit'
+                        ? 'There are no more of this item available in stock.'
+                        : 'This item is currently unavailable.',
+                },
+        );
     }
 
     private updateUrl(): Promise<boolean> {

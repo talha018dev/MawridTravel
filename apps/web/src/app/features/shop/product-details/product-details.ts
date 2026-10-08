@@ -9,12 +9,15 @@ import {
     ProductCatalogService,
 } from '@app/features/shop/product-catalog.service';
 import { ButtonDirective } from '@openng/optimus-ui/button';
+import { MessageService } from '@openng/optimus-ui/api';
+import { Toast } from '@openng/optimus-ui/toast';
 import { Meta, Title } from '@angular/platform-browser';
 import { finalize } from 'rxjs';
 
 @Component({
     selector: 'app-shop-product-details',
-    imports: [ButtonDirective, RouterLink],
+    imports: [ButtonDirective, RouterLink, Toast],
+    providers: [MessageService],
     templateUrl: './product-details.html',
 })
 export class ProductDetails implements OnInit {
@@ -22,6 +25,7 @@ export class ProductDetails implements OnInit {
     private readonly cart = inject(CartService);
     private readonly document = inject(DOCUMENT);
     private readonly meta = inject(Meta);
+    private readonly messageService = inject(MessageService);
     private readonly route = inject(ActivatedRoute);
     private readonly router = inject(Router);
     private readonly title = inject(Title);
@@ -33,7 +37,6 @@ export class ProductDetails implements OnInit {
     protected readonly selectedColorId = signal<string | null>(null);
     protected readonly selectedSizeId = signal<string | null>(null);
     protected readonly detailsExpanded = signal(false);
-    protected readonly cartMessage = signal<string | null>(null);
     protected readonly descriptionIsLong = computed(
         () => (this.product()?.description?.trim().length ?? 0) > 320,
     );
@@ -100,17 +103,31 @@ export class ProductDetails implements OnInit {
         const size = this.option(product, 'Size')?.values.find(
             (value) => value.id === this.selectedSizeId(),
         );
-        if (!color || !size || product.stockQuantity < 1) return;
+        if (!color || !size) {
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Item not added',
+                detail: 'Select a color and size before adding this item to your cart.',
+            });
+            return;
+        }
 
         const result = this.cart.add(product, color, size);
         if (result === 'stock-limit') {
-            this.cartMessage.set('There are no more of this item available in stock.');
-            setTimeout(() => this.cartMessage.set(null), 3500);
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Item not added',
+                detail: 'There are no more of this item available in stock.',
+            });
             return;
         }
 
         if (result === 'unavailable') {
-            this.cartMessage.set('This item is currently unavailable.');
+            this.messageService.add({
+                severity: 'error',
+                summary: 'Item not added',
+                detail: 'This item is currently unavailable.',
+            });
             return;
         }
 
@@ -119,8 +136,11 @@ export class ProductDetails implements OnInit {
             return;
         }
 
-        this.cartMessage.set('Added to your cart.');
-        setTimeout(() => this.cartMessage.set(null), 2500);
+        this.messageService.add({
+            severity: 'success',
+            summary: 'Added to cart',
+            detail: `“${product.name}” was added to your cart.`,
+        });
     }
 
     protected formatPrice(product: CatalogProduct, value = product.price): string {
