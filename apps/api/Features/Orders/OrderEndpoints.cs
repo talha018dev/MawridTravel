@@ -117,20 +117,12 @@ internal static class OrderEndpoints
 
         if (errors.Count > 0) return Results.ValidationProblem(errors);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
-        if (dbContext.Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
-        {
-            await dbContext.Database.ExecuteSqlRawAsync(
-                "SET LOCAL lock_timeout = '5s'",
-                cancellationToken);
-        }
         foreach (var productGroup in requestedItems.GroupBy(item => item.ProductId))
         {
             var requestedQuantity = productGroup.Sum(item => item.Quantity);
             var product = products[productGroup.Key];
             if (!product.IsActive || product.StockQuantity < requestedQuantity)
             {
-                await transaction.RollbackAsync(cancellationToken);
                 return Results.ValidationProblem(new Dictionary<string, string[]>
                 {
                     ["items"] = ["One or more products no longer have enough stock. Refresh your cart and try again."]
@@ -154,7 +146,7 @@ internal static class OrderEndpoints
             Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim(),
             Address = request.Address!.Trim(),
             DeliveryArea = request.DeliveryArea!,
-            PaymentMethod = OrderConstants.CashOnDelivery,
+            PaymentMethod = request.PaymentMethod!,
             Status = OrderConstants.Statuses.NotConfirmed,
             Currency = "BDT",
             Subtotal = subtotal,
@@ -168,11 +160,24 @@ internal static class OrderEndpoints
         dbContext.Orders.Add(order);
         try
         {
-            await dbContext.SaveChangesAsync(cancellationToken);
+            var executionStrategy = dbContext.Database.CreateExecutionStrategy();
+            await executionStrategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+                if (dbContext.Database.ProviderName == "Npgsql.EntityFrameworkCore.PostgreSQL")
+                {
+                    await dbContext.Database.ExecuteSqlRawAsync(
+                        "SET LOCAL lock_timeout = '5s'",
+                        cancellationToken);
+                }
+
+                await dbContext.SaveChangesAsync(acceptAllChangesOnSuccess: false, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            });
+            dbContext.ChangeTracker.AcceptAllChanges();
         }
         catch (DbUpdateConcurrencyException)
         {
-            await transaction.RollbackAsync(cancellationToken);
             dbContext.ChangeTracker.Clear();
             existingOrder = await dbContext.Orders
                 .AsNoTracking()
@@ -189,7 +194,6 @@ internal static class OrderEndpoints
         }
         catch (DbUpdateException exception)
         {
-            await transaction.RollbackAsync(cancellationToken);
             dbContext.ChangeTracker.Clear();
             existingOrder = await dbContext.Orders
                 .AsNoTracking()
@@ -209,7 +213,6 @@ internal static class OrderEndpoints
                     detail: "Another checkout is updating the same product. Please try again.");
             throw;
         }
-        await transaction.CommitAsync(cancellationToken);
 
         return Results.Created($"/api/orders/{order.OrderNumber}", order.ToResponse());
     }
@@ -279,8 +282,8 @@ internal static class OrderEndpoints
             (request.Email.Trim().Length > 320 || !MailAddress.TryCreate(request.Email.Trim(), out _)))
             errors["email"] = ["Enter a valid email address."];
 
-        if (!string.Equals(request.PaymentMethod, OrderConstants.CashOnDelivery, StringComparison.Ordinal))
-            errors["paymentMethod"] = ["Cash on delivery is the only available payment method."];
+        if (request.PaymentMethod is not (OrderConstants.CashOnDelivery or OrderConstants.BanglaQr))
+            errors["paymentMethod"] = ["Select cash on delivery or Bangla QR."];
             
         if (request.Items is null || request.Items.Count == 0)
             errors["items"] = ["Your cart is empty."];

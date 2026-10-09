@@ -9,7 +9,7 @@ export interface CheckoutRequest {
     email: string | null;
     address: string;
     deliveryArea: 'InsideDhaka' | 'OutsideDhaka';
-    paymentMethod: 'CashOnDelivery';
+    paymentMethod: 'CashOnDelivery' | 'BanglaQr';
     items: Array<{
         productId: string;
         colorOptionValueId: string;

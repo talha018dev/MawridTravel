@@ -3,7 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 
-export type OrderStatus = 'NotConfirmed' | 'Confirmed' | 'InProgress' | 'Completed' | 'Failed';
+export type OrderStatus = 'NotConfirmed' | 'Confirmed' | 'InProgress' | 'DeliveryInProgress' | 'Delivered' | 'Completed' | 'Failed';
+export type PaymentMethod = 'CashOnDelivery' | 'BanglaQr';
 
 export interface AdminOrderItem {
     id: string;
@@ -21,7 +22,7 @@ export interface AdminOrder {
     phone: string;
     email: string | null;
     address: string;
-    paymentMethod: string;
+    paymentMethod: PaymentMethod;
     status: OrderStatus;
     currency: string;
     subtotal: number;
@@ -53,5 +54,9 @@ export class OrderAdminService {
 
     updateStatus(id: string, status: OrderStatus): Observable<AdminOrder> {
         return this.http.patch<AdminOrder>(`${this.apiUrl}/${id}/status`, { status }, { withCredentials: true });
+    }
+
+    updatePaymentMethod(id: string, paymentMethod: PaymentMethod): Observable<AdminOrder> {
+        return this.http.patch<AdminOrder>(`${this.apiUrl}/${id}/payment-method`, { paymentMethod }, { withCredentials: true });
     }
 }

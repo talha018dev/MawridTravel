@@ -88,6 +88,28 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Checkout_WithBanglaQr_CreatesBanglaQrOrder()
+    {
+        var product = await CreateProductAsync(stockQuantity: 1);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
+
+        var response = await client.PostAsJsonAsync("/api/checkout", new
+        {
+            fullName = "QR Customer",
+            phone = "01700000000",
+            address = "1 Test Road, Dhaka",
+            deliveryArea = "InsideDhaka",
+            paymentMethod = "BanglaQr",
+            items = new[] { new { productId = product.ProductId, colorOptionValueId = product.ColorId, sizeOptionValueId = product.SizeId, quantity = 1 } }
+        });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var order = await response.Content.ReadFromJsonAsync<OrderResponse>();
+        Assert.Equal("BanglaQr", order?.PaymentMethod);
+    }
+
+    [Fact]
     public async Task Admin_CanMoveOrderThroughFulfilmentStatuses()
     {
         var product = await CreateProductAsync(stockQuantity: 2);
@@ -116,7 +138,7 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
         Assert.NotNull(order);
 
         await CreateAdminAndLoginAsync(client);
-        foreach (var status in new[] { "Confirmed", "InProgress", "Completed" })
+        foreach (var status in new[] { "Confirmed", "InProgress", "DeliveryInProgress", "Delivered" })
         {
             var response = await client.PatchAsJsonAsync(
                 $"/api/admin/orders/{order.Id}/status",
@@ -125,6 +147,49 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
             var updated = await response.Content.ReadFromJsonAsync<OrderResponse>();
             Assert.Equal(status, updated?.Status);
         }
+    }
+
+    [Fact]
+    public async Task Admin_CanMarkOrderAsPaidByBanglaQr()
+    {
+        var product = await CreateProductAsync(stockQuantity: 1);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
+        var checkout = await client.PostAsJsonAsync("/api/checkout", new
+        {
+            fullName = "QR Customer",
+            phone = "01700000000",
+            address = "1 Test Road, Dhaka",
+            deliveryArea = "InsideDhaka",
+            paymentMethod = "CashOnDelivery",
+            items = new[] { new { productId = product.ProductId, colorOptionValueId = product.ColorId, sizeOptionValueId = product.SizeId, quantity = 1 } }
+        });
+        checkout.EnsureSuccessStatusCode();
+        var order = await checkout.Content.ReadFromJsonAsync<OrderResponse>();
+        Assert.Equal("CashOnDelivery", order?.PaymentMethod);
+
+        await CreateAdminAndLoginAsync(client);
+        var response = await client.PatchAsJsonAsync(
+            $"/api/admin/orders/{order!.Id}/payment-method",
+            new { paymentMethod = "BanglaQr" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var updated = await response.Content.ReadFromJsonAsync<OrderResponse>();
+        Assert.Equal("BanglaQr", updated?.PaymentMethod);
+    }
+
+    [Fact]
+    public async Task Admin_UpdateStatus_WithNullBody_ReturnsValidationProblem()
+    {
+        using var client = factory.CreateClient();
+        await CreateAdminAndLoginAsync(client);
+        using var content = new StringContent("null", System.Text.Encoding.UTF8, "application/json");
+
+        var response = await client.PatchAsync(
+            $"/api/admin/orders/{Guid.NewGuid()}/status",
+            content);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
@@ -242,6 +307,7 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
     private sealed record OrderResponse(
         Guid Id,
         string OrderNumber,
+        string PaymentMethod,
         string Status,
         decimal Subtotal,
         decimal DeliveryFee,

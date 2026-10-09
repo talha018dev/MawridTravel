@@ -152,8 +152,12 @@
                     {{ productDetails.name }}
                 </h1>
                 <p class="mt-3 text-sm font-semibold text-(--mawrid-text-muted)">
-                    {{ productDetails.stockQuantity > 0 ? 'In stock' : 'Currently unavailable' }}
-                    &middot; By Mawrid Travel
+                    @if (productDetails.stockQuantity > 0) {
+                        <span>In stock</span>
+                    } @else {
+                        <span class="font-bold text-red-600">Currently unavailable</span>
+                    }
+                    <span>&middot; By Mawrid Travel</span>
                 </p>
 
                 @if (option(productDetails, 'Color'); as colorOption) {

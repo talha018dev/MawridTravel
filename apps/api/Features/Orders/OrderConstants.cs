@@ -3,6 +3,7 @@ namespace MawridTravel.Api.Features.Orders;
 internal static class OrderConstants
 {
     public const string CashOnDelivery = "CashOnDelivery";
+    public const string BanglaQr = "BanglaQr";
     public const string InsideDhaka = "InsideDhaka";
     public const string OutsideDhaka = "OutsideDhaka";
     public const decimal InsideDhakaDeliveryFee = 80m;
@@ -18,11 +19,18 @@ internal static class OrderConstants
         public const string NotConfirmed = "NotConfirmed";
         public const string Confirmed = "Confirmed";
         public const string InProgress = "InProgress";
+        public const string DeliveryInProgress = "DeliveryInProgress";
+        public const string Delivered = "Delivered";
+        // Kept for existing records created before Delivered replaced Completed.
         public const string Completed = "Completed";
         public const string Failed = "Failed";
 
         public static readonly IReadOnlySet<string> All = new HashSet<string>(
-            [NotConfirmed, Confirmed, InProgress, Completed, Failed],
+            [NotConfirmed, Confirmed, InProgress, DeliveryInProgress, Delivered, Completed, Failed],
+            StringComparer.OrdinalIgnoreCase);
+
+        public static readonly IReadOnlySet<string> UpdateOptions = new HashSet<string>(
+            [NotConfirmed, Confirmed, InProgress, DeliveryInProgress, Delivered, Failed],
             StringComparer.OrdinalIgnoreCase);
     }
 }

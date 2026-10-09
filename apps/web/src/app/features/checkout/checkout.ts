@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,6 +23,7 @@ const CHECKOUT_ATTEMPT_KEY = 'mawrid.checkout-attempt.v1';
 })
 export class Checkout {
     private readonly checkoutService = inject(CheckoutService);
+    private readonly document = inject(DOCUMENT);
     protected readonly cart = inject(CartService);
     protected readonly deliveryAreas = [
         { label: 'Inside Dhaka', value: 'InsideDhaka' },
@@ -32,13 +34,14 @@ export class Checkout {
     protected readonly errorMessage = signal<string | null>(null);
     protected readonly serverErrors = signal<Record<string, string[]>>({});
     protected readonly completedOrder = signal<CheckoutOrder | null>(null);
+    protected readonly qrExpanded = signal(false);
     protected readonly checkoutForm = new FormGroup({
         fullName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
         phone: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(30)] }),
         email: new FormControl('', { nonNullable: true, validators: [Validators.email, Validators.maxLength(320)] }),
         address: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1_000)] }),
         deliveryArea: new FormControl<'InsideDhaka' | 'OutsideDhaka'>('InsideDhaka', { nonNullable: true, validators: [Validators.required] }),
-        paymentMethod: new FormControl<'CashOnDelivery'>('CashOnDelivery', { nonNullable: true, validators: [Validators.required] }),
+        paymentMethod: new FormControl<'CashOnDelivery' | 'BanglaQr'>('CashOnDelivery', { nonNullable: true, validators: [Validators.required] }),
     });
 
     protected submit(): void {
@@ -89,6 +92,32 @@ export class Checkout {
 
     protected deliveryFee(): number {
         return this.checkoutForm.controls.deliveryArea.value === 'OutsideDhaka' ? 130 : 80;
+    }
+
+    protected async sharePaymentQr(): Promise<void> {
+        const navigator = this.document.defaultView?.navigator;
+        if (!navigator) return;
+
+        const url = new URL('/images/checkout/mawrid-payment-qr-code.png', this.document.baseURI).href;
+        if (navigator.share) {
+            try {
+                const response = await fetch(url);
+                const qrFile = new File([await response.blob()], 'mawrid-travel-payment-qr.png', {
+                    type: 'image/png',
+                });
+
+                if (navigator.canShare?.({ files: [qrFile] })) {
+                    await navigator.share({ files: [qrFile] });
+                } else {
+                    await navigator.share({ url });
+                }
+            } catch (error) {
+                if (!(error instanceof DOMException && error.name === 'AbortError')) throw error;
+            }
+            return;
+        }
+
+        await navigator.clipboard?.writeText(url);
     }
 
     private resolveIdempotencyKey(request: object): string {

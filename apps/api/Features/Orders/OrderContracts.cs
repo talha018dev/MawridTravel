@@ -54,3 +54,5 @@ internal sealed record OrderListResponse(
     IReadOnlyList<OrderResponse> Items);
 
 internal sealed record UpdateOrderStatusRequest(string? Status);
+
+internal sealed record UpdateOrderPaymentMethodRequest(string? PaymentMethod);

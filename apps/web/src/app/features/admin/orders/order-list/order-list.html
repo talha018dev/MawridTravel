@@ -1,35 +1,203 @@
-<section class="mx-auto w-[min(80rem,calc(100%-2.5rem))] py-8 sm:py-12" aria-labelledby="orders-title">
+<section
+    class="mx-auto w-[min(80rem,calc(100%-2.5rem))] py-8 sm:py-12"
+    aria-labelledby="orders-title"
+>
     <p-toast position="top-center" />
-    <p class="mb-2 text-sm font-bold tracking-[0.12em] text-(--mawrid-font-accent) uppercase">Order management</p>
+    <p class="mb-2 text-sm font-bold tracking-[0.12em] text-(--mawrid-font-accent) uppercase">
+        Order management
+    </p>
     <h1 id="orders-title" class="text-3xl font-bold sm:text-4xl">Orders</h1>
-    <p class="mt-2 text-(--mawrid-text-muted)">Review customer orders and move them through fulfilment.</p>
+    <p class="mt-2 text-(--mawrid-text-muted)">
+        Review customer orders and move them through fulfilment.
+    </p>
 
     <div class="mt-8 grid gap-4 sm:grid-cols-[minmax(0,1fr)_13rem]">
         <div>
             <label class="mb-2 block text-sm font-bold" for="orderSearch">Search orders</label>
-            <p-iconfield><p-inputicon class="pi pi-search" /><input pInputText id="orderSearch" class="w-full" type="search" placeholder="Order number, customer, phone or email" [formControl]="searchControl" /></p-iconfield>
+            <p-iconfield
+                ><p-inputicon class="pi pi-search" /><input
+                    pInputText
+                    id="orderSearch"
+                    class="w-full"
+                    type="search"
+                    placeholder="Order number, customer, phone or email"
+                    [formControl]="searchControl"
+            /></p-iconfield>
         </div>
         <div>
             <label class="mb-2 block text-sm font-bold" for="orderStatus">Status</label>
-            <p-select inputId="orderStatus" class="w-full" styleClass="w-full" [formControl]="statusControl" [options]="filterOptions" optionLabel="label" optionValue="value" [checkmark]="true" />
+            <p-select
+                inputId="orderStatus"
+                class="w-full"
+                styleClass="w-full"
+                [formControl]="statusControl"
+                [options]="filterOptions"
+                optionLabel="label"
+                optionValue="value"
+                [checkmark]="false"
+                appendTo="body"
+                panelStyleClass="min-w-56"
+            >
+                <ng-template #selectedItem let-option>
+                    @if (option?.value === 'all') {
+                        <span class="inline-flex items-center gap-2 font-semibold text-(--mawrid-font-primary)"><i class="pi pi-list" aria-hidden="true"></i> All statuses</span>
+                    } @else if (option) {
+                        <span [class]="statusBadgeClass(option.value)">
+                            <i class="pi" [class]="'pi ' + statusIcon(option.value)" aria-hidden="true"></i>
+                            {{ option.label }}
+                        </span>
+                    }
+                </ng-template>
+                <ng-template #item let-option>
+                    @if (option.value === 'all') {
+                        <span class="flex w-full items-center gap-2 px-2 py-1 text-sm font-bold text-slate-700"><i class="pi pi-list" aria-hidden="true"></i> All statuses</span>
+                    } @else {
+                        <span [class]="statusFilterClass(option.value)">
+                            <i class="pi" [class]="'pi ' + statusIcon(option.value)" aria-hidden="true"></i>
+                            {{ option.label }}
+                        </span>
+                    }
+                </ng-template>
+            </p-select>
         </div>
     </div>
 
-    @if (errorMessage(); as message) { <p class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">{{ message }}</p> }
+    @if (errorMessage(); as message) {
+        <p
+            class="mt-6 rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500"
+            role="alert"
+        >
+            {{ message }}
+        </p>
+    }
 
-    <p-table styleClass="mt-6 overflow-hidden rounded-2xl border border-(--mawrid-border)" tableStyleClass="min-w-260" dataKey="id" [value]="orders()" [lazy]="true" [lazyLoadOnInit]="false" [paginator]="true" [rows]="pageSize" [first]="(page() - 1) * pageSize" [totalRecords]="totalCount()" [loading]="loading()" [scrollable]="true" [rowHover]="true" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first}–{last} of {totalRecords} orders" (onPage)="changePage($event)">
-        <ng-template #header><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Placed</th><th>Status</th></tr></ng-template>
+    <p-table
+        styleClass="mt-6 overflow-hidden rounded-2xl border border-(--mawrid-border)"
+        tableStyleClass="min-w-260"
+        dataKey="id"
+        [value]="orders()"
+        [lazy]="true"
+        [lazyLoadOnInit]="false"
+        [paginator]="true"
+        [rows]="pageSize"
+        [first]="(page() - 1) * pageSize"
+        [totalRecords]="totalCount()"
+        [loading]="loading()"
+        [scrollable]="true"
+        [rowHover]="true"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first}–{last} of {totalRecords} orders"
+        (onPage)="changePage($event)"
+    >
+        <ng-template #header
+            ><tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Payment method</th>
+                <th>Placed</th>
+                <th>Order status</th>
+            </tr></ng-template
+        >
         <ng-template #body let-order>
             <tr>
-                <td><strong>{{ order.orderNumber }}</strong><p class="mt-1 max-w-55 truncate text-xs text-(--mawrid-text-muted)" [title]="order.address">{{ order.address }}</p></td>
-                <td><strong>{{ order.fullName }}</strong><p class="mt-1 text-xs text-(--mawrid-text-muted)">{{ order.phone }}</p><p class="text-xs text-(--mawrid-text-muted)">{{ order.email || 'No email' }}</p></td>
-                <td><span class="font-bold">{{ order.items.length }}</span><p class="mt-1 max-w-55 truncate text-xs text-(--mawrid-text-muted)" [title]="order.items[0]?.productName">{{ order.items[0]?.productName }}{{ order.items.length > 1 ? ' +' + (order.items.length - 1) + ' more' : '' }}</p></td>
-                <td class="whitespace-nowrap font-bold">{{ formatPrice(order.total) }}<p class="mt-1 text-xs font-normal text-(--mawrid-text-muted)">Includes {{ formatPrice(order.deliveryFee) }} delivery</p></td>
-                <td>Cash on delivery</td>
-                <td class="whitespace-nowrap text-(--mawrid-text-muted)">{{ order.createdAt | date: 'medium' }}</td>
-                <td><p-select class="min-w-40" styleClass="w-full" [options]="statusOptions(order)" optionLabel="label" optionValue="value" [ngModel]="order.status" [disabled]="updatingId() === order.id || statusOptions(order).length === 1" (onChange)="updateStatus(order, $event)" /></td>
+                <td>
+                    <strong>{{ order.orderNumber }}</strong>
+                    <p
+                        class="mt-1 max-w-55 truncate text-xs text-(--mawrid-text-muted)"
+                        [title]="order.address"
+                    >
+                        {{ order.address }}
+                    </p>
+                </td>
+                <td>
+                    <strong>{{ order.fullName }}</strong>
+                    <p class="mt-1 text-xs text-(--mawrid-text-muted)">{{ order.phone }}</p>
+                    <p class="text-xs text-(--mawrid-text-muted)">
+                        {{ order.email || 'No email' }}
+                    </p>
+                </td>
+                <td>
+                    <span class="font-bold">{{ order.items.length }}</span>
+                    <p
+                        class="mt-1 max-w-55 truncate text-xs text-(--mawrid-text-muted)"
+                        [title]="order.items[0]?.productName"
+                    >
+                        {{ order.items[0]?.productName
+                        }}{{
+                            order.items.length > 1 ? ' +' + (order.items.length - 1) + ' more' : ''
+                        }}
+                    </p>
+                </td>
+                <td class="whitespace-nowrap font-bold">
+                    {{ formatPrice(order.total) }}
+                    <p class="mt-1 text-xs font-normal text-(--mawrid-text-muted)">
+                        Includes {{ formatPrice(order.deliveryFee) }} delivery
+                    </p>
+                </td>
+                <td>
+                    <p class="mb-1.5 text-[0.65rem] font-bold tracking-wide text-(--mawrid-text-muted) uppercase">Current payment</p>
+                    <span
+                        class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-extrabold"
+                        [class.bg-emerald-100]="order.paymentMethod === 'BanglaQr'"
+                        [class.text-emerald-800]="order.paymentMethod === 'BanglaQr'"
+                        [class.bg-amber-100]="order.paymentMethod === 'CashOnDelivery'"
+                        [class.text-amber-800]="order.paymentMethod === 'CashOnDelivery'"
+                    >
+                        <i class="pi" [class.pi-check-circle]="order.paymentMethod === 'BanglaQr'" [class.pi-wallet]="order.paymentMethod === 'CashOnDelivery'" aria-hidden="true"></i>
+                        {{ paymentLabel(order.paymentMethod) }}
+                    </span>
+                    <button
+                        type="button"
+                        class="mt-2 block cursor-pointer whitespace-nowrap text-xs font-bold text-(--mawrid-font-accent) underline decoration-transparent underline-offset-2 hover:decoration-current disabled:cursor-not-allowed disabled:opacity-50"
+                        [disabled]="updatingId() === order.id"
+                        (click)="updatePaymentMethod(order, order.paymentMethod === 'BanglaQr' ? 'CashOnDelivery' : 'BanglaQr')"
+                    >{{ order.paymentMethod === 'BanglaQr' ? 'Change to cash on delivery' : 'Mark as paid by Bangla QR' }}</button>
+                </td>
+                <td class="whitespace-nowrap text-(--mawrid-text-muted)">
+                    {{ order.createdAt | date: 'medium' }}
+                </td>
+                <td>
+                    <div class="flex items-center gap-2">
+                        <span [class]="statusBadgeClass(order.status)">
+                            <i class="pi" [class]="'pi ' + statusIcon(order.status)" aria-hidden="true"></i>
+                            {{ statusLabel(order.status) }}
+                        </span>
+                        @if (availableStatuses(order).length > 0) {
+                            <button
+                                type="button"
+                                class="grid size-8 cursor-pointer place-items-center rounded-lg border border-(--mawrid-border) bg-(--mawrid-card) text-(--mawrid-text-muted) hover:border-(--mawrid-primary) hover:text-(--mawrid-font-primary)"
+                                aria-label="More order actions"
+                                aria-haspopup="menu"
+                                (click)="actionMenu.toggle($event)"
+                            >
+                                    <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
+                            </button>
+                            <p-popover #actionMenu ariaLabel="More order actions" appendTo="body">
+                                <div class="min-w-48 p-1" role="menu">
+                                @for (status of availableStatuses(order); track status) {
+                                    <button
+                                        type="button"
+                                        [class]="statusActionClass(status)"
+                                        [disabled]="updatingId() === order.id"
+                                        role="menuitem"
+                                        (click)="actionMenu.hide(); updateStatus(order, status)"
+                                    ><i class="pi" [class]="'pi ' + statusIcon(status)" aria-hidden="true"></i> {{ statusActionLabel(status) }}</button>
+                                }
+                                </div>
+                            </p-popover>
+                        }
+                    </div>
+                </td>
             </tr>
         </ng-template>
-        <ng-template #emptymessage><tr><td class="py-12! text-center! text-(--mawrid-text-muted)" colspan="7">No orders match your search and filter.</td></tr></ng-template>
+        <ng-template #emptymessage
+            ><tr>
+                <td class="py-12! text-center! text-(--mawrid-text-muted)" colspan="7">
+                    No orders match your search and filter.
+                </td>
+            </tr></ng-template
+        >
     </p-table>
 </section>

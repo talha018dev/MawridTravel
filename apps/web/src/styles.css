@@ -86,3 +86,11 @@ html {
   flex-shrink: 0;
   align-self: flex-start;
 }
+
+.checkout-payment-radio {
+  --p-radiobutton-checked-background: var(--mawrid-accent);
+  --p-radiobutton-checked-hover-background: var(--mawrid-accent);
+  --p-radiobutton-checked-border-color: var(--mawrid-accent);
+  --p-radiobutton-checked-hover-border-color: var(--mawrid-accent);
+  --p-radiobutton-checked-focus-border-color: var(--mawrid-accent);
+}

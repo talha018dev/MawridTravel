@@ -112,12 +112,14 @@ internal static class RegisterEndpoint
         var createResult = await userManager.CreateAsync(user, password);
         if (!createResult.Succeeded)
         {
+            await transaction.RollbackAsync();
             return createResult;
         }
 
         var roleResult = await userManager.AddToRoleAsync(user, RoleNames.Customer);
         if (!roleResult.Succeeded)
         {
+            await transaction.RollbackAsync();
             return roleResult;
         }
 
