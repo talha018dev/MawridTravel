@@ -1,0 +1,86 @@
+<p-toast position="top-center" />
+<main class="mx-auto w-[min(76rem,calc(100%-2rem))] py-8 sm:py-12">
+    <a class="inline-flex items-center gap-2 text-sm font-bold text-(--mawrid-text-muted) no-underline hover:text-(--mawrid-font-primary)" routerLink="/admin/orders">
+        <i class="pi pi-arrow-left" aria-hidden="true"></i> Back to orders
+    </a>
+
+    @if (loading()) {
+        <div class="mt-8 grid animate-pulse gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div class="h-96 rounded-2xl bg-(--mawrid-header)"></div>
+            <div class="h-72 rounded-2xl bg-(--mawrid-header)"></div>
+        </div>
+    } @else if (errorMessage(); as message) {
+        <section class="mt-8 rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-red-700" role="alert">
+            <i class="pi pi-exclamation-circle text-4xl" aria-hidden="true"></i>
+            <h1 class="mt-3 text-2xl font-bold">{{ message }}</h1>
+            <a pButton class="mt-6 no-underline" routerLink="/admin/orders">Return to orders</a>
+        </section>
+    } @else if (order(); as orderDetails) {
+        <header class="mt-6 flex flex-col justify-between gap-5 border-b border-(--mawrid-border) pb-7 sm:flex-row sm:items-end">
+            <div>
+                <p class="text-sm font-bold tracking-[0.12em] text-(--mawrid-font-accent) uppercase">Order details</p>
+                <h1 class="mt-2 text-3xl font-extrabold sm:text-4xl">{{ orderDetails.orderNumber }}</h1>
+                <p class="mt-2 text-sm text-(--mawrid-text-muted)">Placed {{ orderDetails.createdAt | date: 'medium' }} · Updated {{ orderDetails.updatedAt | date: 'medium' }}</p>
+            </div>
+            <span [class]="statusClass(orderDetails.status)"><i class="pi" [class]="'pi ' + statusIcon(orderDetails.status)" aria-hidden="true"></i>{{ statusLabel(orderDetails.status) }}</span>
+        </header>
+
+        <section class="mt-7 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <div class="grid gap-6">
+                <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow)">
+                    <h2 class="text-xl font-bold">Items <span class="text-sm font-normal text-(--mawrid-text-muted)">({{ orderDetails.items.length }})</span></h2>
+                    <div class="mt-5 divide-y divide-(--mawrid-border)">
+                        @for (item of orderDetails.items; track item.id) {
+                            <article class="grid gap-3 py-5 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                                <div class="min-w-0">
+                                    <a class="font-bold text-(--mawrid-font-primary) no-underline hover:text-(--mawrid-font-accent) hover:underline" [routerLink]="['/admin/products', item.productId]">{{ item.productName }}</a>
+                                    <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-(--mawrid-text-muted)">
+                                        <span class="inline-flex items-center gap-1.5">@if (item.colorHex) { <span class="size-3 rounded-full border border-black/15" [style.background-color]="item.colorHex"></span> } Color: {{ item.color }}</span>
+                                        <span>Size: {{ item.size }}</span>
+                                        <span>Quantity: {{ item.quantity }}</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-(--mawrid-text-muted)">Unit price: {{ formatPrice(item.unitPrice) }}</p>
+                                </div>
+                                <strong class="text-lg">{{ formatPrice(item.lineTotal) }}</strong>
+                            </article>
+                        }
+                    </div>
+                </section>
+
+                <div class="grid gap-6 md:grid-cols-2">
+                    <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow)">
+                        <h2 class="text-lg font-bold">Customer</h2>
+                        <dl class="mt-4 grid gap-3 text-sm"><div><dt class="text-(--mawrid-text-muted)">Name</dt><dd class="mt-1 font-bold">{{ orderDetails.fullName }}</dd></div><div><dt class="text-(--mawrid-text-muted)">Phone</dt><dd class="mt-1"><a class="font-bold text-(--mawrid-font-primary)" [href]="'tel:' + orderDetails.phone">{{ orderDetails.phone }}</a></dd></div><div><dt class="text-(--mawrid-text-muted)">Email</dt><dd class="mt-1">@if (orderDetails.email) { <a class="font-bold text-(--mawrid-font-primary)" [href]="'mailto:' + orderDetails.email">{{ orderDetails.email }}</a> } @else { <span>No email provided</span> }</dd></div></dl>
+                    </section>
+                    <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow)">
+                        <h2 class="text-lg font-bold">Delivery</h2>
+                        <p class="mt-4 leading-6">{{ orderDetails.address }}</p>
+                        <p class="mt-3 text-sm font-bold text-(--mawrid-text-muted)">{{ orderDetails.deliveryArea === 'InsideDhaka' ? 'Inside Dhaka' : 'Outside Dhaka' }}</p>
+                    </section>
+                </div>
+            </div>
+
+            <aside class="grid content-start gap-6 lg:sticky lg:top-6">
+                <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow)">
+                    <h2 class="text-lg font-bold">Order status</h2>
+                    <div class="mt-4 grid gap-2">
+                        @for (status of statuses; track status) {
+                            <button type="button" class="flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-bold disabled:cursor-not-allowed disabled:opacity-60" [class.border-(--mawrid-primary)]="orderDetails.status === status" [class.bg-(--mawrid-primary)]="orderDetails.status === status" [class.text-white]="orderDetails.status === status" [class.border-(--mawrid-border)]="orderDetails.status !== status" [disabled]="updating() !== null || orderDetails.status === status" (click)="updateStatus(status)"><i class="pi" [class]="'pi ' + statusIcon(status)" aria-hidden="true"></i>{{ statusLabel(status) }}</button>
+                        }
+                    </div>
+                </section>
+
+                <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow)">
+                    <h2 class="text-lg font-bold">Payment</h2>
+                    <p class="mt-2 text-sm text-(--mawrid-text-muted)">{{ orderDetails.paymentMethod === 'BanglaQr' ? 'Paid and manually verified' : 'Payment is due on delivery' }}</p>
+                    <div class="mt-4 grid gap-2"><button type="button" class="cursor-pointer rounded-xl border px-3 py-2 text-left text-sm font-bold" [class.border-emerald-500]="orderDetails.paymentMethod === 'BanglaQr'" [class.bg-emerald-50]="orderDetails.paymentMethod === 'BanglaQr'" [disabled]="updating() !== null || orderDetails.paymentMethod === 'BanglaQr'" (click)="updatePayment('BanglaQr')">Bangla QR (paid)</button><button type="button" class="cursor-pointer rounded-xl border px-3 py-2 text-left text-sm font-bold" [class.border-amber-500]="orderDetails.paymentMethod === 'CashOnDelivery'" [class.bg-amber-50]="orderDetails.paymentMethod === 'CashOnDelivery'" [disabled]="updating() !== null || orderDetails.paymentMethod === 'CashOnDelivery'" (click)="updatePayment('CashOnDelivery')">Cash on delivery</button></div>
+                </section>
+
+                <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-6 shadow-(--mawrid-card-shadow)">
+                    <h2 class="text-lg font-bold">Summary</h2>
+                    <dl class="mt-4 grid gap-3 text-sm"><div class="flex justify-between"><dt class="text-(--mawrid-text-muted)">Subtotal</dt><dd class="font-bold">{{ formatPrice(orderDetails.subtotal) }}</dd></div><div class="flex justify-between"><dt class="text-(--mawrid-text-muted)">Delivery</dt><dd class="font-bold">{{ formatPrice(orderDetails.deliveryFee) }}</dd></div><div class="flex justify-between border-t border-(--mawrid-border) pt-4 text-lg"><dt class="font-bold">Total</dt><dd class="font-extrabold text-(--mawrid-font-accent)">{{ formatPrice(orderDetails.total) }}</dd></div></dl>
+                </section>
+            </aside>
+        </section>
+    }
+</main>

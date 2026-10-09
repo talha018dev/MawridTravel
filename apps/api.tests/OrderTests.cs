@@ -179,6 +179,33 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Admin_CanGetOrderDetails()
+    {
+        var product = await CreateProductAsync(stockQuantity: 1);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
+        var checkout = await client.PostAsJsonAsync("/api/checkout", new
+        {
+            fullName = "Details Customer",
+            phone = "01700000000",
+            address = "1 Details Road, Dhaka",
+            deliveryArea = "InsideDhaka",
+            paymentMethod = "CashOnDelivery",
+            items = new[] { new { productId = product.ProductId, colorOptionValueId = product.ColorId, sizeOptionValueId = product.SizeId, quantity = 1 } }
+        });
+        checkout.EnsureSuccessStatusCode();
+        var order = await checkout.Content.ReadFromJsonAsync<OrderResponse>();
+
+        await CreateAdminAndLoginAsync(client);
+        var response = await client.GetAsync($"/api/admin/orders/{order!.Id}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var details = await response.Content.ReadFromJsonAsync<OrderResponse>();
+        Assert.Equal(order.Id, details?.Id);
+        Assert.Equal(order.OrderNumber, details?.OrderNumber);
+    }
+
+    [Fact]
     public async Task Admin_UpdateStatus_WithNullBody_ReturnsValidationProblem()
     {
         using var client = factory.CreateClient();

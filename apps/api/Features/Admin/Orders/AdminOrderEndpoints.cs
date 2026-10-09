@@ -10,6 +10,7 @@ internal static class AdminOrderEndpoints
     {
         var group = adminGroup.MapGroup("/orders");
         group.MapGet("/", GetOrdersAsync).WithName("GetAdminOrders");
+        group.MapGet("/{id:guid}", GetOrderAsync).WithName("GetAdminOrder");
         group.MapPatch("/{id:guid}/status", UpdateStatusAsync).WithName("UpdateOrderStatus");
         group.MapPatch("/{id:guid}/payment-method", UpdatePaymentMethodAsync).WithName("UpdateOrderPaymentMethod");
         return adminGroup;
@@ -62,6 +63,19 @@ internal static class AdminOrderEndpoints
             pageSize,
             totalCount,
             orders.Select(order => order.ToResponse()).ToArray()));
+    }
+
+    private static async Task<IResult> GetOrderAsync(
+        Guid id,
+        AppDbContext dbContext,
+        CancellationToken cancellationToken)
+    {
+        var order = await dbContext.Orders
+            .AsNoTracking()
+            .Include(item => item.Items)
+            .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
+
+        return order is null ? Results.NotFound() : Results.Ok(order.ToResponse());
     }
 
     private static async Task<IResult> UpdateStatusAsync(
@@ -160,11 +174,4 @@ internal static class AdminOrderEndpoints
         OrderConstants.Statuses.All.Single(item =>
             string.Equals(item, status.Trim(), StringComparison.OrdinalIgnoreCase));
 
-    private static string DisplayStatus(string status) => status switch
-    {
-        OrderConstants.Statuses.NotConfirmed => "not confirmed",
-        OrderConstants.Statuses.InProgress => "in progress",
-        OrderConstants.Statuses.DeliveryInProgress => "delivery in progress",
-        _ => status.ToLowerInvariant()
-    };
 }

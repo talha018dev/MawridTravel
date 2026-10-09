@@ -8,9 +8,15 @@ export type PaymentMethod = 'CashOnDelivery' | 'BanglaQr';
 
 export interface AdminOrderItem {
     id: string;
+    productId: string;
     productName: string;
+    productSlug: string;
+    colorOptionValueId: string;
     color: string;
+    colorHex: string | null;
+    sizeOptionValueId: string;
     size: string;
+    unitPrice: number;
     quantity: number;
     lineTotal: number;
 }
@@ -22,6 +28,7 @@ export interface AdminOrder {
     phone: string;
     email: string | null;
     address: string;
+    deliveryArea: 'InsideDhaka' | 'OutsideDhaka';
     paymentMethod: PaymentMethod;
     status: OrderStatus;
     currency: string;
@@ -50,6 +57,10 @@ export class OrderAdminService {
         if (search) params = params.set('search', search);
         if (status !== 'all') params = params.set('status', status);
         return this.http.get<AdminOrderListResponse>(this.apiUrl, { params, withCredentials: true });
+    }
+
+    getOrder(id: string): Observable<AdminOrder> {
+        return this.http.get<AdminOrder>(`${this.apiUrl}/${id}`, { withCredentials: true });
     }
 
     updateStatus(id: string, status: OrderStatus): Observable<AdminOrder> {

@@ -98,12 +98,16 @@
                 <th>Payment method</th>
                 <th>Placed</th>
                 <th>Order status</th>
+                <th>Actions</th>
             </tr></ng-template
         >
         <ng-template #body let-order>
             <tr>
                 <td>
-                    <strong>{{ order.orderNumber }}</strong>
+                    <a
+                        class="font-bold text-(--mawrid-font-primary) no-underline hover:text-(--mawrid-font-accent) hover:underline"
+                        [routerLink]="['/admin/orders', order.id]"
+                    >{{ order.orderNumber }}</a>
                     <p
                         class="mt-1 max-w-55 truncate text-xs text-(--mawrid-text-muted)"
                         [title]="order.address"
@@ -190,11 +194,17 @@
                         }
                     </div>
                 </td>
+                <td>
+                    <a
+                        class="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-(--mawrid-primary) bg-(--mawrid-primary) px-3 py-2 text-xs font-bold text-white no-underline hover:brightness-110"
+                        [routerLink]="['/admin/orders', order.id]"
+                    ><i class="pi pi-eye" aria-hidden="true"></i> Details</a>
+                </td>
             </tr>
         </ng-template>
         <ng-template #emptymessage
             ><tr>
-                <td class="py-12! text-center! text-(--mawrid-text-muted)" colspan="7">
+                <td class="py-12! text-center! text-(--mawrid-text-muted)" colspan="8">
                     No orders match your search and filter.
                 </td>
             </tr></ng-template

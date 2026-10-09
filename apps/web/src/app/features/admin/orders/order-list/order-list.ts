@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AdminOrder, OrderAdminService, OrderStatus, PaymentMethod } from '@app/features/admin/orders/order-admin.service';
 import { MessageService } from '@openng/optimus-ui/api';
 import { IconField } from '@openng/optimus-ui/iconfield';
@@ -18,7 +19,7 @@ import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 @Component({
     selector: 'app-order-list',
     providers: [MessageService],
-    imports: [DatePipe, IconField, InputIcon, InputText, Popover, ReactiveFormsModule, Select, TableModule, Toast],
+    imports: [DatePipe, IconField, InputIcon, InputText, Popover, ReactiveFormsModule, RouterLink, Select, TableModule, Toast],
     templateUrl: './order-list.html',
 })
 export class OrderList implements OnInit {
