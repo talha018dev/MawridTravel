@@ -48,9 +48,9 @@
 
                 <section class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7" aria-labelledby="delivery-payment-title">
                     <h2 id="delivery-payment-title" class="text-xl font-bold">Delivery and payment</h2>
-                    <label class="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-(--mawrid-accent) bg-(--mawrid-nav-hover) p-4" for="cashOnDelivery">
+                    <label class="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-(--mawrid-primary) bg-(--mawrid-primary) p-4 text-white" for="cashOnDelivery">
                         <p-radiobutton inputId="cashOnDelivery" value="CashOnDelivery" formControlName="paymentMethod" />
-                        <span><strong class="block">Cash on delivery</strong><span class="mt-1 block text-sm text-(--mawrid-text-muted)">Pay when your order arrives. Delivery fee: {{ formatPrice(deliveryFee()) }}</span></span>
+                        <span><strong class="block">Cash on delivery</strong><span class="mt-1 block text-sm text-white/80">Pay when your order arrives. Delivery fee: {{ formatPrice(deliveryFee()) }}</span></span>
                     </label>
                 </section>
             </div>
