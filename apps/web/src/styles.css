@@ -56,3 +56,33 @@ html {
   --mawrid-status-draft-text: #cbd5e1;
   --mawrid-card-shadow: 0 20px 60px rgb(0 0 0 / 28%);
 }
+
+/* Keep every toast icon, message, and close control aligned to the first text row. */
+.p-toast-message-content {
+  align-items: flex-start !important;
+}
+
+.p-toast-message-icon {
+  position: static !important;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.p-toast-message-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.p-toast-summary {
+  display: block;
+  line-height: 1.5rem;
+}
+
+.p-toast-detail {
+  line-height: 1.5rem;
+}
+
+.p-toast-close-button {
+  flex-shrink: 0;
+  align-self: flex-start;
+}

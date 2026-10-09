@@ -1,3 +1,4 @@
+<p-toast position="top-center" />
 <main class="mx-auto w-[min(80rem,calc(100%-2rem))] py-10 sm:py-14">
     <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
@@ -57,7 +58,7 @@
                                 ></span>
                             }
                         </a>
-                        <div class="min-w-0">
+                        <div class="flex min-w-0 flex-col">
                             <a
                                 class="font-bold text-(--mawrid-font-primary) no-underline hover:underline"
                                 [routerLink]="['/shop', item.slug]"
@@ -74,7 +75,7 @@
                                 </div>
                             </dl>
                             <div
-                                class="mt-4 inline-flex items-center overflow-hidden rounded-full border border-(--mawrid-border)"
+                                class="mt-4 inline-flex w-fit items-center overflow-hidden rounded-full border border-(--mawrid-border) sm:mt-auto sm:translate-y-0.5"
                             >
                                 <button
                                     type="button"
@@ -90,35 +91,24 @@
                                     aria-live="polite"
                                     >{{ item.quantity }}</span
                                 >
-                                <span
-                                    class="inline-flex"
-                                    [pTooltip]="
+                                <button
+                                    type="button"
+                                    class="relative z-10 grid size-9 shrink-0 cursor-pointer place-items-center text-(--mawrid-font-primary) hover:bg-(--mawrid-nav-hover)"
+                                    [attr.aria-label]="
                                         item.quantity >= item.stockQuantity
-                                            ? 'No more items are available in stock'
-                                            : 'Increase quantity'
+                                            ? 'Show maximum stock message for ' + item.name
+                                            : 'Increase quantity for ' + item.name
                                     "
-                                    tooltipPosition="top"
+                                    (click)="$event.stopPropagation(); increaseQuantity(item)"
                                 >
-                                    <button
-                                        type="button"
-                                        class="grid size-9 cursor-pointer place-items-center hover:bg-(--mawrid-nav-hover) disabled:cursor-not-allowed disabled:opacity-40"
-                                        [disabled]="item.quantity >= item.stockQuantity"
-                                        [attr.aria-label]="
-                                            item.quantity >= item.stockQuantity
-                                                ? 'Maximum available stock is already in your cart'
-                                                : 'Increase quantity for ' + item.name
-                                        "
-                                        (click)="cart.setQuantity(item.key, item.quantity + 1)"
-                                    >
-                                        <i class="pi pi-plus text-xs" aria-hidden="true"></i>
-                                    </button>
-                                </span>
+                                    <i class="pi pi-plus text-xs" aria-hidden="true"></i>
+                                </button>
                             </div>
                         </div>
                         <div
                             class="col-span-2 flex items-center justify-between gap-4 sm:col-span-1 sm:flex-col sm:items-end"
                         >
-                            <p class="font-extrabold text-(--mawrid-font-accent)">
+                            <p class="text-xl font-extrabold text-(--mawrid-font-accent)">
                                 {{ formatPrice(item, item.price * item.quantity) }}
                             </p>
                             <button
@@ -141,7 +131,7 @@
                     <span class="text-(--mawrid-text-muted)"
                         >Subtotal ({{ cart.itemCount() }} items)</span
                     >
-                    <strong>{{ formatPrice(cart.items()[0], cart.subtotal()) }}</strong>
+                    <strong class="text-xl">{{ formatPrice(cart.items()[0], cart.subtotal()) }}</strong>
                 </div>
                 <p class="mt-4 text-sm leading-6 text-(--mawrid-text-muted)">
                     Shipping and final availability are confirmed at checkout.
