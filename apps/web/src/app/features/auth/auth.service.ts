@@ -15,7 +15,16 @@ export interface LoginResponse {
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string | null;
+  address?: string | null;
   roles: string[];
+}
+
+export interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string | null;
+  address: string | null;
 }
 
 export type AuthUser = LoginResponse;
@@ -124,6 +133,12 @@ export class AuthService {
         this.sessionLoaded = true;
       }),
     );
+  }
+
+  updateProfile(request: UpdateProfileRequest): Observable<AuthUser> {
+    return this.http
+      .put<AuthUser>(`${this.apiUrl}/profile`, request, { withCredentials: true })
+      .pipe(tap((user) => this.setAuthenticatedUser(user)));
   }
 
   private setAuthenticatedUser(user: AuthUser): void {

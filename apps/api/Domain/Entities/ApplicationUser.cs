@@ -8,6 +8,8 @@ public sealed class ApplicationUser : IdentityUser<Guid>
 
     public required string LastName { get; set; }
 
+    public string? Address { get; set; }
+
     public DateTimeOffset CreatedAt { get; set; }
 
     public DateTimeOffset UpdatedAt { get; set; }

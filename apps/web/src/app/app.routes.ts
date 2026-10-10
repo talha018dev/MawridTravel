@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from '@app/features/admin/admin.guard';
 import { guestOnlyGuard } from '@app/features/auth/guest-only.guard';
+import { authGuard } from '@app/features/auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -53,6 +54,12 @@ export const routes: Routes = [
     path: 'checkout',
     loadComponent: () => import('@app/features/checkout/checkout').then(({ Checkout }) => Checkout),
     title: 'Checkout | Mawrid Travel',
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('@app/features/profile/profile').then(({ Profile }) => Profile),
+    title: 'Profile | Mawrid Travel',
   },
   {
     path: 'terms-and-use',

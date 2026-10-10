@@ -17,6 +17,9 @@ internal sealed class ApplicationUserConfiguration
             .HasMaxLength(100)
             .IsRequired();
 
+        builder.Property(user => user.Address)
+            .HasMaxLength(500);
+
         builder.Property(user => user.CreatedAt)
             .IsRequired();
 

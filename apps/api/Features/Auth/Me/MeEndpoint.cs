@@ -34,6 +34,8 @@ internal static class MeEndpoint
             user.FirstName,
             user.LastName,
             user.Email,
+            user.PhoneNumber,
+            user.Address,
             roles));
     }
 
@@ -42,5 +44,7 @@ internal static class MeEndpoint
         string FirstName,
         string LastName,
         string Email,
+        string? PhoneNumber,
+        string? Address,
         IList<string> Roles);
 }
