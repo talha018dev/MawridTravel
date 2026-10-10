@@ -25,6 +25,40 @@ public sealed class BlogTests(ApiFactory factory) : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task PublicBlogs_ReturnOnlyPublishedPostsAndSupportSlugLookup()
+    {
+        using var adminClient = await CreateAdminClientAsync();
+        using var publicClient = factory.CreateClient();
+        var marker = Guid.NewGuid().ToString("N");
+
+        var publishedResponse = await adminClient.PostAsJsonAsync(
+            "/api/admin/blogs",
+            CreateRequest($"Published journey {marker}", isPublished: true));
+        publishedResponse.EnsureSuccessStatusCode();
+        var published = await publishedResponse.Content.ReadFromJsonAsync<BlogResponse>();
+        Assert.NotNull(published);
+
+        var draftResponse = await adminClient.PostAsJsonAsync(
+            "/api/admin/blogs",
+            CreateRequest($"Draft journey {marker}", isPublished: false));
+        draftResponse.EnsureSuccessStatusCode();
+        var draft = await draftResponse.Content.ReadFromJsonAsync<BlogResponse>();
+        Assert.NotNull(draft);
+
+        var list = await publicClient.GetFromJsonAsync<BlogListResponse>(
+            $"/api/blogs?search={marker}&page=1&pageSize=9");
+        Assert.NotNull(list);
+        Assert.Contains(list.Items, blog => blog.Id == published.Id);
+        Assert.DoesNotContain(list.Items, blog => blog.Id == draft.Id);
+
+        var detailResponse = await publicClient.GetAsync($"/api/blogs/{published.Slug}");
+        Assert.Equal(HttpStatusCode.OK, detailResponse.StatusCode);
+
+        var draftDetailResponse = await publicClient.GetAsync($"/api/blogs/{draft.Slug}");
+        Assert.Equal(HttpStatusCode.NotFound, draftDetailResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task CreateBlog_WhenCustomer_ReturnsForbidden()
     {
         using var client = factory.CreateClient();

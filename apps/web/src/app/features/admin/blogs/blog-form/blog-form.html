@@ -2,7 +2,16 @@
   class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
   aria-labelledby="blog-create-title"
 >
-  <div class="flex flex-wrap items-end justify-between gap-4">
+  <button
+    type="button"
+    class="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-(--mawrid-text-muted) transition-colors hover:text-(--mawrid-font-primary) hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+    (click)="cancelled.emit()"
+  >
+    <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
+    Back to blogs
+  </button>
+
+  <div class="mt-4 flex flex-wrap items-end justify-between gap-4">
     <div>
       <p class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase">
         Blog management
@@ -10,27 +19,40 @@
       <h1 id="blog-create-title" class="text-3xl font-bold sm:text-4xl">
         {{ mode() === 'edit' ? 'Edit blog' : 'Create blog' }}
       </h1>
-      <p class="mt-2 text-(--mawrid-text-muted)">
-        {{
-          mode() === 'edit'
-            ? 'Update the article details, content, publishing state and featured image.'
-            : 'Write a travel article and save it as a draft or publish it immediately.'
-        }}
-      </p>
     </div>
-    <button
-      pButton
-      type="button"
-      severity="secondary"
-      variant="outlined"
-      (click)="cancelled.emit()"
-    >
-      <i class="pi pi-arrow-left" aria-hidden="true"></i>
-      <span>Back to blogs</span>
-    </button>
+    <div class="flex items-center gap-3">
+      <button
+        pButton
+        type="button"
+        class="border-transparent! bg-(--mawrid-nav-hover)! text-(--mawrid-nav-hover-text)! hover:bg-(--mawrid-accent)! hover:text-(--mawrid-primary)!"
+        [disabled]="submitting()"
+        (click)="cancelled.emit()"
+      >
+        Cancel
+      </button>
+      <button
+        pButton
+        type="submit"
+        form="blog-form"
+        [disabled]="submitting() || !editorReady()"
+      >
+        @if (submitting()) {
+          <i class="pi pi-spin pi-spinner" aria-hidden="true"></i>
+        }
+        {{
+          submitting()
+            ? mode() === 'edit'
+              ? 'Saving…'
+              : 'Creating blog…'
+            : mode() === 'edit'
+              ? 'Save changes'
+              : 'Create blog'
+        }}
+      </button>
+    </div>
   </div>
 
-  <form class="mt-8" [formGroup]="blogForm" (ngSubmit)="submitForm()" novalidate>
+  <form id="blog-form" class="mt-8" [formGroup]="blogForm" (ngSubmit)="submitForm()" novalidate>
     <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
       <div class="grid gap-6">
         <section
@@ -412,31 +434,5 @@
       <p-message styleClass="mt-6 w-full" severity="error" [text]="message" />
     }
 
-    <div class="mt-6 flex flex-wrap justify-end gap-3">
-      <button
-        pButton
-        type="button"
-        severity="secondary"
-        variant="outlined"
-        [disabled]="submitting()"
-        (click)="cancelled.emit()"
-      >
-        Cancel
-      </button>
-      <p-button
-        type="submit"
-        [label]="
-          submitting()
-            ? mode() === 'edit'
-              ? 'Saving changes…'
-              : 'Creating blog…'
-            : mode() === 'edit'
-              ? 'Save changes'
-              : 'Create blog'
-        "
-        [loading]="submitting()"
-        [disabled]="submitting() || !editorReady()"
-      />
-    </div>
   </form>
 </section>

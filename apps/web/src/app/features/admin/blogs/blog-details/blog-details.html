@@ -10,7 +10,15 @@
             Loading blog details…
         </p>
     } @else if (blog(); as blogDetails) {
-        <div class="flex flex-wrap items-start justify-between gap-5">
+        <a
+            class="inline-flex items-center gap-1.5 text-sm font-semibold text-(--mawrid-text-muted) no-underline transition-colors hover:text-(--mawrid-font-primary) hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+            routerLink="/admin/blog"
+        >
+            <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
+            Back to blogs
+        </a>
+
+        <div class="mt-4 flex flex-wrap items-end justify-between gap-4">
             <div class="max-w-3xl">
                 <p
                     class="mb-2 text-sm font-bold tracking-[.12em] text-(--mawrid-font-accent) uppercase"
@@ -18,7 +26,10 @@
                     Blog management
                 </p>
                 <div class="flex flex-wrap items-center gap-3">
-                    <h1 id="blog-details-title" class="text-3xl leading-tight font-bold sm:text-4xl">
+                    <h1
+                        id="blog-details-title"
+                        class="text-3xl leading-tight font-bold sm:text-4xl"
+                    >
                         {{ blogDetails.title }}
                     </h1>
                     <span
@@ -40,21 +51,10 @@
                 <p class="mt-2 text-(--mawrid-text-muted)">/{{ blogDetails.slug }}</p>
             </div>
 
-            <div class="flex flex-wrap gap-3">
+            <div class="flex items-center gap-3">
                 <a
                     pButton
-                    severity="secondary"
-                    variant="outlined"
-                    class="border-(--mawrid-secondary)! bg-transparent! text-(--mawrid-secondary)! no-underline hover:bg-(--mawrid-nav-hover)! dark:border-slate-500! dark:text-white!"
-                    routerLink="/admin/blog"
-                >
-                    <i class="pi pi-arrow-left" aria-hidden="true"></i>
-                    <span>Back to blogs</span>
-                </a>
-                <a
-                    pButton
-                    severity="secondary"
-                    class="border-(--mawrid-primary)! bg-(--mawrid-primary)! text-white! no-underline hover:border-(--mawrid-secondary)! hover:bg-(--mawrid-secondary)! dark:border-slate-500! dark:bg-transparent! dark:text-white! dark:hover:bg-(--mawrid-nav-hover)!"
+                    class="no-underline"
                     [routerLink]="['/admin/blog', blogDetails.id, 'edit']"
                 >
                     <i class="pi pi-pencil" aria-hidden="true"></i>
@@ -84,7 +84,7 @@
             <main class="grid content-start gap-6">
                 @if (blogDetails.featuredImageUrl) {
                     <img
-                        class="aspect-[16/9] w-full rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) object-contain p-3 shadow-(--mawrid-card-shadow)"
+                        class="aspect-video w-full rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) object-contain p-3 shadow-(--mawrid-card-shadow)"
                         [src]="blogDetails.featuredImageUrl"
                         [alt]="blogDetails.title"
                     />
@@ -111,19 +111,25 @@
                 <h2 class="text-lg font-bold">Details</h2>
                 <dl class="mt-4 grid gap-4">
                     <div>
-                        <dt class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">
+                        <dt
+                            class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase"
+                        >
                             Created
                         </dt>
                         <dd class="mt-1">{{ blogDetails.createdAt | date: 'medium' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">
+                        <dt
+                            class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase"
+                        >
                             Updated
                         </dt>
                         <dd class="mt-1">{{ blogDetails.updatedAt | date: 'medium' }}</dd>
                     </div>
                     <div>
-                        <dt class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">
+                        <dt
+                            class="text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase"
+                        >
                             Published
                         </dt>
                         <dd class="mt-1">

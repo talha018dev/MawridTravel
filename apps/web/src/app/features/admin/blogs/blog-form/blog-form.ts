@@ -15,7 +15,7 @@ import {
     BlogWriteRequest,
 } from '@app/features/admin/blogs/services/blog-admin.service';
 import { RemoveButton } from '@app/shared/components/remove-button/remove-button';
-import { Button, ButtonDirective } from '@openng/optimus-ui/button';
+import { ButtonDirective } from '@openng/optimus-ui/button';
 import { FileUpload } from '@openng/optimus-ui/fileupload';
 import { InputText } from '@openng/optimus-ui/inputtext';
 import { Message } from '@openng/optimus-ui/message';
@@ -63,7 +63,6 @@ function richTextRequired(control: AbstractControl): Record<string, boolean> | n
 @Component({
     selector: 'app-blog-form',
     imports: [
-        Button,
         ButtonDirective,
         FileUpload,
         InputText,

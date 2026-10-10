@@ -70,6 +70,22 @@ export const routes: Routes = [
     title: 'Frequently Asked Questions | Mawrid Travel',
   },
   {
+    path: 'blogs',
+    loadComponent: () =>
+      import('@app/features/blogs/blog-list/blog-list').then(
+        ({ PublicBlogList }) => PublicBlogList,
+      ),
+    title: 'Travel Blog | Mawrid Travel',
+  },
+  {
+    path: 'blogs/:slug',
+    loadComponent: () =>
+      import('@app/features/blogs/blog-details/blog-details').then(
+        ({ PublicBlogDetails }) => PublicBlogDetails,
+      ),
+    title: 'Travel Article | Mawrid Travel',
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],

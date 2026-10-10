@@ -12,13 +12,13 @@ const ADMIN_MENU_ITEMS = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: 'pi pi-home' },
   { label: 'Products', path: '/admin/products/list', icon: 'pi pi-box' },
   { label: 'Orders', path: '/admin/orders', icon: 'pi pi-shopping-cart' },
-  { label: 'Blog', path: '/admin/blog', icon: 'pi pi-file-edit' },
+  { label: 'Manage Blogs', path: '/admin/blog', icon: 'pi pi-file-edit' },
 ] as const;
 
 const PUBLIC_MENU_ITEMS = [
   { label: 'Home', path: '/', icon: 'pi pi-home' },
   { label: 'Shop', path: '/shop', icon: 'pi pi-shopping-bag' },
-  { label: 'Blogs', path: '/blogs', icon: 'pi pi-book' },
+  { label: 'Travel Blog', path: '/blogs', icon: 'pi pi-book' },
   { label: 'Tickets', path: '/tickets', icon: 'pi pi-ticket' },
 ] as const;
 

@@ -1,0 +1,21 @@
+<section class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-10 sm:py-14">
+    @if (loading()) {
+        <div class="mx-auto max-w-3xl animate-pulse space-y-5"><div class="h-5 w-36 rounded bg-(--mawrid-nav-hover)"></div><div class="h-12 rounded bg-(--mawrid-nav-hover)"></div><div class="aspect-[16/9] rounded-3xl bg-(--mawrid-nav-hover)"></div></div>
+    } @else if (blog(); as article) {
+        <article>
+            <header class="mx-auto max-w-4xl text-center">
+                <a class="inline-flex items-center gap-2 text-sm font-bold text-(--mawrid-font-accent) no-underline hover:underline" routerLink="/blogs"><i class="pi pi-arrow-left" aria-hidden="true"></i> Travel journal</a>
+                <h1 class="mt-5 text-4xl leading-tight font-extrabold sm:text-5xl">{{ article.title }}</h1>
+                @if (article.excerpt) { <p class="mx-auto mt-5 max-w-3xl text-xl leading-8 text-(--mawrid-text-muted)">{{ article.excerpt }}</p> }
+                <p class="mt-5 text-sm text-(--mawrid-text-muted)">Published {{ article.publishedAt | date: 'longDate' }} · {{ readingTime(article) }} min read</p>
+            </header>
+
+            @if (article.featuredImageUrl) { <img class="mx-auto mt-10 aspect-[16/8] w-full rounded-3xl border border-(--mawrid-border) object-cover shadow-(--mawrid-card-shadow)" [src]="article.featuredImageUrl" [alt]="article.title" /> }
+
+            <div class="mx-auto mt-10 max-w-3xl text-lg leading-8 [&>*+*]:mt-5 [&_a]:font-medium [&_a]:text-(--mawrid-font-accent) [&_a]:underline [&_blockquote]:border-l-4 [&_blockquote]:border-(--mawrid-accent) [&_blockquote]:pl-5 [&_blockquote]:text-(--mawrid-text-muted) [&_h2]:mt-10 [&_h2]:text-3xl [&_h2]:leading-tight [&_h2]:font-extrabold [&_h3]:mt-8 [&_h3]:text-2xl [&_h3]:font-bold [&_ol]:list-decimal [&_ol]:pl-7 [&_ul]:list-disc [&_ul]:pl-7" [innerHTML]="article.content"></div>
+        </article>
+        <div class="mx-auto mt-14 max-w-3xl border-t border-(--mawrid-border) pt-8"><a pButton severity="secondary" variant="outlined" class="no-underline" routerLink="/blogs"><i class="pi pi-arrow-left" aria-hidden="true"></i> Back to all articles</a></div>
+    } @else {
+        <div class="py-16 text-center"><i class="pi pi-file-excel text-5xl text-(--mawrid-text-muted)" aria-hidden="true"></i><h1 class="mt-5 text-3xl font-extrabold">Article unavailable</h1><p class="mt-3 text-(--mawrid-text-muted)" role="alert">{{ errorMessage() }}</p><a pButton class="mt-6 no-underline" routerLink="/blogs">Browse the travel blog</a></div>
+    }
+</section>

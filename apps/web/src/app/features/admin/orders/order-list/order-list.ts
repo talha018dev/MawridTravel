@@ -26,6 +26,15 @@ export class OrderList implements OnInit {
     private readonly service = inject(OrderAdminService);
     private readonly messages = inject(MessageService);
     private readonly destroyRef = inject(DestroyRef);
+    private readonly statusActionLabels: Record<OrderStatus, string> = {
+        NotConfirmed: 'Not Confirmed',
+        Confirmed: 'Confirmed',
+        InProgress: 'Processing',
+        DeliveryInProgress: 'Delivery in Progress',
+        Delivered: 'Delivered',
+        Completed: 'Delivered',
+        Failed: 'Failed',
+    };
     protected readonly pageSize = 20;
     protected readonly searchControl = new FormControl('', { nonNullable: true });
     protected readonly statusControl = new FormControl('all', { nonNullable: true });
@@ -125,11 +134,7 @@ export class OrderList implements OnInit {
     }
 
     protected statusActionLabel(status: OrderStatus): string {
-        return status === 'NotConfirmed' ? 'Not Confirmed'
-            : status === 'Confirmed' ? 'Confirmed'
-                : status === 'InProgress' ? 'Processing'
-                    : status === 'DeliveryInProgress' ? 'Delivery in Progress'
-                        : status === 'Delivered' ? 'Delivered' : 'Failed';
+        return this.statusActionLabels[status];
     }
 
     protected formatPrice(value: number): string { return `৳ ${new Intl.NumberFormat('en-BD', { maximumFractionDigits: 2 }).format(value)}`; }

@@ -257,7 +257,7 @@
     </div>
 
     <section
-      class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) sm:p-7"
+      class="mt-6 rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow) [overflow-anchor:none] sm:p-7"
       aria-labelledby="product-options-title"
     >
       <div class="border-b border-(--mawrid-border) pb-4">
@@ -291,7 +291,7 @@
           <div class="grid gap-3">
             @for (color of colors.controls; track color; let index = $index) {
               <div
-                class="grid grid-cols-[3rem_minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
+                class="grid grid-cols-[3rem_minmax(0,1fr)_1.5rem] items-center gap-3 rounded-xl border border-(--mawrid-border) p-3"
                 [formGroupName]="index"
               >
                 <input
@@ -303,11 +303,14 @@
                 <div>
                   <input
                     pInputText
+                    type="text"
                     class="w-full"
                     formControlName="value"
                     maxlength="100"
+                    autocomplete="off"
                     [placeholder]="'Color name, e.g. Navy'"
                     [invalid]="color.controls.value.invalid && submitAttempted()"
+                    (keydown.enter)="$event.preventDefault()"
                   />
                   @if (submitAttempted() && color.controls.value.invalid) {
                     <p-message severity="error" size="small" variant="simple">
@@ -356,17 +359,20 @@
           <div class="grid gap-3">
             @for (size of sizes.controls; track size; let index = $index) {
               <div
-                class="grid grid-cols-[minmax(0,1fr)_2.5rem] items-start gap-3 rounded-xl border border-(--mawrid-border) p-3"
+                class="grid grid-cols-[minmax(0,1fr)_1.5rem] items-center gap-3 rounded-xl border border-(--mawrid-border) p-3"
                 [formGroupName]="index"
               >
                 <div>
                   <input
                     pInputText
+                    type="text"
                     class="w-full"
                     formControlName="value"
                     maxlength="100"
+                    autocomplete="off"
                     placeholder="Size, e.g. Medium"
                     [invalid]="size.controls.value.invalid && submitAttempted()"
+                    (keydown.enter)="$event.preventDefault()"
                   />
                   @if (submitAttempted() && size.controls.value.invalid) {
                     <p-message severity="error" size="small" variant="simple">

@@ -62,6 +62,7 @@ app.MapAuthEndpoints();
 app.MapAdminEndpoints();
 app.MapProductEndpoints();
 app.MapOrderEndpoints();
+app.MapBlogEndpoints();
 
 app.Run();
 
