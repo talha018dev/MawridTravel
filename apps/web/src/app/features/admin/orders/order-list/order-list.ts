@@ -156,7 +156,7 @@ export class OrderList implements OnInit {
         const tone = paymentMethod === 'PaidBanglaQr' ? 'bg-emerald-100 text-emerald-800'
             : paymentMethod === 'UnpaidBanglaQr' ? 'bg-red-100 text-red-700'
                 : 'bg-amber-100 text-amber-800';
-        return `inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-extrabold ${tone}`;
+        return `inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border border-transparent px-3 py-1.5 text-xs font-extrabold transition-colors hover:border-current disabled:cursor-not-allowed disabled:opacity-60 ${tone}`;
     }
 
     protected paymentActionClass(paymentMethod: PaymentMethod): string {

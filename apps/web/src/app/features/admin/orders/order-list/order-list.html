@@ -143,11 +143,11 @@
                 <td>
                     <p class="mb-1.5 text-[0.65rem] font-bold tracking-wide text-(--mawrid-text-muted) uppercase">Current payment</p>
                     <div class="flex items-center gap-2">
-                        <span [class]="paymentBadgeClass(order.paymentMethod)">
+                        <button type="button" [class]="paymentBadgeClass(order.paymentMethod)" aria-label="Change payment status" aria-haspopup="menu" [disabled]="updatingId() === order.id" (click)="paymentMenu.toggle($event)">
                             <i class="pi" [class]="'pi ' + paymentIcon(order.paymentMethod)" aria-hidden="true"></i>
                             {{ paymentLabel(order.paymentMethod) }}
-                        </span>
-                        <button type="button" class="grid size-8 cursor-pointer place-items-center rounded-lg border border-(--mawrid-border) bg-(--mawrid-card) text-(--mawrid-text-muted) transition-colors hover:border-(--mawrid-primary) hover:text-(--mawrid-font-primary)" aria-label="Change payment status" aria-haspopup="menu" [disabled]="updatingId() === order.id" (click)="paymentMenu.toggle($event)"><i class="pi pi-ellipsis-h" aria-hidden="true"></i></button>
+                            <i class="pi pi-chevron-down ml-0.5 text-[0.65rem] opacity-70" aria-hidden="true"></i>
+                        </button>
                         <p-popover #paymentMenu ariaLabel="Payment options" appendTo="body">
                             <div class="min-w-52 space-y-1 p-1" role="menu">
                                 @for (paymentMethod of paymentOptions; track paymentMethod) {
