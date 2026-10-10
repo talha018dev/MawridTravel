@@ -1,19 +1,65 @@
-<section
-  class="grid min-h-[calc(100dvh-10rem)] place-items-center px-5 py-16 text-center"
-  aria-labelledby="home-title"
->
-  <div class="max-w-3xl">
-    <p class="text-sm font-bold uppercase tracking-[.12em] text-(--mawrid-accent)">
-      Thoughtful journeys, beautifully planned
-    </p>
-    <h1 id="home-title" class="my-3 text-[clamp(3rem,8vw,6rem)] leading-none">
-      Travel with purpose.
-    </h1>
-    <p class="text-lg text-(--mawrid-text-muted)">
-      Discover inspiring destinations and plan a trip that stays with you.
-    </p>
-    <a pButton class="mt-5 no-underline" rounded raised routerLink="/login">
-      Log in to your account
-    </a>
-  </div>
-</section>
+<p-toast position="top-center" />
+<main class="overflow-hidden">
+  <section class="relative isolate px-4 py-14 sm:px-6 sm:py-20 lg:py-28" aria-labelledby="home-title">
+    <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_80%_12%,color-mix(in_srgb,var(--p-primary-color)_20%,transparent),transparent_32%),radial-gradient(circle_at_5%_92%,color-mix(in_srgb,var(--mawrid-accent)_15%,transparent),transparent_28%)]"></div>
+    <div class="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr]">
+      <div>
+        <p class="text-sm font-extrabold tracking-[.15em] text-(--mawrid-font-accent) uppercase">Flights, essentials & travel inspiration</p>
+        <h1 id="home-title" class="mt-4 max-w-4xl text-[clamp(3.2rem,7vw,6.4rem)] leading-[.92] font-black tracking-tight">Travel smarter.<br /><span class="text-(--p-primary-color)">Journey confidently.</span></h1>
+        <p class="mt-7 max-w-2xl text-lg leading-8 text-(--mawrid-text-muted)">Plan personal or business flights with real human support, then find the essentials and ideas that make every journey better.</p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-(--p-primary-color) px-6 py-3 font-extrabold text-(--p-primary-contrast-color) no-underline shadow-lg transition duration-200 hover:-translate-y-0.5 hover:shadow-xl motion-reduce:transition-none" routerLink="/tickets"><i class="pi pi-send" aria-hidden="true"></i>Plan a flight</a>
+          <a class="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-(--p-primary-color) px-6 py-3 font-extrabold text-(--p-primary-color) no-underline transition-colors duration-200 hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) motion-reduce:transition-none" routerLink="/shop"><i class="pi pi-shopping-bag" aria-hidden="true"></i>Shop travel essentials</a>
+        </div>
+        <div class="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold text-(--mawrid-text-muted)"><span><i class="pi pi-check-circle mr-2 text-emerald-600"></i>Personal flight support</span><span><i class="pi pi-check-circle mr-2 text-emerald-600"></i>B2B enquiries</span><span><i class="pi pi-check-circle mr-2 text-emerald-600"></i>Delivery across Bangladesh</span></div>
+      </div>
+
+      <div class="relative mx-auto w-full max-w-xl" aria-hidden="true">
+        <div class="absolute -top-10 -right-10 size-48 rounded-full bg-(--p-primary-color)/15 blur-3xl"></div>
+        <div class="relative rotate-1 rounded-4xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-2xl shadow-slate-950/12 sm:p-8">
+          <div class="flex items-start justify-between"><div><p class="text-xs font-extrabold tracking-[.14em] text-(--mawrid-font-accent) uppercase">Your journey</p><p class="mt-1 text-2xl font-bold">Designed around you</p></div><span class="grid size-14 place-items-center rounded-2xl bg-(--p-primary-color) text-2xl text-(--p-primary-contrast-color)"><i class="pi pi-send"></i></span></div>
+          <div class="mt-8 rounded-3xl p-6 text-white" style="background: linear-gradient(135deg, color-mix(in srgb, var(--p-primary-color) 72%, black), var(--p-primary-color))">
+            <div class="grid grid-cols-[auto_1fr_auto] items-center gap-4"><div><strong class="text-3xl">DAC</strong><span class="block text-xs opacity-80">Dhaka</span></div><div class="flex items-center"><span class="size-2 rounded-full bg-white"></span><span class="h-px flex-1 border-t border-dashed border-white/60"></span><i class="pi pi-send rotate-45"></i><span class="h-px flex-1 border-t border-dashed border-white/60"></span><span class="size-2 rounded-full bg-white"></span></div><div class="text-right"><strong class="text-2xl sm:text-3xl">YOUR</strong><span class="block text-xs opacity-80">Destination</span></div></div>
+          </div>
+          <div class="mt-5 grid grid-cols-3 gap-3 text-center"><div class="rounded-2xl border border-(--mawrid-border) p-3"><i class="pi pi-comments text-(--mawrid-font-accent)"></i><span class="mt-1 block text-xs font-bold">Discuss</span></div><div class="rounded-2xl border border-(--mawrid-border) p-3"><i class="pi pi-sliders-h text-(--mawrid-font-accent)"></i><span class="mt-1 block text-xs font-bold">Compare</span></div><div class="rounded-2xl border border-(--mawrid-border) p-3"><i class="pi pi-check text-(--mawrid-font-accent)"></i><span class="mt-1 block text-xs font-bold">Choose</span></div></div>
+        </div>
+        <div class="absolute -bottom-5 left-4 inline-flex items-center gap-2 rounded-xl bg-emerald-700 px-4 py-3 text-sm font-extrabold text-white shadow-xl sm:left-10"><i class="pi pi-whatsapp text-xl"></i>Personal help on WhatsApp</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-y border-(--mawrid-border) bg-(--mawrid-card) px-4 py-6">
+    <div class="mx-auto grid max-w-7xl gap-5 text-center sm:grid-cols-2 lg:grid-cols-4"><div><i class="pi pi-whatsapp text-xl text-emerald-600"></i><strong class="ml-2">WhatsApp support</strong></div><div><i class="pi pi-building text-xl text-(--mawrid-font-accent)"></i><strong class="ml-2">Business travel</strong></div><div><i class="pi pi-user text-xl text-(--mawrid-font-accent)"></i><strong class="ml-2">Personal planning</strong></div><div><i class="pi pi-truck text-xl text-(--mawrid-font-accent)"></i><strong class="ml-2">Nationwide delivery</strong></div></div>
+  </section>
+
+  <section class="mx-auto w-[min(80rem,calc(100%-2rem))] py-16 sm:py-22" aria-labelledby="services-title">
+    <header class="max-w-2xl"><p class="text-sm font-extrabold tracking-[.14em] text-(--mawrid-font-accent) uppercase">Everything for the journey</p><h2 id="services-title" class="mt-2 text-3xl font-black sm:text-5xl">Start where you need us.</h2></header>
+    <div class="mt-9 grid gap-5 md:grid-cols-3">
+      <a class="group rounded-3xl border border-(--mawrid-border) bg-(--mawrid-card) p-7 text-(--mawrid-font-primary) no-underline transition duration-200 hover:-translate-y-1 hover:border-(--p-primary-color) hover:shadow-xl motion-reduce:transition-none" routerLink="/tickets"><span class="grid size-13 place-items-center rounded-2xl bg-blue-500/12 text-xl text-blue-700 dark:text-blue-300"><i class="pi pi-send"></i></span><h3 class="mt-6 text-2xl font-bold">Personal flights</h3><p class="mt-3 leading-7 text-(--mawrid-text-muted)">Discuss destinations, dates, route preferences, and price options with our travel team.</p><span class="mt-6 inline-flex items-center gap-2 font-extrabold text-(--p-primary-color)">Plan a flight <i class="pi pi-arrow-right transition-transform group-hover:translate-x-1"></i></span></a>
+      <a class="group rounded-3xl border border-(--mawrid-border) bg-(--mawrid-card) p-7 text-(--mawrid-font-primary) no-underline transition duration-200 hover:-translate-y-1 hover:border-(--p-primary-color) hover:shadow-xl motion-reduce:transition-none" routerLink="/tickets"><span class="grid size-13 place-items-center rounded-2xl bg-violet-500/12 text-xl text-violet-700 dark:text-violet-300"><i class="pi pi-building"></i></span><h3 class="mt-6 text-2xl font-bold">B2B travel support</h3><p class="mt-3 leading-7 text-(--mawrid-text-muted)">Ask about regular business routes, group movements, and agency flight requirements.</p><span class="mt-6 inline-flex items-center gap-2 font-extrabold text-(--p-primary-color)">Explore B2B support <i class="pi pi-arrow-right transition-transform group-hover:translate-x-1"></i></span></a>
+      <a class="group rounded-3xl border border-(--mawrid-border) bg-(--mawrid-card) p-7 text-(--mawrid-font-primary) no-underline transition duration-200 hover:-translate-y-1 hover:border-(--p-primary-color) hover:shadow-xl motion-reduce:transition-none" routerLink="/shop"><span class="grid size-13 place-items-center rounded-2xl bg-amber-500/12 text-xl text-amber-700 dark:text-amber-300"><i class="pi pi-shopping-bag"></i></span><h3 class="mt-6 text-2xl font-bold">Travel essentials</h3><p class="mt-3 leading-7 text-(--mawrid-text-muted)">Shop practical products selected to keep trips comfortable, organised, and prepared.</p><span class="mt-6 inline-flex items-center gap-2 font-extrabold text-(--p-primary-color)">Visit the shop <i class="pi pi-arrow-right transition-transform group-hover:translate-x-1"></i></span></a>
+    </div>
+  </section>
+
+  <section class="bg-(--mawrid-card) px-4 py-16 sm:py-22" aria-labelledby="featured-products-title">
+    <div class="mx-auto max-w-7xl">
+      <header class="flex flex-wrap items-end justify-between gap-5"><div><p class="text-sm font-extrabold tracking-[.14em] text-(--mawrid-font-accent) uppercase">Travel shop</p><h2 id="featured-products-title" class="mt-2 text-3xl font-black sm:text-4xl">Featured essentials</h2></div><a class="font-extrabold text-(--p-primary-color) no-underline hover:underline" routerLink="/shop">View all products <i class="pi pi-arrow-right ml-1 text-sm"></i></a></header>
+      @if (loading()) {
+        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4" aria-label="Loading featured products">@for (item of [1,2,3,4]; track item) { <div class="animate-pulse"><div class="aspect-4/5 rounded-2xl bg-(--mawrid-nav-hover)"></div><div class="mt-3 h-5 rounded bg-(--mawrid-nav-hover)"></div></div> }</div>
+      } @else if (products().length) {
+        <div class="mt-8 grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-4">@for (product of products(); track product.id) { <article class="flex flex-col"><a class="group/image relative block aspect-4/5 overflow-hidden rounded-2xl bg-(--mawrid-nav-hover)" [routerLink]="['/shop', product.slug]" (mouseenter)="startImageRotation(product)" (mouseleave)="stopImageRotation(product.id)">@if (product.images.length) { @for (image of product.images; track image.id; let imageIndex = $index) { <img class="absolute inset-0 h-full w-full object-cover opacity-0 transition-[opacity,transform] duration-500 group-hover/image:scale-105 motion-reduce:transition-none" [class.opacity-100]="imageIndex === activeImageIndex(product.id)" [class.z-10]="imageIndex === activeImageIndex(product.id)" [src]="image.url" [alt]="image.altText || product.name" loading="lazy" width="480" height="600" /> } } @else { <span class="grid h-full place-items-center"><i class="pi pi-image text-5xl text-(--mawrid-text-muted)"></i></span> } @if (product.stockQuantity === 0) { <span class="absolute top-3 left-0 z-20 rounded-r-lg bg-red-600 px-3 py-1.5 text-xs font-extrabold text-white shadow">Currently unavailable</span> }</a><h3 class="mt-3 line-clamp-2 min-h-[3.5rem] text-lg leading-7 font-bold"><a class="text-(--mawrid-font-primary) no-underline hover:text-(--p-primary-color)" [routerLink]="['/shop', product.slug]">{{ product.name }}</a></h3><p class="mt-1 text-xl font-extrabold text-(--mawrid-font-accent)">{{ formatPrice(product) }}</p><button type="button" class="mt-4 inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-(--p-primary-color) px-4 text-sm font-extrabold text-(--p-primary-color) transition-colors duration-200 hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) disabled:cursor-not-allowed disabled:border-(--mawrid-border) disabled:text-(--mawrid-text-muted) disabled:opacity-60" [disabled]="product.stockQuantity === 0" (click)="addToCart(product)"><i class="pi pi-shopping-cart" aria-hidden="true"></i>Add to cart</button></article> }</div>
+      } @else { <div class="mt-8 rounded-2xl border border-dashed border-(--mawrid-border) p-8 text-center text-(--mawrid-text-muted)">New travel essentials are coming soon. <a class="font-bold text-(--p-primary-color)" routerLink="/shop">Browse the shop</a>.</div> }
+    </div>
+  </section>
+
+  <section class="mx-auto w-[min(76rem,calc(100%-2rem))] py-16 sm:py-22">
+    <div class="overflow-hidden rounded-4xl bg-(--p-primary-color) px-6 py-10 text-(--p-primary-contrast-color) sm:px-10 lg:flex lg:items-center lg:justify-between lg:gap-10 lg:px-14"><div class="max-w-2xl"><p class="text-sm font-extrabold tracking-[.14em] uppercase opacity-75">Need a flight plan?</p><h2 class="mt-2 text-3xl font-black sm:text-4xl">Send your route and dates. We’ll take it from there.</h2><p class="mt-4 text-lg leading-8 opacity-85">Message us for personal itineraries, B2B requirements, and flight price enquiries.</p></div><a class="mt-7 inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 font-extrabold text-slate-950 no-underline transition duration-200 hover:-translate-y-0.5 hover:shadow-xl motion-reduce:transition-none lg:mt-0" [href]="whatsappUrl" target="_blank" rel="noopener noreferrer"><i class="pi pi-whatsapp text-2xl text-emerald-700"></i>Chat on WhatsApp</a></div>
+  </section>
+
+  <section class="border-t border-(--mawrid-border) bg-(--mawrid-card) px-4 py-16 sm:py-22" aria-labelledby="latest-articles-title">
+    <div class="mx-auto max-w-7xl"><header class="flex flex-wrap items-end justify-between gap-5"><div><p class="text-sm font-extrabold tracking-[.14em] text-(--mawrid-font-accent) uppercase">Travel journal</p><h2 id="latest-articles-title" class="mt-2 text-3xl font-black sm:text-4xl">Ideas for your next journey</h2></div><a class="font-extrabold text-(--p-primary-color) no-underline hover:underline" routerLink="/blogs">Read all articles <i class="pi pi-arrow-right ml-1 text-sm"></i></a></header>
+      @if (loading()) { <div class="mt-8 grid gap-5 md:grid-cols-3">@for (item of [1,2,3]; track item) { <div class="animate-pulse"><div class="aspect-16/10 rounded-2xl bg-(--mawrid-nav-hover)"></div><div class="mt-4 h-6 rounded bg-(--mawrid-nav-hover)"></div></div> }</div> }
+      @else if (blogs().length) { <div class="mt-8 grid gap-7 md:grid-cols-3">@for (blog of blogs(); track blog.id) { <article class="group"><a class="block aspect-16/10 overflow-hidden rounded-2xl bg-(--mawrid-nav-hover)" [routerLink]="['/blogs', blog.slug]">@if (blog.featuredImageUrl) { <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none" [src]="blog.featuredImageUrl" [alt]="blog.title" loading="lazy" /> } @else { <span class="grid h-full place-items-center"><i class="pi pi-map text-5xl text-(--mawrid-font-accent)"></i></span> }</a><p class="mt-4 text-xs font-bold tracking-wide text-(--mawrid-text-muted) uppercase">{{ blog.publishedAt | date: 'longDate' }}</p><h3 class="mt-2 text-xl leading-snug font-bold"><a class="text-(--mawrid-font-primary) no-underline hover:text-(--p-primary-color)" [routerLink]="['/blogs', blog.slug]">{{ blog.title }}</a></h3><p class="mt-3 line-clamp-3 leading-7 text-(--mawrid-text-muted)">{{ blogSummary(blog) }}</p></article> }</div> } @else { <div class="mt-8 rounded-2xl border border-dashed border-(--mawrid-border) p-8 text-center text-(--mawrid-text-muted)">Travel stories and practical guides are coming soon.</div> }
+    </div>
+  </section>
+</main>
