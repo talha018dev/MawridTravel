@@ -7,6 +7,32 @@ export interface AdminDashboardSummary {
     totalUsers: number;
     totalCustomers: number;
     totalAdmins: number;
+    newCustomersLast30Days: number;
+    totalOrders: number;
+    ordersLast24Hours: number;
+    awaitingConfirmation: number;
+    activeFulfilment: number;
+    deliveredOrders: number;
+    unpaidBanglaQr: number;
+    collectedRevenue: number;
+    openOrderValue: number;
+    totalProducts: number;
+    activeProducts: number;
+    lowStockProducts: number;
+    outOfStockProducts: number;
+    publishedBlogs: number;
+    recentOrders: AdminDashboardOrder[];
+}
+
+export interface AdminDashboardOrder {
+    id: string;
+    orderNumber: string;
+    customerName: string;
+    status: string;
+    paymentMethod: string;
+    total: number;
+    currency: string;
+    createdAt: string;
 }
 
 @Injectable({ providedIn: 'root' })

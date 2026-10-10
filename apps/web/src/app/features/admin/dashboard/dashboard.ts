@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -7,7 +8,7 @@ import { Message } from '@openng/optimus-ui/message';
 
 @Component({
     selector: 'app-admin-dashboard',
-    imports: [ButtonDirective, Message, RouterLink],
+    imports: [ButtonDirective, DatePipe, Message, RouterLink],
     templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
@@ -28,5 +29,22 @@ export class Dashboard implements OnInit {
                 next: (summary) => this.summary.set(summary),
                 error: () => this.errorMessage.set('Unable to load the dashboard summary.'),
             });
+    }
+
+    protected formatMoney(value: number): string {
+        return `BDT ${new Intl.NumberFormat('en-BD', { maximumFractionDigits: 2 }).format(value)}`;
+    }
+
+    protected statusLabel(status: string): string {
+        return status === 'NotConfirmed' ? 'Not confirmed'
+            : status === 'InProgress' ? 'Processing'
+                : status === 'DeliveryInProgress' ? 'Delivery in progress'
+                    : status === 'Completed' ? 'Delivered' : status;
+    }
+
+    protected paymentLabel(paymentMethod: string): string {
+        return paymentMethod === 'PaidBanglaQr' ? 'Paid QR'
+            : paymentMethod === 'UnpaidBanglaQr' ? 'Unpaid QR'
+                : 'Cash on delivery';
     }
 }
