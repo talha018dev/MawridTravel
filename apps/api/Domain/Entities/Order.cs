@@ -3,6 +3,7 @@ namespace MawridTravel.Api.Domain.Entities;
 public sealed class Order
 {
     public Guid Id { get; set; }
+    public Guid? CustomerId { get; set; }
     public required string IdempotencyKey { get; set; }
     public required string RequestFingerprint { get; set; }
     public required string OrderNumber { get; set; }

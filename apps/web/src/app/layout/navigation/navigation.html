@@ -26,6 +26,16 @@
           <i class="pi pi-user relative top-0.5 mr-2" aria-hidden="true"></i>
           Profile
         </a>
+        @if (!admin()) {
+          <a
+            class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+            routerLink="/my-orders"
+            (click)="closeDrawer()"
+          >
+            <i class="pi pi-shopping-bag relative top-0.5 mr-2" aria-hidden="true"></i>
+            My Orders
+          </a>
+        }
         <button
           type="button"
           class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) disabled:cursor-not-allowed disabled:opacity-60"
@@ -107,6 +117,16 @@
               <i class="pi pi-user mr-2" aria-hidden="true"></i>
               Profile
             </a>
+            @if (!admin()) {
+              <a
+                class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                routerLink="/my-orders"
+                (click)="accountMenu.hide()"
+              >
+                <i class="pi pi-shopping-bag mr-2" aria-hidden="true"></i>
+                My Orders
+              </a>
+            }
             <button
               type="button"
               class="rounded-lg px-3 py-2 text-left text-sm font-semibold text-(--mawrid-font-primary) hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"

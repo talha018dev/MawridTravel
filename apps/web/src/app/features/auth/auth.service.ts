@@ -128,7 +128,7 @@ export class AuthService {
         }
         return throwError(() => error);
       }),
-      tap(() => {
+      finalize(() => {
         this.currentUser.set(null);
         this.sessionLoaded = true;
       }),

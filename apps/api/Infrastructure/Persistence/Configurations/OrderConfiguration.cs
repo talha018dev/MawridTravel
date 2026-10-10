@@ -25,6 +25,12 @@ internal sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.HasIndex(order => order.OrderNumber).IsUnique();
         builder.HasIndex(order => order.IdempotencyKey).IsUnique();
+        builder.HasIndex(order => new { order.CustomerId, order.CreatedAt });
+
+        builder.HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(order => order.CustomerId)
+            .OnDelete(DeleteBehavior.SetNull);
         builder.HasIndex(order => new { order.Status, order.CreatedAt });
 
         builder.ToTable(tableBuilder =>

@@ -62,6 +62,12 @@ export const routes: Routes = [
     title: 'Profile | Mawrid Travel',
   },
   {
+    path: 'my-orders',
+    canActivate: [authGuard],
+    loadComponent: () => import('@app/features/orders/my-orders/my-orders').then(({ MyOrders }) => MyOrders),
+    title: 'My Orders | Mawrid Travel',
+  },
+  {
     path: 'terms-and-use',
     loadComponent: () => import('@app/features/static-pages/terms/terms').then(({ Terms }) => Terms),
     title: 'Terms of Use | Mawrid Travel',

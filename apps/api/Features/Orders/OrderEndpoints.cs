@@ -2,6 +2,7 @@ using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Security.Claims;
 using MawridTravel.Api.Domain.Entities;
 using MawridTravel.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,42 @@ internal static class OrderEndpoints
             .Produces<OrderResponse>(StatusCodes.Status201Created)
             .ProducesValidationProblem();
 
+        endpoints.MapGet("/api/orders", GetMyOrdersAsync)
+            .WithTags("Orders")
+            .WithName("GetMyOrders")
+            .RequireAuthorization()
+            .Produces<OrderListResponse>()
+            .ProducesProblem(StatusCodes.Status401Unauthorized);
+
         return endpoints;
+    }
+
+    private static async Task<IResult> GetMyOrdersAsync(
+        ClaimsPrincipal principal,
+        AppDbContext dbContext,
+        int page = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        if (!Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var customerId))
+            return Results.Unauthorized();
+
+        page = Math.Max(page, 1);
+        pageSize = Math.Clamp(pageSize, 1, 50);
+        var query = dbContext.Orders.AsNoTracking().Where(order => order.CustomerId == customerId);
+        var totalCount = await query.CountAsync(cancellationToken);
+        var orders = await query
+            .Include(order => order.Items)
+            .OrderByDescending(order => order.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return Results.Ok(new OrderListResponse(
+            page,
+            pageSize,
+            totalCount,
+            orders.Select(order => order.ToResponse()).ToArray()));
     }
 
     private static async Task<IResult> CheckoutAsync(
@@ -28,6 +64,7 @@ internal static class OrderEndpoints
         [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey,
         AppDbContext dbContext,
         TimeProvider timeProvider,
+        ClaimsPrincipal principal,
         CancellationToken cancellationToken)
     {
         var errors = ValidateRequest(request);
@@ -138,6 +175,7 @@ internal static class OrderEndpoints
         var order = new Order
         {
             Id = Guid.NewGuid(),
+            CustomerId = TryGetCustomerId(principal),
             IdempotencyKey = normalizedIdempotencyKey,
             RequestFingerprint = requestFingerprint,
             OrderNumber = $"MWR-{now:yyyyMMdd}-{Guid.NewGuid():N}"[..21].ToUpperInvariant(),
@@ -225,6 +263,11 @@ internal static class OrderEndpoints
                 title = "Idempotency key has already been used.",
                 detail = "Generate a new idempotency key before submitting different checkout data."
             });
+
+    private static Guid? TryGetCustomerId(ClaimsPrincipal principal) =>
+        Guid.TryParse(principal.FindFirstValue(ClaimTypes.NameIdentifier), out var customerId)
+            ? customerId
+            : null;
 
     private static string CreateFingerprint(CheckoutRequest request)
     {
