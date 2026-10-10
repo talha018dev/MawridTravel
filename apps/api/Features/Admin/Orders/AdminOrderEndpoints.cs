@@ -153,10 +153,11 @@ internal static class AdminOrderEndpoints
         TimeProvider timeProvider,
         CancellationToken cancellationToken)
     {
-        if (request?.PaymentMethod is not (OrderConstants.CashOnDelivery or OrderConstants.BanglaQr))
+        if (string.IsNullOrWhiteSpace(request?.PaymentMethod) ||
+            !OrderConstants.PaymentStates.Contains(request.PaymentMethod))
             return Results.ValidationProblem(new Dictionary<string, string[]>
             {
-                ["paymentMethod"] = ["Select cash on delivery or Bangla QR."]
+                ["paymentMethod"] = ["Select cash on delivery, unpaid Bangla QR, or paid Bangla QR."]
             });
 
         var order = await dbContext.Orders
@@ -164,7 +165,8 @@ internal static class AdminOrderEndpoints
             .SingleOrDefaultAsync(item => item.Id == id, cancellationToken);
         if (order is null) return Results.NotFound();
 
-        order.PaymentMethod = request.PaymentMethod;
+        order.PaymentMethod = OrderConstants.PaymentStates.Single(state =>
+            string.Equals(state, request.PaymentMethod.Trim(), StringComparison.OrdinalIgnoreCase));
         order.UpdatedAt = timeProvider.GetUtcNow();
         await dbContext.SaveChangesAsync(cancellationToken);
         return Results.Ok(order.ToResponse());

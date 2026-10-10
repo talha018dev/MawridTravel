@@ -19,7 +19,7 @@ export interface CustomerOrder {
   orderNumber: string;
   address: string;
   deliveryArea: 'InsideDhaka' | 'OutsideDhaka';
-  paymentMethod: 'CashOnDelivery' | 'BanglaQr';
+  paymentMethod: 'CashOnDelivery' | 'UnpaidBanglaQr' | 'PaidBanglaQr';
   status: CustomerOrderStatus;
   currency: string;
   subtotal: number;

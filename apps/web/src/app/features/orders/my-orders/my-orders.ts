@@ -38,7 +38,13 @@ export class MyOrders implements OnInit {
   protected formatPrice(order: CustomerOrder, amount = order.total): string {
     return order.currency === 'BDT' ? `৳ ${new Intl.NumberFormat('en-BD', { maximumFractionDigits: 2 }).format(amount)}` : `${order.currency} ${amount.toFixed(2)}`;
   }
-  protected paymentLabel(order: CustomerOrder): string { return order.paymentMethod === 'BanglaQr' ? 'Paid · Bangla QR' : 'Cash on delivery'; }
+  protected paymentLabel(order: CustomerOrder): string {
+    return order.paymentMethod === 'PaidBanglaQr'
+      ? 'Paid - Bangla QR'
+      : order.paymentMethod === 'UnpaidBanglaQr'
+        ? 'Unpaid - Bangla QR'
+        : 'Cash on delivery';
+  }
   protected statusLabel(status: CustomerOrderStatus): string {
     return ({ NotConfirmed: 'Not confirmed', Confirmed: 'Confirmed', InProgress: 'Processing', DeliveryInProgress: 'Delivery in progress', Delivered: 'Delivered', Completed: 'Delivered', Failed: 'Failed' })[status];
   }

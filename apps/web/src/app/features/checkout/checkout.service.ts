@@ -21,6 +21,7 @@ export interface CheckoutRequest {
 export interface CheckoutOrder {
     id: string;
     orderNumber: string;
+    paymentMethod: 'CashOnDelivery' | 'UnpaidBanglaQr' | 'PaidBanglaQr';
     status: string;
     subtotal: number;
     deliveryFee: number;

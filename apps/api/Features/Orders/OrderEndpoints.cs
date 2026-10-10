@@ -184,7 +184,9 @@ internal static class OrderEndpoints
             Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email.Trim(),
             Address = request.Address!.Trim(),
             DeliveryArea = request.DeliveryArea!,
-            PaymentMethod = request.PaymentMethod!,
+            PaymentMethod = request.PaymentMethod == OrderConstants.BanglaQr
+                ? OrderConstants.UnpaidBanglaQr
+                : OrderConstants.CashOnDelivery,
             Status = OrderConstants.Statuses.NotConfirmed,
             Currency = "BDT",
             Subtotal = subtotal,

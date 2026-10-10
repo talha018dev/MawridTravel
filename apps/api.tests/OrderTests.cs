@@ -106,7 +106,7 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var order = await response.Content.ReadFromJsonAsync<OrderResponse>();
-        Assert.Equal("BanglaQr", order?.PaymentMethod);
+        Assert.Equal("UnpaidBanglaQr", order?.PaymentMethod);
     }
 
     [Fact]
@@ -171,11 +171,11 @@ public sealed class OrderTests(ApiFactory factory) : IClassFixture<ApiFactory>
         await CreateAdminAndLoginAsync(client);
         var response = await client.PatchAsJsonAsync(
             $"/api/admin/orders/{order!.Id}/payment-method",
-            new { paymentMethod = "BanglaQr" });
+            new { paymentMethod = "PaidBanglaQr" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var updated = await response.Content.ReadFromJsonAsync<OrderResponse>();
-        Assert.Equal("BanglaQr", updated?.PaymentMethod);
+        Assert.Equal("PaidBanglaQr", updated?.PaymentMethod);
     }
 
     [Fact]

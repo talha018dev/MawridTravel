@@ -4,7 +4,7 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 
 export type OrderStatus = 'NotConfirmed' | 'Confirmed' | 'InProgress' | 'DeliveryInProgress' | 'Delivered' | 'Completed' | 'Failed';
-export type PaymentMethod = 'CashOnDelivery' | 'BanglaQr';
+export type PaymentMethod = 'CashOnDelivery' | 'UnpaidBanglaQr' | 'PaidBanglaQr';
 
 export interface AdminOrderItem {
     id: string;

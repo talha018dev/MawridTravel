@@ -1,0 +1,16 @@
+<section class="rounded-2xl border border-(--mawrid-border) bg-white p-4 text-(--mawrid-primary) shadow-(--mawrid-card-shadow)" aria-labelledby="bangla-qr-title">
+  <h2 id="bangla-qr-title" class="text-center text-lg leading-6 font-extrabold">{{ heading() }}</h2>
+  @if (showPaymentReminder()) {
+    <p class="mx-auto mt-2 max-w-md text-center text-sm leading-6 text-slate-600">After paying, send the receipt to Mawrid Travel through WhatsApp so your payment can be verified.</p>
+  }
+  <div class="mx-auto mt-4 max-w-md rounded-2xl bg-violet-50 p-3">
+    <p class="border-b border-violet-200 pb-3 text-center text-xl font-extrabold">Mawrid Travel</p>
+    <img class="mt-3 aspect-square w-full rounded-xl bg-white" [src]="imagePath" alt="Bangla QR code for paying Mawrid Travel" />
+    <p class="mt-3 rounded-xl border border-violet-200 bg-white/70 p-3 text-center text-sm font-bold">Merchant Name: Mawrid Travel</p>
+  </div>
+  <div class="mx-auto mt-4 grid max-w-md grid-cols-3 gap-2">
+    <button type="button" class="grid cursor-pointer place-items-center gap-1 rounded-xl bg-violet-50 p-3 text-sm font-bold transition-colors hover:bg-violet-100" (click)="share()"><i class="pi pi-share-alt text-xl" aria-hidden="true"></i>Share</button>
+    <a class="grid place-items-center gap-1 rounded-xl bg-violet-50 p-3 text-sm font-bold text-inherit no-underline transition-colors hover:bg-violet-100" [href]="imagePath" download="mawrid-travel-payment-qr.png"><i class="pi pi-download text-xl" aria-hidden="true"></i>Download</a>
+    <a class="grid place-items-center gap-1 rounded-xl bg-violet-50 p-3 text-sm font-bold text-inherit no-underline transition-colors hover:bg-violet-100" [href]="whatsappUrl" target="_blank" rel="noopener noreferrer"><i class="pi pi-whatsapp text-xl text-emerald-700" aria-hidden="true"></i>WhatsApp</a>
+  </div>
+</section>

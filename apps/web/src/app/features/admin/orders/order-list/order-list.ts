@@ -53,6 +53,12 @@ export class OrderList implements OnInit {
         { label: 'Delivered', value: 'Delivered' },
         { label: 'Failed', value: 'Failed' },
     ];
+    protected readonly paymentOptions: PaymentMethod[] = [
+        'CashOnDelivery', 'UnpaidBanglaQr', 'PaidBanglaQr',
+    ];
+    protected readonly statusOptions: OrderStatus[] = [
+        'NotConfirmed', 'Confirmed', 'InProgress', 'DeliveryInProgress', 'Delivered', 'Failed',
+    ];
     ngOnInit(): void {
         this.searchControl.valueChanges.pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => { this.page.set(1); this.load(); });
         this.statusControl.valueChanges.pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef)).subscribe(() => { this.page.set(1); this.load(); });
@@ -60,11 +66,6 @@ export class OrderList implements OnInit {
     }
 
     protected changePage(event: TablePageEvent): void { this.page.set(Math.floor(event.first / event.rows) + 1); this.load(); }
-
-    protected availableStatuses(order: AdminOrder): OrderStatus[] {
-        return (['NotConfirmed', 'Confirmed', 'InProgress', 'DeliveryInProgress', 'Delivered', 'Failed'] as OrderStatus[])
-            .filter((status) => status !== order.status);
-    }
 
     protected updateStatus(order: AdminOrder, status: OrderStatus): void {
         if (status === order.status) return;
@@ -103,7 +104,7 @@ export class OrderList implements OnInit {
                     : status === 'InProgress' ? 'bg-violet-100 text-violet-800'
                     : status === 'Confirmed' ? 'bg-blue-100 text-blue-800'
                         : 'bg-amber-100 text-amber-800';
-        return `inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-extrabold ${tone}`;
+        return `inline-flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border border-transparent px-3 py-1.5 text-xs font-extrabold transition-colors hover:border-current disabled:cursor-not-allowed disabled:opacity-60 ${tone}`;
     }
 
     protected statusIcon(status: OrderStatus): string {
@@ -140,7 +141,29 @@ export class OrderList implements OnInit {
     protected formatPrice(value: number): string { return `৳ ${new Intl.NumberFormat('en-BD', { maximumFractionDigits: 2 }).format(value)}`; }
 
     protected paymentLabel(paymentMethod: PaymentMethod): string {
-        return paymentMethod === 'BanglaQr' ? 'Paid · Bangla QR' : 'Payment due · Cash on delivery';
+        return paymentMethod === 'PaidBanglaQr' ? 'Paid Bangla QR'
+            : paymentMethod === 'UnpaidBanglaQr' ? 'Unpaid Bangla QR'
+                : 'Cash on delivery';
+    }
+
+    protected paymentIcon(paymentMethod: PaymentMethod): string {
+        return paymentMethod === 'PaidBanglaQr' ? 'pi-check-circle'
+            : paymentMethod === 'UnpaidBanglaQr' ? 'pi-clock'
+                : 'pi-wallet';
+    }
+
+    protected paymentBadgeClass(paymentMethod: PaymentMethod): string {
+        const tone = paymentMethod === 'PaidBanglaQr' ? 'bg-emerald-100 text-emerald-800'
+            : paymentMethod === 'UnpaidBanglaQr' ? 'bg-red-100 text-red-700'
+                : 'bg-amber-100 text-amber-800';
+        return `inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-extrabold ${tone}`;
+    }
+
+    protected paymentActionClass(paymentMethod: PaymentMethod): string {
+        const tone = paymentMethod === 'PaidBanglaQr' ? 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+            : paymentMethod === 'UnpaidBanglaQr' ? 'bg-red-50 text-red-700 hover:bg-red-100'
+                : 'bg-amber-50 text-amber-800 hover:bg-amber-100';
+        return `flex w-full cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-left text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${tone}`;
     }
 
     protected updatePaymentMethod(order: AdminOrder, paymentMethod: PaymentMethod): void {
@@ -149,7 +172,7 @@ export class OrderList implements OnInit {
         this.service.updatePaymentMethod(order.id, paymentMethod).pipe(finalize(() => this.updatingId.set(null))).subscribe({
             next: (updated) => {
                 this.orders.update((orders) => orders.map((item) => item.id === updated.id ? updated : item));
-                this.messages.add({ severity: 'success', summary: 'Payment updated', detail: `${updated.orderNumber} is marked as ${paymentMethod === 'BanglaQr' ? 'paid by Bangla QR' : 'cash on delivery'}.` });
+                this.messages.add({ severity: 'success', summary: 'Payment updated', detail: `${updated.orderNumber} is now ${this.paymentLabel(paymentMethod).toLowerCase()}.` });
             },
             error: (error: HttpErrorResponse) => this.messages.add({ severity: 'error', summary: 'Payment not updated', detail: error.error?.errors?.paymentMethod?.[0] ?? 'Unable to update the payment method.' }),
         });

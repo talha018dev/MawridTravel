@@ -142,56 +142,44 @@
                 </td>
                 <td>
                     <p class="mb-1.5 text-[0.65rem] font-bold tracking-wide text-(--mawrid-text-muted) uppercase">Current payment</p>
-                    <span
-                        class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-extrabold"
-                        [class.bg-emerald-100]="order.paymentMethod === 'BanglaQr'"
-                        [class.text-emerald-800]="order.paymentMethod === 'BanglaQr'"
-                        [class.bg-amber-100]="order.paymentMethod === 'CashOnDelivery'"
-                        [class.text-amber-800]="order.paymentMethod === 'CashOnDelivery'"
-                    >
-                        <i class="pi" [class.pi-check-circle]="order.paymentMethod === 'BanglaQr'" [class.pi-wallet]="order.paymentMethod === 'CashOnDelivery'" aria-hidden="true"></i>
-                        {{ paymentLabel(order.paymentMethod) }}
-                    </span>
-                    <button
-                        type="button"
-                        class="mt-2 block cursor-pointer whitespace-nowrap text-xs font-bold text-(--mawrid-font-accent) underline decoration-transparent underline-offset-2 hover:decoration-current disabled:cursor-not-allowed disabled:opacity-50"
-                        [disabled]="updatingId() === order.id"
-                        (click)="updatePaymentMethod(order, order.paymentMethod === 'BanglaQr' ? 'CashOnDelivery' : 'BanglaQr')"
-                    >{{ order.paymentMethod === 'BanglaQr' ? 'Change to cash on delivery' : 'Mark as paid by Bangla QR' }}</button>
+                    <div class="flex items-center gap-2">
+                        <span [class]="paymentBadgeClass(order.paymentMethod)">
+                            <i class="pi" [class]="'pi ' + paymentIcon(order.paymentMethod)" aria-hidden="true"></i>
+                            {{ paymentLabel(order.paymentMethod) }}
+                        </span>
+                        <button type="button" class="grid size-8 cursor-pointer place-items-center rounded-lg border border-(--mawrid-border) bg-(--mawrid-card) text-(--mawrid-text-muted) transition-colors hover:border-(--mawrid-primary) hover:text-(--mawrid-font-primary)" aria-label="Change payment status" aria-haspopup="menu" [disabled]="updatingId() === order.id" (click)="paymentMenu.toggle($event)"><i class="pi pi-ellipsis-h" aria-hidden="true"></i></button>
+                        <p-popover #paymentMenu ariaLabel="Payment options" appendTo="body">
+                            <div class="min-w-52 space-y-1 p-1" role="menu">
+                                @for (paymentMethod of paymentOptions; track paymentMethod) {
+                                    <button type="button" [class]="paymentActionClass(paymentMethod)" [disabled]="updatingId() === order.id || paymentMethod === order.paymentMethod" role="menuitem" (click)="paymentMenu.hide(); updatePaymentMethod(order, paymentMethod)"><i class="pi" [class]="'pi ' + paymentIcon(paymentMethod)" aria-hidden="true"></i>{{ paymentLabel(paymentMethod) }}</button>
+                                }
+                            </div>
+                        </p-popover>
+                    </div>
                 </td>
                 <td class="whitespace-nowrap text-(--mawrid-text-muted)">
                     {{ order.createdAt | date: 'medium' }}
                 </td>
                 <td>
                     <div class="flex items-center gap-2">
-                        <span [class]="statusBadgeClass(order.status)">
+                        <button type="button" [class]="statusBadgeClass(order.status)" aria-label="Change order status" aria-haspopup="menu" [disabled]="updatingId() === order.id" (click)="statusMenu.toggle($event)">
                             <i class="pi" [class]="'pi ' + statusIcon(order.status)" aria-hidden="true"></i>
                             {{ statusLabel(order.status) }}
-                        </span>
-                        @if (availableStatuses(order).length > 0) {
-                            <button
-                                type="button"
-                                class="grid size-8 cursor-pointer place-items-center rounded-lg border border-(--mawrid-border) bg-(--mawrid-card) text-(--mawrid-text-muted) hover:border-(--mawrid-primary) hover:text-(--mawrid-font-primary)"
-                                aria-label="More order actions"
-                                aria-haspopup="menu"
-                                (click)="actionMenu.toggle($event)"
-                            >
-                                    <i class="pi pi-ellipsis-h" aria-hidden="true"></i>
-                            </button>
-                            <p-popover #actionMenu ariaLabel="More order actions" appendTo="body">
-                                <div class="min-w-48 p-1" role="menu">
-                                @for (status of availableStatuses(order); track status) {
+                            <i class="pi pi-chevron-down ml-0.5 text-[0.65rem] opacity-70" aria-hidden="true"></i>
+                        </button>
+                            <p-popover #statusMenu ariaLabel="Order status options" appendTo="body">
+                                <div class="min-w-48 space-y-1 p-1" role="menu">
+                                @for (status of statusOptions; track status) {
                                     <button
                                         type="button"
                                         [class]="statusActionClass(status)"
-                                        [disabled]="updatingId() === order.id"
+                                        [disabled]="updatingId() === order.id || status === order.status"
                                         role="menuitem"
-                                        (click)="actionMenu.hide(); updateStatus(order, status)"
+                                        (click)="statusMenu.hide(); updateStatus(order, status)"
                                     ><i class="pi" [class]="'pi ' + statusIcon(status)" aria-hidden="true"></i> {{ statusActionLabel(status) }}</button>
                                 }
                                 </div>
                             </p-popover>
-                        }
                     </div>
                 </td>
                 <td>

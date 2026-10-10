@@ -7,6 +7,9 @@
             <p class="mt-4 text-(--mawrid-text-muted) text-balance">Your order number is <strong class="text-(--mawrid-font-primary)">{{ order.orderNumber }}</strong>.</p>
             <p>We will contact you to confirm it.</p>
             <p class="mt-5 text-xl font-extrabold">Total: {{ formatPrice(order.total) }}</p>
+            @if (order.paymentMethod === 'UnpaidBanglaQr' || order.paymentMethod === 'PaidBanglaQr') {
+                <app-bangla-qr class="mt-8 text-left" heading="Complete your Bangla QR payment" [showPaymentReminder]="true" />
+            }
             <a pButton class="mt-8 no-underline" routerLink="/shop">Continue shopping</a>
         </section>
     } @else {
@@ -80,44 +83,9 @@
                 <a class="mt-4 block text-center text-sm font-bold text-(--mawrid-font-primary) hover:underline" routerLink="/cart">Back to cart</a>
             </aside>
                 @if (checkoutForm.controls.paymentMethod.value === 'BanglaQr') {
-                <section class="rounded-2xl border border-(--mawrid-border) bg-white p-4 text-(--mawrid-primary) shadow-(--mawrid-card-shadow)" aria-labelledby="payment-qr-title">
-                    <h2 id="payment-qr-title" class="text-center text-lg font-extrabold leading-6">Scan with any bank or mobile banking app to make a payment</h2>
-                    <div class="mt-4 rounded-2xl bg-violet-50 p-3">
-                        <p class="border-b border-violet-200 pb-3 text-center text-xl font-extrabold">Mawrid Travel</p>
-                        <img
-                            class="mt-3 aspect-square w-full rounded-xl bg-white"
-                            src="/images/checkout/mawrid-payment-qr-code.png"
-                            alt="QR code for paying Mawrid Travel"
-                        />
-                        <p class="mt-3 rounded-xl border border-violet-200 bg-white/70 p-3 text-center text-sm font-bold">Merchant Name: Mawrid Travel</p>
-                    </div>
-                    <div class="mt-4 grid grid-cols-3 gap-2">
-                        <button type="button" class="grid cursor-pointer place-items-center gap-1 rounded-xl bg-violet-50 p-3 text-sm font-bold hover:bg-violet-100" (click)="sharePaymentQr()">
-                            <i class="pi pi-share-alt text-xl" aria-hidden="true"></i>
-                            Share
-                        </button>
-                        <a class="grid place-items-center gap-1 rounded-xl bg-violet-50 p-3 text-sm font-bold text-inherit no-underline hover:bg-violet-100" href="/images/checkout/mawrid-payment-qr-code.png" download="mawrid-travel-payment-qr.png">
-                            <i class="pi pi-download text-xl" aria-hidden="true"></i>
-                            Download
-                        </a>
-                        <button type="button" class="grid cursor-pointer place-items-center gap-1 rounded-xl bg-violet-50 p-3 text-sm font-bold hover:bg-violet-100" (click)="qrExpanded.set(true)">
-                            <i class="pi pi-expand text-xl" aria-hidden="true"></i>
-                            Enlarge
-                        </button>
-                    </div>
-                </section>
+                    <app-bangla-qr />
                 }
             </div>
         </form>
-        @if (qrExpanded()) {
-            <div class="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-label="Enlarged Mawrid Travel payment QR code" (click)="qrExpanded.set(false)">
-                <div class="relative w-full max-w-2xl rounded-2xl bg-white p-4 shadow-2xl" (click)="$event.stopPropagation()">
-                    <button type="button" class="absolute top-2 right-2 grid size-10 cursor-pointer place-items-center rounded-full bg-white text-(--mawrid-primary) shadow" aria-label="Close enlarged QR code" (click)="qrExpanded.set(false)">
-                        <i class="pi pi-times" aria-hidden="true"></i>
-                    </button>
-                    <img class="aspect-square w-full" src="/images/checkout/mawrid-payment-qr-code.png" alt="Enlarged QR code for paying Mawrid Travel" />
-                </div>
-            </div>
-        }
     }
 </main>

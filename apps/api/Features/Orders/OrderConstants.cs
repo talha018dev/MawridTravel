@@ -4,6 +4,11 @@ internal static class OrderConstants
 {
     public const string CashOnDelivery = "CashOnDelivery";
     public const string BanglaQr = "BanglaQr";
+    public const string UnpaidBanglaQr = "UnpaidBanglaQr";
+    public const string PaidBanglaQr = "PaidBanglaQr";
+    public static readonly IReadOnlySet<string> PaymentStates = new HashSet<string>(
+        [CashOnDelivery, UnpaidBanglaQr, PaidBanglaQr],
+        StringComparer.OrdinalIgnoreCase);
     public const string InsideDhaka = "InsideDhaka";
     public const string OutsideDhaka = "OutsideDhaka";
     public const decimal InsideDhakaDeliveryFee = 80m;
