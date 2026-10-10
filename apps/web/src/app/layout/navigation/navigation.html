@@ -1,149 +1,150 @@
 @if (drawer()) {
-  <nav
-    class="flex flex-col gap-1 px-3 py-4 pl-0 [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
-    aria-label="Mobile navigation"
-  >
-    @for (item of menuItems(); track item.path; let index = $index) {
-      @if (admin() && index === adminMenuItems.length) {
-        <div class="my-2 border-t border-(--mawrid-border)" role="separator"></div>
-      }
-      <a
-        class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-        [routerLink]="item.path"
-        (click)="closeDrawer()"
-        ><i [class]="item.icon + ' relative top-0.5 mr-2'" aria-hidden="true"></i>{{
-          item.label
-        }}</a
-      >
-    }
-    @if (showAccount()) {
-      @if (authenticated()) {
-        <a
-          class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-          routerLink="/profile"
-          (click)="closeDrawer()"
-        >
-          <i class="pi pi-user relative top-0.5 mr-2" aria-hidden="true"></i>
-          Profile
-        </a>
-        @if (!admin()) {
-          <a
-            class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-            routerLink="/my-orders"
-            (click)="closeDrawer()"
-          >
-            <i class="pi pi-shopping-bag relative top-0.5 mr-2" aria-hidden="true"></i>
-            My Orders
-          </a>
-        }
-        <button
-          type="button"
-          class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) disabled:cursor-not-allowed disabled:opacity-60"
-          [disabled]="loggingOut()"
-          (click)="logout()"
-        >
-          <i class="pi pi-sign-out relative top-0.5 mr-2" aria-hidden="true"></i>
-          {{ loggingOut() ? 'Logging out...' : 'Logout' }}
-        </button>
-      } @else {
-        <a
-          class="mt-2 rounded-lg bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
-          routerLink="/login"
-          (click)="closeDrawer()"
-          >Login</a
-        >
-      }
-    }
-    @if (showCart()) {
-      <a
-        class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
-        routerLink="/cart"
-        (click)="closeDrawer()"
-      >
-        <i class="pi pi-shopping-cart relative top-0.5 mr-2" aria-hidden="true"></i>
-        Cart
-      </a>
-    }
-  </nav>
-} @else {
-  <nav
-    class="flex items-center gap-2 max-[900px]:hidden [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
-    [attr.aria-label]="showMenu() ? 'Primary navigation' : 'Account navigation'"
-  >
-    @if (showMenu()) {
-      @for (item of menuItems(); track item.path; let index = $index) {
-        @if (admin() && index === adminMenuItems.length) {
-          <span
-            class="mx-1 h-6 w-px shrink-0 bg-(--mawrid-border)"
-            role="separator"
-            aria-orientation="vertical"
-          ></span>
-        }
-        <a
-          pButton
-          text
-          rounded
-          class="text-(--mawrid-font-primary)! no-underline"
-          [routerLink]="item.path"
-        >
-          {{ item.label }}
-        </a>
-      }
-    }
-    @if (showThemeToggle()) {
-      <app-theme-toggle />
-    }
-    @if (showAccount()) {
-      @if (authenticated()) {
-        <button
-          type="button"
-          class="inline-grid size-10 cursor-pointer place-items-center rounded-full border border-(--mawrid-border) bg-transparent text-(--mawrid-font-primary) transition-colors hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-          aria-label="Open account menu"
-          (click)="accountMenu.toggle($event)"
-        >
-          <p-avatar
-            [label]="userInitials()"
-            shape="circle"
-            styleClass="size-auto! bg-transparent! text-inherit! text-sm! font-semibold!"
-          />
-        </button>
-        <p-popover #accountMenu ariaLabel="Account menu">
-          <div class="flex min-w-40 flex-col gap-1 p-1">
+    <nav
+        class="flex flex-col gap-1 px-3 py-4 pl-0 [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
+        aria-label="Mobile navigation"
+    >
+        @for (item of menuItems(); track item.path; let index = $index) {
+            @if (admin() && index === adminMenuItems.length) {
+                <div class="my-2 border-t border-(--mawrid-border)" role="separator"></div>
+            }
             <a
-              class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
-              routerLink="/profile"
-              (click)="accountMenu.hide()"
+                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                [routerLink]="item.path"
+                (click)="closeDrawer()"
+                ><i [class]="item.icon + ' relative top-0.5 mr-2'" aria-hidden="true"></i
+                >{{ item.label }}</a
             >
-              <i class="pi pi-user mr-2" aria-hidden="true"></i>
-              Profile
+        }
+        @if (showAccount() && authenticated()) {
+            <a
+                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                routerLink="/profile"
+                (click)="closeDrawer()"
+            >
+                <i class="pi pi-user relative top-0.5 mr-2" aria-hidden="true"></i>
+                Profile
             </a>
             @if (!admin()) {
-              <a
-                class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
-                routerLink="/my-orders"
-                (click)="accountMenu.hide()"
-              >
-                <i class="pi pi-shopping-bag mr-2" aria-hidden="true"></i>
-                My Orders
-              </a>
+                <a
+                    class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                    routerLink="/my-orders"
+                    (click)="closeDrawer()"
+                >
+                    <i class="pi pi-shopping-bag relative top-0.5 mr-2" aria-hidden="true"></i>
+                    My Orders
+                </a>
             }
-            <button
-              type="button"
-              class="rounded-lg px-3 py-2 text-left text-sm font-semibold text-(--mawrid-font-primary) hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
-              [disabled]="loggingOut()"
-              (click)="logout(accountMenu)"
+        }
+        @if (showCart()) {
+            <a
+                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                routerLink="/cart"
+                (click)="closeDrawer()"
             >
-              <i class="pi pi-sign-out mr-2" aria-hidden="true"></i>
-              {{ loggingOut() ? 'Logging out...' : 'Logout' }}
-            </button>
-          </div>
-        </p-popover>
-      } @else {
-        <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
-      }
-    }
-    @if (showCart()) {
-      <app-cart-button />
-    }
-  </nav>
+                <i class="pi pi-shopping-cart relative top-0.5 mr-2" aria-hidden="true"></i>
+                Cart
+            </a>
+        }
+        @if (showAccount()) {
+            @if (authenticated()) {
+                <button
+                    type="button"
+                    class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) disabled:cursor-not-allowed disabled:opacity-60"
+                    [disabled]="loggingOut()"
+                    (click)="logout()"
+                >
+                    <i class="pi pi-sign-out relative top-0.5 mr-2" aria-hidden="true"></i>
+                    {{ loggingOut() ? 'Logging out...' : 'Logout' }}
+                </button>
+            } @else {
+                <a
+                    class="mt-2 rounded-lg bg-(--p-primary-color) p-3.5 text-center text-sm leading-tight font-extrabold tracking-[0.075em] text-(--p-primary-contrast-color) uppercase no-underline hover:bg-(--p-primary-hover-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
+                    routerLink="/login"
+                    (click)="closeDrawer()"
+                    >Login</a
+                >
+            }
+        }
+    </nav>
+} @else {
+    <nav
+        class="flex items-center gap-2 max-[900px]:hidden [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
+        [attr.aria-label]="showMenu() ? 'Primary navigation' : 'Account navigation'"
+    >
+        @if (showMenu()) {
+            @for (item of menuItems(); track item.path; let index = $index) {
+                @if (admin() && index === adminMenuItems.length) {
+                    <span
+                        class="mx-1 h-6 w-px shrink-0 bg-(--mawrid-border)"
+                        role="separator"
+                        aria-orientation="vertical"
+                    ></span>
+                }
+                <a
+                    pButton
+                    text
+                    rounded
+                    class="text-(--mawrid-font-primary)! no-underline"
+                    [routerLink]="item.path"
+                >
+                    {{ item.label }}
+                </a>
+            }
+        }
+        @if (showThemeToggle()) {
+            <app-theme-toggle />
+        }
+        @if (showAccount()) {
+            @if (authenticated()) {
+                <button
+                    type="button"
+                    class="inline-grid size-10 cursor-pointer place-items-center rounded-full border border-(--mawrid-border) bg-transparent text-(--mawrid-font-primary) transition-colors hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                    aria-label="Open account menu"
+                    (click)="accountMenu.toggle($event)"
+                >
+                    <p-avatar
+                        [label]="userInitials()"
+                        shape="circle"
+                        styleClass="size-auto! bg-transparent! text-inherit! text-sm! font-semibold!"
+                    />
+                </button>
+                <p-popover #accountMenu ariaLabel="Account menu" (onHide)="accountMenuHidden()">
+                    <div class="flex min-w-40 flex-col gap-1 p-1">
+                        <a
+                            class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                            routerLink="/profile"
+                            (click)="accountMenu.hide()"
+                        >
+                            <i class="pi pi-user mr-2" aria-hidden="true"></i>
+                            Profile
+                        </a>
+                        @if (!admin()) {
+                            <a
+                                class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                                routerLink="/my-orders"
+                                (click)="accountMenu.hide()"
+                            >
+                                <i class="pi pi-shopping-bag mr-2" aria-hidden="true"></i>
+                                My Orders
+                            </a>
+                        }
+                        <button
+                            type="button"
+                            class="rounded-lg px-3 py-2 text-left text-sm font-semibold text-(--mawrid-font-primary) hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                            [disabled]="loggingOut()"
+                            (click)="logoutFromAccountMenu(accountMenu)"
+                        >
+                            <i class="pi pi-sign-out mr-2" aria-hidden="true"></i>
+                            {{ loggingOut() ? 'Logging out...' : 'Logout' }}
+                        </button>
+                    </div>
+                </p-popover>
+            } @else {
+                <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
+            }
+        }
+        @if (showCart()) {
+            <app-cart-button />
+        }
+    </nav>
 }
