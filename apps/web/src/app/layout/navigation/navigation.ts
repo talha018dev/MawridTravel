@@ -2,7 +2,7 @@ import { Component, computed, inject, input, output, signal } from '@angular/cor
 import { Avatar } from '@openng/optimus-ui/avatar';
 import { ButtonDirective } from '@openng/optimus-ui/button';
 import { Popover } from '@openng/optimus-ui/popover';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '@app/features/auth/auth.service';
 import { ThemeToggle } from '@app/layout/theme-toggle/theme-toggle';
 import { finalize } from 'rxjs';
@@ -24,7 +24,7 @@ const PUBLIC_MENU_ITEMS = [
 
 @Component({
     selector: 'app-navigation',
-    imports: [Avatar, ButtonDirective, CartButton, Popover, RouterLink, ThemeToggle],
+  imports: [Avatar, ButtonDirective, CartButton, Popover, RouterLink, RouterLinkActive, ThemeToggle],
     templateUrl: './navigation.html',
 })
 export class Navigation {

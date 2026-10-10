@@ -1,6 +1,6 @@
 @if (drawer()) {
     <nav
-        class="flex flex-col gap-1 px-3 py-4 pl-0 [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
+    class="flex flex-col gap-1 px-3 py-4 pl-0 [&_a]:transition-colors [&_a]:duration-200 [&_button]:transition-colors [&_button]:duration-200 motion-reduce:[&_a]:transition-none motion-reduce:[&_button]:transition-none"
         aria-label="Mobile navigation"
     >
         @for (item of menuItems(); track item.path; let index = $index) {
@@ -8,8 +8,10 @@
                 <div class="my-2 border-t border-(--mawrid-border)" role="separator"></div>
             }
             <a
-                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) focus-visible:bg-(--p-primary-color) focus-visible:text-(--p-primary-contrast-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
                 [routerLink]="item.path"
+                routerLinkActive="bg-(--p-primary-color)! text-(--p-primary-contrast-color)!"
+                [routerLinkActiveOptions]="{ exact: item.path === '/' }"
                 (click)="closeDrawer()"
                 ><i [class]="item.icon + ' relative top-0.5 mr-2'" aria-hidden="true"></i
                 >{{ item.label }}</a
@@ -17,7 +19,7 @@
         }
         @if (showAccount() && authenticated()) {
             <a
-                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) focus-visible:bg-(--p-primary-color) focus-visible:text-(--p-primary-contrast-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
                 routerLink="/profile"
                 (click)="closeDrawer()"
             >
@@ -26,7 +28,7 @@
             </a>
             @if (!admin()) {
                 <a
-                    class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                    class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) focus-visible:bg-(--p-primary-color) focus-visible:text-(--p-primary-contrast-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
                     routerLink="/my-orders"
                     (click)="closeDrawer()"
                 >
@@ -37,7 +39,7 @@
         }
         @if (showCart()) {
             <a
-                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                class="rounded-lg p-3.5 text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase no-underline hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) focus-visible:bg-(--p-primary-color) focus-visible:text-(--p-primary-contrast-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
                 routerLink="/cart"
                 (click)="closeDrawer()"
             >
@@ -49,7 +51,7 @@
             @if (authenticated()) {
                 <button
                     type="button"
-                    class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:bg-(--mawrid-nav-hover) focus-visible:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent) disabled:cursor-not-allowed disabled:opacity-60"
+                class="cursor-pointer rounded-lg p-3.5 text-left text-sm leading-tight font-extrabold tracking-[0.075em] text-(--mawrid-font-primary) uppercase hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) focus-visible:bg-(--p-primary-color) focus-visible:text-(--p-primary-contrast-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color) disabled:cursor-not-allowed disabled:opacity-60"
                     [disabled]="loggingOut()"
                     (click)="logout()"
                 >
@@ -68,7 +70,7 @@
     </nav>
 } @else {
     <nav
-        class="flex items-center gap-2 max-[900px]:hidden [&_a]:transition-colors [&_a]:duration-200 motion-reduce:[&_a]:transition-none"
+        class="flex items-center gap-2 max-[900px]:hidden [&_a]:transition-colors [&_a]:duration-200 [&_button]:transition-colors [&_button]:duration-200 motion-reduce:[&_a]:transition-none motion-reduce:[&_button]:transition-none"
         [attr.aria-label]="showMenu() ? 'Primary navigation' : 'Account navigation'"
     >
         @if (showMenu()) {
@@ -84,8 +86,10 @@
                     pButton
                     text
                     rounded
-                    class="text-(--mawrid-font-primary)! no-underline"
+                    class="text-(--mawrid-font-primary)! no-underline transition-colors! duration-200! hover:bg-(--p-primary-color)! hover:text-(--p-primary-contrast-color)!"
                     [routerLink]="item.path"
+                    routerLinkActive="bg-(--p-primary-color)! text-(--p-primary-contrast-color)!"
+                    [routerLinkActiveOptions]="{ exact: item.path === '/' }"
                 >
                     {{ item.label }}
                 </a>
@@ -98,7 +102,7 @@
             @if (authenticated()) {
                 <button
                     type="button"
-                    class="inline-grid size-10 cursor-pointer place-items-center rounded-full border border-(--mawrid-border) bg-transparent text-(--mawrid-font-primary) transition-colors hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
+                    class="inline-grid size-10 cursor-pointer place-items-center rounded-full border border-(--mawrid-border) bg-transparent text-(--mawrid-font-primary) transition-colors hover:border-(--p-primary-color) hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--p-primary-color)"
                     aria-label="Open account menu"
                     (click)="accountMenu.toggle($event)"
                 >
@@ -111,7 +115,7 @@
                 <p-popover #accountMenu ariaLabel="Account menu" (onHide)="accountMenuHidden()">
                     <div class="flex min-w-40 flex-col gap-1 p-1">
                         <a
-                            class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                            class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline transition-colors duration-200 hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) motion-reduce:transition-none"
                             routerLink="/profile"
                             (click)="accountMenu.hide()"
                         >
@@ -120,7 +124,7 @@
                         </a>
                         @if (!admin()) {
                             <a
-                                class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                                class="rounded-lg px-3 py-2 text-sm font-semibold text-(--mawrid-font-primary) no-underline transition-colors duration-200 hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) motion-reduce:transition-none"
                                 routerLink="/my-orders"
                                 (click)="accountMenu.hide()"
                             >
@@ -130,7 +134,7 @@
                         }
                         <button
                             type="button"
-                            class="rounded-lg px-3 py-2 text-left text-sm font-semibold text-(--mawrid-font-primary) hover:bg-(--mawrid-nav-hover) hover:text-(--mawrid-nav-hover-text)"
+                            class="rounded-lg px-3 py-2 text-left text-sm font-semibold text-(--mawrid-font-primary) transition-colors duration-200 hover:bg-(--p-primary-color) hover:text-(--p-primary-contrast-color) motion-reduce:transition-none"
                             [disabled]="loggingOut()"
                             (click)="logoutFromAccountMenu(accountMenu)"
                         >
@@ -140,7 +144,14 @@
                     </div>
                 </p-popover>
             } @else {
-                <a pButton rounded class="no-underline" routerLink="/login"> Login </a>
+                <a
+                    pButton
+                    rounded
+                    class="border-(--p-primary-color)! bg-transparent! text-(--p-primary-color)! no-underline transition-colors! duration-200! hover:bg-(--p-primary-color)! hover:text-(--p-primary-contrast-color)! motion-reduce:transition-none!"
+                    routerLink="/login"
+                >
+                    Login
+                </a>
             }
         }
         @if (showCart()) {

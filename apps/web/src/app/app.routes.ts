@@ -56,6 +56,11 @@ export const routes: Routes = [
     title: 'Checkout | Mawrid Travel',
   },
   {
+    path: 'tickets',
+    loadComponent: () => import('@app/features/tickets/tickets').then(({ Tickets }) => Tickets),
+    title: 'Flight Tickets | Mawrid Travel',
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('@app/features/profile/profile').then(({ Profile }) => Profile),
