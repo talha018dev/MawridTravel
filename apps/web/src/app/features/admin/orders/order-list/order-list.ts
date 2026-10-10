@@ -62,8 +62,19 @@ export class OrderList implements OnInit {
         this.updatingId.set(order.id);
         this.service.updateStatus(order.id, status).pipe(finalize(() => this.updatingId.set(null))).subscribe({
             next: (updated) => {
-                this.orders.update((orders) => orders.map((item) => item.id === updated.id ? updated : item));
                 this.messages.add({ severity: 'success', summary: 'Order updated', detail: `${updated.orderNumber} is now ${this.statusLabel(updated.status).toLowerCase()}.` });
+
+                const activeStatus = this.statusControl.value;
+                if (activeStatus !== 'all' && activeStatus !== updated.status) {
+                    const remainingTotal = Math.max(0, this.totalCount() - 1);
+                    if (this.page() > 1 && (this.page() - 1) * this.pageSize >= remainingTotal) {
+                        this.page.update((page) => page - 1);
+                    }
+                    this.load();
+                    return;
+                }
+
+                this.orders.update((orders) => orders.map((item) => item.id === updated.id ? updated : item));
             },
             error: (error: HttpErrorResponse) => this.messages.add({ severity: 'error', summary: 'Status not updated', detail: error.error?.errors?.status?.[0] ?? 'Unable to update the order status.' }),
         });
@@ -114,11 +125,11 @@ export class OrderList implements OnInit {
     }
 
     protected statusActionLabel(status: OrderStatus): string {
-        return status === 'NotConfirmed' ? 'Set as not confirmed'
-            : status === 'Confirmed' ? 'Mark confirmed'
-                : status === 'InProgress' ? 'Mark processing'
-                    : status === 'DeliveryInProgress' ? 'Mark delivery in progress'
-                        : status === 'Delivered' ? 'Mark delivered' : 'Mark failed';
+        return status === 'NotConfirmed' ? 'Not Confirmed'
+            : status === 'Confirmed' ? 'Confirmed'
+                : status === 'InProgress' ? 'Processing'
+                    : status === 'DeliveryInProgress' ? 'Delivery in Progress'
+                        : status === 'Delivered' ? 'Delivered' : 'Failed';
     }
 
     protected formatPrice(value: number): string { return `৳ ${new Intl.NumberFormat('en-BD', { maximumFractionDigits: 2 }).format(value)}`; }

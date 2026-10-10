@@ -1,0 +1,28 @@
+<main class="mx-auto w-[min(52rem,calc(100%-2rem))] py-10 sm:py-16">
+    <header class="text-center">
+        <p class="text-sm font-bold tracking-[0.12em] text-(--mawrid-font-accent) uppercase">
+            Help centre
+        </p>
+        <h1 class="mt-2 text-3xl font-extrabold sm:text-5xl">Frequently Asked Questions</h1>
+        <p class="mx-auto mt-4 max-w-2xl leading-7 text-(--mawrid-text-muted)">
+            Quick answers about ordering, payment, and delivery. This is placeholder content that
+            you can update later.
+        </p>
+    </header>
+
+    <section class="mt-10" aria-label="Frequently asked questions">
+        <p-accordion
+            [value]="0"
+            styleClass="grid gap-3 [&_.p-accordionpanel]:overflow-hidden [&_.p-accordionpanel]:rounded-2xl [&_.p-accordionpanel]:border [&_.p-accordionpanel]:border-(--mawrid-border) [&_.p-accordionpanel]:bg-(--mawrid-card) [&_.p-accordionpanel]:shadow-(--mawrid-card-shadow) [&_.p-accordionheader]:px-5 [&_.p-accordionheader]:py-4 [&_.p-accordionheader]:font-bold [&_.p-accordioncontent-content]:px-5 [&_.p-accordioncontent-content]:pb-5"
+        >
+            @for (item of questions; track item.question; let index = $index) {
+                <p-accordion-panel [value]="index">
+                    <p-accordion-header>{{ item.question }}</p-accordion-header>
+                    <p-accordion-content>
+                        <p class="leading-7 text-(--mawrid-text-muted)">{{ item.answer }}</p>
+                    </p-accordion-content>
+                </p-accordion-panel>
+            }
+        </p-accordion>
+    </section>
+</main>

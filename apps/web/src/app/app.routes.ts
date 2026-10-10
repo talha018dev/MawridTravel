@@ -55,6 +55,21 @@ export const routes: Routes = [
     title: 'Checkout | Mawrid Travel',
   },
   {
+    path: 'terms-and-use',
+    loadComponent: () => import('@app/features/static-pages/terms/terms').then(({ Terms }) => Terms),
+    title: 'Terms of Use | Mawrid Travel',
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('@app/features/static-pages/privacy/privacy').then(({ Privacy }) => Privacy),
+    title: 'Privacy Policy | Mawrid Travel',
+  },
+  {
+    path: 'faq',
+    loadComponent: () => import('@app/features/static-pages/faq/faq').then(({ Faq }) => Faq),
+    title: 'Frequently Asked Questions | Mawrid Travel',
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],
