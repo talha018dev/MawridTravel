@@ -9,6 +9,11 @@ export interface PublicBlog {
     slug: string;
     excerpt: string | null;
     content: string;
+    metaTitle: string | null;
+    metaDescription: string | null;
+    canonicalUrl: string | null;
+    socialTitle: string | null;
+    socialDescription: string | null;
     featuredImageUrl: string | null;
     publishedAt: string;
     updatedAt: string;

@@ -90,6 +90,11 @@ internal static class BlogHandlers
                 cancellationToken),
             Excerpt = NormalizeOptional(request.Excerpt),
             Content = request.Content!.Trim(),
+            MetaTitle = NormalizeOptional(request.MetaTitle),
+            MetaDescription = NormalizeOptional(request.MetaDescription),
+            CanonicalUrl = NormalizeOptional(request.CanonicalUrl),
+            SocialTitle = NormalizeOptional(request.SocialTitle),
+            SocialDescription = NormalizeOptional(request.SocialDescription),
             IsPublished = request.IsPublished,
             PublishedAt = request.IsPublished ? now : null,
             CreatedAt = now,
@@ -135,6 +140,11 @@ internal static class BlogHandlers
             cancellationToken);
         blog.Excerpt = NormalizeOptional(request.Excerpt);
         blog.Content = request.Content!.Trim();
+        blog.MetaTitle = NormalizeOptional(request.MetaTitle);
+        blog.MetaDescription = NormalizeOptional(request.MetaDescription);
+        blog.CanonicalUrl = NormalizeOptional(request.CanonicalUrl);
+        blog.SocialTitle = NormalizeOptional(request.SocialTitle);
+        blog.SocialDescription = NormalizeOptional(request.SocialDescription);
         blog.IsPublished = request.IsPublished;
         blog.PublishedAt = request.IsPublished ? blog.PublishedAt ?? now : null;
         blog.UpdatedAt = now;

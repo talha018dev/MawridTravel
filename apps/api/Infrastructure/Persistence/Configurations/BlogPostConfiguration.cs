@@ -12,6 +12,11 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(blog => blog.Slug).HasMaxLength(220);
         builder.Property(blog => blog.Excerpt).HasMaxLength(500);
         builder.Property(blog => blog.Content).HasMaxLength(100_000);
+        builder.Property(blog => blog.MetaTitle).HasMaxLength(70);
+        builder.Property(blog => blog.MetaDescription).HasMaxLength(160);
+        builder.Property(blog => blog.CanonicalUrl).HasMaxLength(2_048);
+        builder.Property(blog => blog.SocialTitle).HasMaxLength(100);
+        builder.Property(blog => blog.SocialDescription).HasMaxLength(300);
         builder.Property(blog => blog.FeaturedImageObjectKey).HasMaxLength(500);
         builder.Property(blog => blog.FeaturedImageContentType).HasMaxLength(100);
 

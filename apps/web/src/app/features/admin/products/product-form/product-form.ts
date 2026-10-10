@@ -21,6 +21,7 @@ import { Textarea } from '@openng/optimus-ui/textarea';
 import { ToggleSwitch } from '@openng/optimus-ui/toggleswitch';
 import { FileRemoveEvent, FileSelectEvent } from '@openng/optimus-ui/types/fileupload';
 import { RemoveButton } from '@app/shared/components/remove-button/remove-button';
+import { BackToProductsButton } from '@app/features/admin/products/components/back-to-products-button/back-to-products-button';
 
 export interface ProductFormSubmission {
     product: CreateProductRequest;
@@ -45,6 +46,7 @@ type SizeFormGroup = FormGroup<{
 @Component({
     selector: 'app-product-form',
     imports: [
+        BackToProductsButton,
         ButtonDirective,
         FileUpload,
         InputNumber,

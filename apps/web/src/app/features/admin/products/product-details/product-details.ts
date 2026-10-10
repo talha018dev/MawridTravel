@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { BackToProductsButton } from '@app/features/admin/products/components/back-to-products-button/back-to-products-button';
 import {
     Product,
     ProductAdminService,
@@ -14,7 +15,7 @@ import { finalize } from 'rxjs';
 @Component({
     selector: 'app-product-details',
     providers: [ConfirmationService],
-    imports: [Button, ButtonDirective, Carousel, ConfirmDialog, DatePipe, RouterLink],
+    imports: [BackToProductsButton, Button, ButtonDirective, Carousel, ConfirmDialog, DatePipe, RouterLink],
     templateUrl: './product-details.html',
 })
 export class ProductDetails implements OnInit {

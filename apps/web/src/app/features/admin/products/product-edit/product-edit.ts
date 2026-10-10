@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BackToProductsButton } from '@app/features/admin/products/components/back-to-products-button/back-to-products-button';
 import {
     ProductForm,
     ProductFormSubmission,
@@ -9,7 +10,6 @@ import {
     Product,
     ProductAdminService,
 } from '@app/features/admin/products/services/product-admin.service';
-import { ButtonDirective } from '@openng/optimus-ui/button';
 import { catchError, concat, concatMap, finalize, from, map, of, switchMap, toArray } from 'rxjs';
 
 interface ImageChangeResult {
@@ -25,7 +25,7 @@ interface ValidationProblem {
 
 @Component({
     selector: 'app-product-edit',
-    imports: [ButtonDirective, ProductForm, RouterLink],
+    imports: [BackToProductsButton, ProductForm],
     templateUrl: './product-edit.html',
 })
 export class ProductEdit implements OnInit {

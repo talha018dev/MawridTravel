@@ -303,6 +303,51 @@
       <aside class="grid content-start gap-6">
         <section
           class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow)"
+          aria-labelledby="blog-seo-title"
+        >
+          <h2 id="blog-seo-title" class="text-lg font-bold">SEO &amp; sharing</h2>
+          <p class="mt-1 text-xs leading-5 text-(--mawrid-text-muted)">
+            Optional. Empty fields fall back to the article title and excerpt.
+          </p>
+
+          <div class="mt-4">
+            <label class="mb-2 block text-sm font-bold" for="blogMetaTitle">Meta title</label>
+            <input pInputText id="blogMetaTitle" class="w-full" formControlName="metaTitle" maxlength="70" placeholder="Search result title" [invalid]="controls.metaTitle.invalid && submitAttempted()" />
+            <p class="mt-1 text-right text-xs text-(--mawrid-text-muted)">{{ controls.metaTitle.value.length }}/70</p>
+            @for (message of serverErrors()['metaTitle'] ?? []; track message) { <p-message severity="error" size="small" variant="simple" [text]="message" /> }
+          </div>
+
+          <div class="mt-4">
+            <label class="mb-2 block text-sm font-bold" for="blogMetaDescription">Meta description</label>
+            <textarea pTextarea id="blogMetaDescription" class="min-h-24 w-full" formControlName="metaDescription" maxlength="160" placeholder="Search result description" [autoResize]="true" [invalid]="controls.metaDescription.invalid && submitAttempted()"></textarea>
+            <p class="mt-1 text-right text-xs text-(--mawrid-text-muted)">{{ controls.metaDescription.value.length }}/160</p>
+            @for (message of serverErrors()['metaDescription'] ?? []; track message) { <p-message severity="error" size="small" variant="simple" [text]="message" /> }
+          </div>
+
+          <div class="mt-4">
+            <label class="mb-2 block text-sm font-bold" for="blogCanonicalUrl">Canonical URL</label>
+            <input pInputText id="blogCanonicalUrl" class="w-full" type="url" formControlName="canonicalUrl" maxlength="2048" placeholder="https://example.com/article" [invalid]="controls.canonicalUrl.invalid && submitAttempted()" />
+            @if (submitAttempted() && controls.canonicalUrl.hasError('pattern')) { <p-message severity="error" size="small" variant="simple">Enter a complete HTTP or HTTPS URL.</p-message> }
+            @for (message of serverErrors()['canonicalUrl'] ?? []; track message) { <p-message severity="error" size="small" variant="simple" [text]="message" /> }
+          </div>
+
+          <div class="mt-4">
+            <label class="mb-2 block text-sm font-bold" for="blogSocialTitle">Social title</label>
+            <input pInputText id="blogSocialTitle" class="w-full" formControlName="socialTitle" maxlength="100" placeholder="Title used when shared" [invalid]="controls.socialTitle.invalid && submitAttempted()" />
+            <p class="mt-1 text-right text-xs text-(--mawrid-text-muted)">{{ controls.socialTitle.value.length }}/100</p>
+            @for (message of serverErrors()['socialTitle'] ?? []; track message) { <p-message severity="error" size="small" variant="simple" [text]="message" /> }
+          </div>
+
+          <div class="mt-4">
+            <label class="mb-2 block text-sm font-bold" for="blogSocialDescription">Social description</label>
+            <textarea pTextarea id="blogSocialDescription" class="min-h-24 w-full" formControlName="socialDescription" maxlength="300" placeholder="Description used when shared" [autoResize]="true" [invalid]="controls.socialDescription.invalid && submitAttempted()"></textarea>
+            <p class="mt-1 text-right text-xs text-(--mawrid-text-muted)">{{ controls.socialDescription.value.length }}/300</p>
+            @for (message of serverErrors()['socialDescription'] ?? []; track message) { <p-message severity="error" size="small" variant="simple" [text]="message" /> }
+          </div>
+        </section>
+
+        <section
+          class="rounded-2xl border border-(--mawrid-border) bg-(--mawrid-card) p-5 shadow-(--mawrid-card-shadow)"
           aria-labelledby="blog-publishing-title"
         >
           <h2 id="blog-publishing-title" class="text-lg font-bold">Publishing</h2>

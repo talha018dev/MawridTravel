@@ -5,6 +5,11 @@ internal sealed record BlogWriteRequest(
     string? Slug,
     string? Excerpt,
     string? Content,
+    string? MetaTitle,
+    string? MetaDescription,
+    string? CanonicalUrl,
+    string? SocialTitle,
+    string? SocialDescription,
     bool IsPublished);
 
 internal sealed record BlogResponse(
@@ -13,6 +18,11 @@ internal sealed record BlogResponse(
     string Slug,
     string? Excerpt,
     string Content,
+    string? MetaTitle,
+    string? MetaDescription,
+    string? CanonicalUrl,
+    string? SocialTitle,
+    string? SocialDescription,
     string? FeaturedImageUrl,
     bool IsPublished,
     DateTimeOffset? PublishedAt,

@@ -11,9 +11,7 @@
         <p class="rounded-xl border border-red-500 bg-red-500/10 p-4 text-red-500" role="alert">
             {{ errorMessage() }}
         </p>
-        <a pButton class="mt-6 no-underline" routerLink="/admin/products/list">
-            Back to products
-        </a>
+        <app-back-to-products-button class="mt-6" />
     </div>
 } @else {
     <app-product-form

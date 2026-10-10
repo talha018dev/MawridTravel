@@ -112,6 +112,14 @@ export class BlogForm implements OnDestroy {
             nonNullable: true,
             validators: [richTextRequired, Validators.maxLength(100_000)],
         }),
+        metaTitle: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(70)] }),
+        metaDescription: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(160)] }),
+        canonicalUrl: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.maxLength(2048), Validators.pattern(/^https?:\/\/.+/i)],
+        }),
+        socialTitle: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] }),
+        socialDescription: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(300)] }),
         isPublished: new FormControl(false, { nonNullable: true }),
     });
     protected readonly editor = new Editor({
@@ -151,6 +159,11 @@ export class BlogForm implements OnDestroy {
                 slug: blog.slug,
                 excerpt: blog.excerpt ?? '',
                 content: blog.content,
+                metaTitle: blog.metaTitle ?? '',
+                metaDescription: blog.metaDescription ?? '',
+                canonicalUrl: blog.canonicalUrl ?? '',
+                socialTitle: blog.socialTitle ?? '',
+                socialDescription: blog.socialDescription ?? '',
                 isPublished: blog.isPublished,
             }, { emitEvent: false });
             this.editor.commands.setContent(blog.content);
@@ -185,6 +198,11 @@ export class BlogForm implements OnDestroy {
                 slug: this.optionalValue(value.slug),
                 excerpt: this.optionalValue(value.excerpt),
                 content: this.sanitizeContent(value.content),
+                metaTitle: this.optionalValue(value.metaTitle),
+                metaDescription: this.optionalValue(value.metaDescription),
+                canonicalUrl: this.optionalValue(value.canonicalUrl),
+                socialTitle: this.optionalValue(value.socialTitle),
+                socialDescription: this.optionalValue(value.socialDescription),
                 isPublished: value.isPublished,
             },
             featuredImage: this.selectedImage(),

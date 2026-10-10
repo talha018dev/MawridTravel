@@ -16,6 +16,11 @@ internal static class BlogHelpers
             blog.Slug,
             blog.Excerpt,
             blog.Content,
+            blog.MetaTitle,
+            blog.MetaDescription,
+            blog.CanonicalUrl,
+            blog.SocialTitle,
+            blog.SocialDescription,
             blog.FeaturedImageObjectKey is null
                 ? null
                 : imageStorage.GetPublicUrl(blog.FeaturedImageObjectKey),

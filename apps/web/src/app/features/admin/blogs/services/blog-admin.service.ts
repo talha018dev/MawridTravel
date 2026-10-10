@@ -9,6 +9,11 @@ export interface Blog {
     slug: string;
     excerpt: string | null;
     content: string;
+    metaTitle: string | null;
+    metaDescription: string | null;
+    canonicalUrl: string | null;
+    socialTitle: string | null;
+    socialDescription: string | null;
     featuredImageUrl: string | null;
     isPublished: boolean;
     publishedAt: string | null;
@@ -35,6 +40,11 @@ export interface BlogWriteRequest {
     slug: string | null;
     excerpt: string | null;
     content: string;
+    metaTitle: string | null;
+    metaDescription: string | null;
+    canonicalUrl: string | null;
+    socialTitle: string | null;
+    socialDescription: string | null;
     isPublished: boolean;
 }
 

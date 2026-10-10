@@ -54,16 +54,27 @@ export class PublicBlogDetails implements OnInit {
     }
 
     private configureSeo(blog: PublicBlog): void {
-        const pageTitle = `${blog.title} | Mawrid Travel`;
-        const description = blog.excerpt || `Read ${blog.title} on the Mawrid Travel blog.`;
-        const url = `https://mawridtravel.com/blogs/${blog.slug}`;
+        const pageTitle = blog.metaTitle || `${blog.title} | Mawrid Travel`;
+        const description = blog.metaDescription || blog.excerpt || `Read ${blog.title} on the Mawrid Travel blog.`;
+        const url = blog.canonicalUrl || `https://mawridtravel.com/blogs/${blog.slug}`;
+        const socialTitle = blog.socialTitle || pageTitle;
+        const socialDescription = blog.socialDescription || description;
         this.title.setTitle(pageTitle);
         this.meta.updateTag({ name: 'description', content: description });
-        this.meta.updateTag({ property: 'og:title', content: pageTitle });
-        this.meta.updateTag({ property: 'og:description', content: description });
+        this.meta.updateTag({ property: 'og:title', content: socialTitle });
+        this.meta.updateTag({ property: 'og:description', content: socialDescription });
         this.meta.updateTag({ property: 'og:type', content: 'article' });
         this.meta.updateTag({ property: 'og:url', content: url });
-        if (blog.featuredImageUrl) this.meta.updateTag({ property: 'og:image', content: blog.featuredImageUrl });
+        this.meta.updateTag({ name: 'twitter:card', content: blog.featuredImageUrl ? 'summary_large_image' : 'summary' });
+        this.meta.updateTag({ name: 'twitter:title', content: socialTitle });
+        this.meta.updateTag({ name: 'twitter:description', content: socialDescription });
+        if (blog.featuredImageUrl) {
+            this.meta.updateTag({ property: 'og:image', content: blog.featuredImageUrl });
+            this.meta.updateTag({ name: 'twitter:image', content: blog.featuredImageUrl });
+        } else {
+            this.meta.removeTag("property='og:image'");
+            this.meta.removeTag("name='twitter:image'");
+        }
 
         let canonical = this.document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
         if (!canonical) {

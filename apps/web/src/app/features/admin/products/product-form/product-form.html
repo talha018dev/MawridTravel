@@ -2,14 +2,7 @@
   class="mx-auto w-[min(73.75rem,calc(100%-2.5rem))] py-8 sm:py-12"
   aria-labelledby="product-form-title"
 >
-  <button
-    type="button"
-    class="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-(--mawrid-text-muted) transition-colors hover:text-(--mawrid-font-primary) hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--mawrid-accent)"
-    (click)="cancelled.emit()"
-  >
-    <i class="pi pi-arrow-left text-xs" aria-hidden="true"></i>
-    Back to products
-  </button>
+  <app-back-to-products-button />
 
   <div class="mt-4 flex flex-wrap items-end justify-between gap-4">
     <div>
@@ -137,7 +130,7 @@
           formControlName="description"
           placeholder="Describe the product, its features, materials, and ideal use."
           maxlength="10000"
-          [autoResize]="true"
+          [autoResize]="false"
           [invalid]="controls.description.invalid && submitAttempted()"
         ></textarea>
         @if (submitAttempted() && controls.description.hasError('maxlength')) {

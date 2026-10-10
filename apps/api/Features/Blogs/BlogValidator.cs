@@ -28,6 +28,19 @@ internal static class BlogValidator
             errors["excerpt"] = ["Excerpt must not exceed 500 characters."];
         }
 
+        ValidateOptionalLength(errors, "metaTitle", request.MetaTitle, 70, "Meta title");
+        ValidateOptionalLength(errors, "metaDescription", request.MetaDescription, 160, "Meta description");
+        ValidateOptionalLength(errors, "canonicalUrl", request.CanonicalUrl, 2_048, "Canonical URL");
+        ValidateOptionalLength(errors, "socialTitle", request.SocialTitle, 100, "Social title");
+        ValidateOptionalLength(errors, "socialDescription", request.SocialDescription, 300, "Social description");
+
+        if (!string.IsNullOrWhiteSpace(request.CanonicalUrl) &&
+            (!Uri.TryCreate(request.CanonicalUrl.Trim(), UriKind.Absolute, out var canonicalUri) ||
+             canonicalUri.Scheme is not ("http" or "https")))
+        {
+            errors["canonicalUrl"] = ["Canonical URL must be a valid HTTP or HTTPS URL."];
+        }
+
         if (!HasVisibleContent(request.Content))
         {
             errors["content"] = ["Content is required."];
@@ -38,6 +51,19 @@ internal static class BlogValidator
         }
 
         return errors;
+    }
+
+    private static void ValidateOptionalLength(
+        Dictionary<string, string[]> errors,
+        string key,
+        string? value,
+        int maximumLength,
+        string label)
+    {
+        if (value?.Trim().Length > maximumLength)
+        {
+            errors[key] = [$"{label} must not exceed {maximumLength:N0} characters."];
+        }
     }
 
     private static bool HasVisibleContent(string? content)
